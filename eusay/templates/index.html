@@ -7,14 +7,26 @@
 .red {
 	color: red;
 }
+.proposal {
+	min-height: 80px;
+	border-left: 5px rgb(237, 23, 78) solid;
+	margin-bottom: 10px;
+}
+.proposalName {
+	color: black;
+	font-size: 1.4em;
+}
+.row1 {
+	background-color: rgb(240, 240, 240);
+}
 {% endblock %}
 
 {% block content %}
-{% for user in users %}
-<div class="row">
-<div class="col-xs-8"><p>{{ user.name }}</p></div>
-<div class="col-xs-2 green"><p>{{ user.sid }}</p></div>
-<div class="col-xs-2 red"><p>{{ user.signUpDate }}</p></div>
+{% for proposal in proposals %}
+<div class="row proposal {% cycle "row1" "row2" %}">
+<div class="col-xs-8"><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></div>
+<div class="col-xs-2 green">{{ proposal.actionDescription }}</div>
+<div class="col-xs-2 red">{{ proposal.backgroundDescription }}</div>
 </div>
 {% endfor %}
 {% endblock %}
