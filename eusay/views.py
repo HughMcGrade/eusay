@@ -18,7 +18,7 @@ def add_user(url_data):
     user.signUpDate = datetime.datetime.now()
     user.candidateStatus = "None"
     user.save()
-    return HttpResponse(render_to_string("index.html", {"users": User.objects.all()}))
+    return HttpResponse(user.name + " added.")
 
 def get_users(url_data):
     users = User.objects.all()
@@ -26,3 +26,6 @@ def get_users(url_data):
     for user in users:
         s = s + user.name + ", "
     return HttpResponse(s)
+
+def index(url_data):
+	return HttpResponse(render_to_string("index.html", {"users": User.objects.all()}))
