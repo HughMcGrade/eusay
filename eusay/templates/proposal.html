@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block style %}
+.textbox {
+	background-color: rgb(240, 240, 240);
+	padding: 8px;
+}
+h2, h3 {
+	margin-left: 0px;
+	padding-left: 8px;
+}
+.green {
+	color: green;
+}
+.red {
+	color: red;
+}
+.col-xs-1 {
+	margin: 5px 5px 5px 0px;
+	padding-left: 10px;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="column-xs-12">
+	<h2>{{ proposal.title }}</h2>
+	</div>
+</div>
+
+<div class="row">
+<div class="col-xs-1 green">2000</div>
+<div class="col-xs-1 red">780</div>
+<div class="col-xs-10"></div>
+</div>
+
+<hr />
+
+<div class="row">
+	<div class="column-xs-12">
+	<h3>What will we do?</h3>
+	<p class="textbox">{{ proposal.actionDescription }}</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="column-xs-12">
+	<h3>What is the background to this?</h3>
+	<p class="textbox">{{ proposal.backgroundDescription }}</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="column-xs-12">
+	<h3>What beliefs motivate the actions you propose?</h3>
+	<p class="textbox">{{ proposal.beliefsDescription }}</p>
+	</div>
+</div>
+
+{% endblock %}
