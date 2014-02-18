@@ -1,24 +1,20 @@
 {% extends "base.html" %}
 
+{% block style %}
+.green {
+	color: green;
+}
+.red {
+	color: red;
+}
+{% endblock %}
+
 {% block content %}
-<div class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Proposal</th>
-				<th>Votes up</th>
-				<th>Votes down</th>
-			</tr>
-		</thead>
-		<tbody>			
-{% for proposal in proposals %}
-			<tr>
-				<td>{{ proposal.title }}</td>
-				<td>{{ proposal.votesUp }}</td>
-				<td>{{ proposal.votesDown }}</td>
-			</tr>
-{% endfor %}
-		</tbody>
-	</table>
+{% for user in users %}
+<div class="row">
+<div class="col-xs-8"><p>{{ user.name }}</p></div>
+<div class="col-xs-2 green"><p>{{ user.sid }}</p></div>
+<div class="col-xs-2 red"><p>{{ user.signUpDate }}</p></div>
 </div>
+{% endfor %}
 {% endblock %}

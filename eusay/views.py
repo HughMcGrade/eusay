@@ -4,6 +4,7 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 
+from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -17,7 +18,7 @@ def add_user(url_data):
     user.signUpDate = datetime.datetime.now()
     user.candidateStatus = "None"
     user.save()
-    return HttpResponse("Hello")
+    return HttpResponse(render_to_string("index.html", {"users": User.objects.all()}))
 
 def get_users(url_data):
     users = User.objects.all()
