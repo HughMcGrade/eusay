@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, Comment
 import datetime
 
-def add_user(url_data):
+def add_user(request):
     user = User()
     user.name = "John"
     user.sid = "s1234567"
@@ -20,12 +20,12 @@ def add_user(url_data):
     user.save()
     return HttpResponse(user.name + " added.")
 
-def get_users(url_data):
+def get_users(request):
     users = User.objects.all()
     s = ""
     for user in users:
         s = s + user.name + ", "
     return HttpResponse(s)
 
-def index(url_data):
+def index(request):
 	return HttpResponse(render_to_string("index.html", {"users": User.objects.all()}))
