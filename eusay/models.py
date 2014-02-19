@@ -9,13 +9,13 @@ class Comment (models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=500)
     date = models.DateField()
-    user = models.ForeignKey("User")#, related_name="votedForComment")
+    user = models.ForeignKey("User")
 
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
     isVoteUp = models.BooleanField()
     date = models.DateField()
-    user = models.ForeignKey("User")#, related_name="votedFor")
+    user = models.ForeignKey("User")
     
 class Proposal (models.Model):
     id = models.AutoField(primary_key=True)
@@ -23,28 +23,30 @@ class Proposal (models.Model):
     actionDescription = models.CharField(max_length=2000)
     backgroundDescription = models.CharField(max_length=2000)
     beliefsDescription = models.CharField(max_length=2000)
-    votes = models.ForeignKey(Vote, null=True, blank=True)
     comments = models.ForeignKey(Comment, null=True, blank=True)
     proposer = models.ForeignKey("User")#, related_name="proposed")
     
+    def getVotes(self, isUp):
+        try:
+            return len(ProposalVote.objects.all().filter(proposal=self).filter(isVoteUp = isUp))
+        except Exception:
+            return 0
+    
     def votesUp(self):
-        return len(self.votes.filter(isVoteUp = True))
+        return self.getVotes(True)
     
     def votesDown(self):
-        return len(self.votes.filter(isVoteUp = False))
+        return self.getVotes(False)
     
 class ProposalVote (Vote):
-    proposal = models.ForeignKey(Proposal, null=True)
+    proposal = models.ForeignKey(Proposal)
     
 class CommentVote (Vote):
-    comment = models.ForeignKey(Comment, null=True)
+    comment = models.ForeignKey(Comment)
     
 class User (models.Model):
     sid = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    votedFor = models.ForeignKey(Vote, null=True, blank=True, related_name="Vote.user")
-    commented = models.ForeignKey(Comment, null=True, blank=True, related_name="Comment.user")
-    proposed = models.ForeignKey(Proposal, null=True, blank=True, related_name="Proposal.proposer")
     signUpDate = models.DateField()
     candidateStatus = models.CharField(max_length=20)
     

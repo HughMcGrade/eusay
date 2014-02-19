@@ -17,6 +17,6 @@ urlpatterns = patterns('',
 	url(r'^submit/', views.submit),
 	url(r'^thanks/', views.thanks),
 	url(r'^proposal/(?P<proposalId>\d+)', views.proposal),
-    url(r'^vote_up_proposal/', views.vote_up_proposal),
-    url(r'^vote_down_proposal/', views.vote_down_proposal),
+    url(r'^vote_proposal/(?P<ud>(up|down))/(?P<proposal_id>\d+)', views.vote_proposal),
+    url(r'^vote_comment/(?P<ud>(up|down))/(?P<comment_id>\d+)', views.vote_comment),
 )

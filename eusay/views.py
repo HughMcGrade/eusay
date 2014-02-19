@@ -15,8 +15,8 @@ import datetime
 
 def add_user(request):
     user = User()
-    user.name = "John"
-    user.sid = "s1234567"
+    user.name = "Jim"
+    user.sid = "s7654321"
     user.signUpDate = datetime.datetime.now()
     user.candidateStatus = "None"
     user.save()
@@ -52,48 +52,64 @@ def proposal(request, proposalId):
     proposal = Proposal.objects.get(id=proposalId)
     return HttpResponse(render_to_string("proposal.html", {"proposal": proposal}))
 
-def vote_up_proposal(request):
-    # if the user typed the url directly in the browser's address bar
-    referer = request.META.get('HTTP_REFERER')
-    if not referer:
-        referer = "" # TODO Index
-    
-    proposal_id = request.GET.get('id')
-    print(proposal_id)
-    if proposal_id == None:
-        proposal_id = 12345
-    proposal = get_object_or_404(Proposal, proposal_id)
-    
-    new_vote = ProposalVote()
-    new_vote.isVoteUp = True
+def vote_proposal(request, ud, proposal_id):
+    proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
     # TODO Get real user
-    user = User.objects.all().first()
+    user = User.objects.all()[1]
+    
+    # Check if they have already voted
+    if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
+        # Has already voted
+        previous_vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
+        if previous_vote.isVoteUp and ud == "down":
+            previous_vote.delete()
+        elif not previous_vote.isVoteUp and ud == "up":
+            previous_vote.delete()
+        else:
+            return HttpResponse("User has already voted")
+    
+    new_vote = ProposalVote()
+    
+    if ud == "up":
+        new_vote.isVoteUp = True
+    else:
+        new_vote.isVoteUp = False
     
     new_vote.user = user
     new_vote.proposal = proposal
+    new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return HttpResponseRedirect(referer)
+    return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
-def vote_down_proposal(request):
-    # if the user typed the url directly in the browser's address bar
-    referer = request.META.get('HTTP_REFERER')
-    if not referer:
-        referer = "" # TODO Index
-    
-    proposal_id = request.GET.get('id')
-    proposal = get_object_or_404(Proposal, proposal_id)
-    
-    new_vote = ProposalVote()
-    new_vote.isVoteUp = False
+def vote_comment(request, ud, comment_id):
+    comment = Comment.objects.all().get(id=comment_id)#get_object_or_404(Proposal, proposal_id)
     
     # TODO Get real user
-    user = User.objects.all().first()
+    user = User.objects.all()[1]
+    
+    # Check if they have already voted
+    if CommentVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
+        # Has already voted
+        previous_vote = CommentVote.objects.all().filter(comment=comment).get(user=user)
+        if previous_vote.isVoteUp and ud == "down":
+            previous_vote.delete()
+        elif not previous_vote.isVoteUp and ud == "up":
+            previous_vote.delete()
+        else:
+            return HttpResponse("User has already voted")
+    
+    new_vote = CommentVote()
+    
+    if ud == "up":
+        new_vote.isVoteUp = True
+    else:
+        new_vote.isVoteUp = False
     
     new_vote.user = user
-    new_vote.proposal = proposal
+    new_vote.comment = comment
+    new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return HttpResponseRedirect(referer)
-
+    return HttpResponse("Voted " + ud + " " + comment_id + ". It now has " + str(comment.votesUp()) + " votes up.")
