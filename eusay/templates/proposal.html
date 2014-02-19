@@ -19,6 +19,35 @@ h2, h3 {
 	margin: 5px 5px 5px 0px;
 	padding-left: 10px;
 }
+
+.green {
+	color: green;
+}
+.red {
+	color: red;
+}
+.proposal {
+	min-height: 80px;
+	border-left: 5px rgb(237, 23, 78) solid;
+	margin-bottom: 10px;
+}
+.proposalName {
+	color: black;
+	font-size: 1.4em
+}
+.row1 {
+	background-color: rgb(240, 240, 240);
+}
+.tri {
+	font-size: 1.3em;
+}
+.tri:hover {
+	color: grey;
+	text-decoration: none;
+}
+.col-xs-2 {
+	font-size: 1.5em;
+}
 {% endblock %}
 
 {% block content %}
@@ -29,11 +58,9 @@ h2, h3 {
 	</div>
 </div>
 
-<div class="row">
-<div class="col-xs-1 green">{{ proposal.votesUp }}</div>
-<div class="col-xs-1 red">{{ proposal.votesDown }}</div>
+<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }})" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
+<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>
 <div class="col-xs-10"></div>
-</div>
 
 <hr />
 

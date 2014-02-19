@@ -4,14 +4,18 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 
-from django.template.loader import render_to_string
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django import forms
-from eusay.forms import ProposalForm
-
-from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, Comment
 import datetime
+
+from django import forms
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
+
+from eusay.forms import ProposalForm
+from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
+    Comment
+
 
 def add_user(request):
     user = User()
@@ -30,7 +34,10 @@ def get_users(request):
     return HttpResponse(s)
 
 def index(request):
-    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all()}))
+    # TODO Get real user
+    user = User.objects.all().first()
+    
+    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "user_votes" : user_proposal_votes_dict(user)}))
 
 def submit(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -56,7 +63,7 @@ def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
     # TODO Get real user
-    user = User.objects.all()[1]
+    user = User.objects.all().first()
     
     # Check if they have already voted
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
@@ -80,8 +87,22 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.proposal = proposal
     new_vote.date = datetime.datetime.now()
     new_vote.save()
-    
     return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
+
+def user_proposal_votes_dict(user):
+    votes_dict = {}
+    for proposal in Proposal.objects.all():
+        try:
+            vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
+        except ObjectDoesNotExist:
+            vote = None
+        if vote == None:
+            votes_dict[proposal.id] = 0
+        elif vote.isVoteUp:
+            votes_dict[proposal.id] = 1
+        else:
+            votes_dict[proposal.id] = -1
+    return votes_dict
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id=comment_id)#get_object_or_404(Proposal, proposal_id)
