@@ -31,9 +31,23 @@
 }
 {% endblock %}
 
+
 {% block content %}
+
+<div class="row">
+<div class="col-xs-1"></div>
+<div class="col-xs-10">
+<div class="jumbotron">
+	<h1>eu<span class="pink">say</span></h1>
+	<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae orci vel sem ultrices pretium. Sed tristique tellus massa, feugiat elementum urna malesuada lacinia. Quisque egestas massa dolor.</p>
+	<p><a class="btn btn-primary" role="button">Learn more</a></p>
+</div>
+</div>
+<div class="col-xs-1"></div>
+</div>
+
 {% for proposal in proposals %}
-<div class="row proposal {% cycle "row1" "row2" %}">
+<div class="row proposal {% cycle "row1" "row2" %}" id="{{ proposal.id }}">
 <div class="col-xs-8"><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></div>
 <div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }})" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
 <div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>

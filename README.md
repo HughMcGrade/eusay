@@ -5,15 +5,15 @@ eusa wants to know what students think. students want to share their proposals. 
 
 To do:
 ------
-* Actually write some code
-* Make templates
 * Set up EASE authentication ([1][ease1]) ([2][ease2])
+* Add comments to proposals
+* Add voting on comments
 * Set up Google Analytics
 
 
 Questions
 ------------
-* Will EASE give us a name or only a matrix number? If no name, how should we identify users on the site?
+* Will EASE give us a name or only a matric number? If no name, how should we identify users on the site?
 * Should anonymous proposals be accepted?
 
 
