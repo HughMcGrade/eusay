@@ -30,32 +30,47 @@ h2, h3 {
 </div>
 
 <div class="row">
-<div class="col-xs-1 green">43</div>
-<div class="col-xs-1 red">7</div>
+<div class="col-xs-1 green">{{ proposal.votesUp }}</div>
+<div class="col-xs-1 red">{{ proposal.votesDown }}</div>
 <div class="col-xs-10"></div>
 </div>
 
 <hr />
 
 <div class="row">
-	<div class="column-xs-12">
-	<h3>What will we do?</h3>
-	<p class="textbox">{{ proposal.actionDescription }}</p>
+	<div class="col-xs-12">
+		<h3>What will we do?</h3>
+	</div><!-- /column -->
+</div><!-- /row -->
+<div class="row">
+	<div class="textbox col-xs-8">
+		<p>{{ proposal.actionDescription }}</p>
 	</div>
+	<div class="col-xs-4">Comments will go here.</div>
 </div>
 
 <div class="row">
-	<div class="column-xs-12">
-	<h3>What is the background to this?</h3>
-	<p class="textbox">{{ proposal.backgroundDescription }}</p>
+	<div class="col-xs-12">
+		<h3>What is the background to this?</h3>
 	</div>
+</div>
+<div class="row">
+	<div class="textbox col-xs-8">
+		<p>{{ proposal.backgroundDescription }}</p>
+	</div>
+	<div class="col-xs-4">Comments will go here.</div>
 </div>
 
 <div class="row">
-	<div class="column-xs-12">
-	<h3>What beliefs motivate the actions you propose?</h3>
-	<p class="textbox">{{ proposal.beliefsDescription }}</p>
+	<div class="col-xs-12">
+		<h3>What beliefs motivate the actions you propose?</h3>
 	</div>
+</div>
+<div class="row">
+	<div class="textbox col-xs-8">
+		<p>{{ proposal.beliefsDescription }}</p>
+	</div>
+	<div class="col-xs-4">Comments will go here.</div>
 </div>
 
 {% endblock %}
