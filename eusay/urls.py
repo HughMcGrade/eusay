@@ -16,4 +16,5 @@ urlpatterns = patterns('',
 	url(r'^$', views.index),
 	url(r'^submit/', views.submit),
 	url(r'^thanks/', views.thanks),
+	url(r'^proposal/(?P<proposalId>\d+)', views.proposal),
 )

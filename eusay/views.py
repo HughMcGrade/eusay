@@ -47,3 +47,8 @@ def submit(request):
 
 def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
+
+def proposal(request, proposalId):
+	proposal = Proposal.objects.get(id=proposalId)
+	return HttpResponse(render_to_string("proposal.html", {"proposal": proposal}))
+	
