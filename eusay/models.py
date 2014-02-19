@@ -27,6 +27,12 @@ class Proposal (models.Model):
     comments = models.ForeignKey(Comment, null=True, blank=True)
     proposer = models.ForeignKey("User")#, related_name="proposed")
     
+    def votesUp(self):
+        return len(self.votes.filter(isVoteUp = True))
+    
+    def votesDown(self):
+        return len(self.votes.filter(isVoteUp = False))
+    
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal, null=True)
     
