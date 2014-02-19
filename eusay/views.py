@@ -5,7 +5,7 @@ Created on 18 Feb 2014
 '''
 
 from django.template.loader import render_to_string
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from eusay.forms import ProposalForm
@@ -49,6 +49,51 @@ def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
 
 def proposal(request, proposalId):
-	proposal = Proposal.objects.get(id=proposalId)
-	return HttpResponse(render_to_string("proposal.html", {"proposal": proposal}))
-	
+    proposal = Proposal.objects.get(id=proposalId)
+    return HttpResponse(render_to_string("proposal.html", {"proposal": proposal}))
+
+def vote_up_proposal(request):
+    # if the user typed the url directly in the browser's address bar
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        referer = "" # TODO Index
+    
+    proposal_id = request.GET.get('id')
+    print(proposal_id)
+    if proposal_id == None:
+        proposal_id = 12345
+    proposal = get_object_or_404(Proposal, proposal_id)
+    
+    new_vote = ProposalVote()
+    new_vote.isVoteUp = True
+    
+    # TODO Get real user
+    user = User.objects.all().first()
+    
+    new_vote.user = user
+    new_vote.proposal = proposal
+    new_vote.save()
+    
+    return HttpResponseRedirect(referer)
+
+def vote_down_proposal(request):
+    # if the user typed the url directly in the browser's address bar
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        referer = "" # TODO Index
+    
+    proposal_id = request.GET.get('id')
+    proposal = get_object_or_404(Proposal, proposal_id)
+    
+    new_vote = ProposalVote()
+    new_vote.isVoteUp = False
+    
+    # TODO Get real user
+    user = User.objects.all().first()
+    
+    new_vote.user = user
+    new_vote.proposal = proposal
+    new_vote.save()
+    
+    return HttpResponseRedirect(referer)
+
