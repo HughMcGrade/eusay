@@ -26,14 +26,17 @@
 	color: grey;
 	text-decoration: none;
 }
+.col-xs-2 {
+	font-size: 1.5em;
+}
 {% endblock %}
 
 {% block content %}
 {% for proposal in proposals %}
 <div class="row proposal {% cycle "row1" "row2" %}">
 <div class="col-xs-8"><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></div>
-<div class="col-xs-2 green"><a href="#" class="tri green">&#9650;</a> {{ proposal.actionDescription }}</div>
-<div class="col-xs-2 red"><a href="#" class="tri red">&#9660;</a> {{ proposal.backgroundDescription }}</div>
+<div class="col-xs-2 green"><a href="#" class="tri green">&#9650;</a> {% cycle "15" "3" "0" "43" "7" %}</div>
+<div class="col-xs-2 red"><a href="#" class="tri red">&#9660;</a> {% cycle "2" "0" "0" "7" "80" "77" %}</div>
 </div>
 {% endfor %}
 {% endblock %}
