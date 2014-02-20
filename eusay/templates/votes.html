@@ -1,0 +1,11 @@
+{% if user_vote == 1 %}
+<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('proposal_id_{{ proposal.id }}'))" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
+{% else %}
+<div class="col-xs-2"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('proposal_id_{{ proposal.id }}'))" href="#" class="tri">&#9650;</a> {{ proposal.votesUp }} </div>
+{% endif %}
+
+{%if user_vote == -1 %}
+<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>
+{% else %}
+<div class="col-xs-2"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri">&#9660;</a> {{ proposal.votesDown }} </div>
+{% endif %}

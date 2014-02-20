@@ -1,0 +1,8 @@
+{% for comment in comments %}	
+						
+	<blockquote>
+		<p>{{ comment.text }}</p>
+	 	<small>{{ comment.user.name }}, {{ comment.date }}</small>
+	</blockquote>
+		 
+{% endfor %}

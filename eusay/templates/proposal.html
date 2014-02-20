@@ -58,8 +58,8 @@ h2, h3 {
 	</div>
 </div>
 
-<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }})" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
-<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>
+<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }})" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
+<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>
 <div class="col-xs-10"></div>
 
 <hr />
@@ -87,7 +87,7 @@ h2, h3 {
 					{% endfor %}
 			<form>
 				<textarea id="newActionComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-				<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'action', document.getElementById('newActionComment').value, '{{ user.sid }}')">Submit</button>
+				<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'action', document.getElementById('newActionComment'), '{{ user.sid }}')">Submit</button>
 			</form>
 		</div>
 </div>
@@ -115,7 +115,7 @@ h2, h3 {
 					{% endfor %}
 				<form>
 					<textarea id="newBackgroundComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'background', document.getElementById('newBackgroundComment').value, '{{ user.sid }}')">Submit</button>
+					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'background', document.getElementById('newBackgroundComment'), '{{ user.sid }}')">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -143,9 +143,10 @@ h2, h3 {
 		    				</blockquote>
 		 
 						{% endfor %}
-				<form>
+				<form id="beliefsCommentForm" action="/post_comment/{{ proposal.id }}/beliefs" method="post">
 					<textarea id="newBeliefsComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'beliefs', document.getElementById('newBeliefsComment').value, '{{ user.sid }}')">Submit</button>
+					<!--<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'beliefs', document.getElementById('newBeliefsComment').value, '{{ user.sid }}', document.getElementById('beliefsComments'))">Submit</button>-->
+					<button type="submit" class="btn" onclick="post_comment(document.getElementById('beliefsCommentForm'), '{{ proposal.id }}', 'beliefs', '{{ user.sid }}', document.getElementById('beliefsComments'))">Submit</button>
 				</form>
 			</div>
 		</div>

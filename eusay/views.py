@@ -10,7 +10,7 @@ from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 
 from eusay.forms import ProposalForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -63,7 +63,7 @@ def proposal(request, proposalId):
     comments = Comment.objects.all().filter(proposal = proposal)
     action_comments = comments.filter(field = "action")
     background_comments = comments.filter(field = "background")
-    beliefs_comments = comments.filter(field = "beliefs")  
+    beliefs_comments = comments.filter(field = "beliefs")
     return HttpResponse(render_to_string("proposal.html", {"proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user}))
 
 def vote_proposal(request, ud, proposal_id):
@@ -76,25 +76,43 @@ def vote_proposal(request, ud, proposal_id):
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
         # Has already voted
         previous_vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
-        if previous_vote.isVoteUp and ud == "down":
+        if ud == "get":
+            if previous_vote.isVoteUp:
+                user_vote = 1
+            else:
+                user_vote = -1
+            print ("User vote for " + proposal_id +  " = " + str(user_vote))
+            return render(request, "votes.html", { "proposal" : proposal, "user_vote" : user_vote })
+        elif previous_vote.isVoteUp and ud == "down":
+            # Toggle vote from up to down
             previous_vote.delete()
         elif not previous_vote.isVoteUp and ud == "up":
+            # Toggle vote from down to up
             previous_vote.delete()
         else:
-            return HttpResponse("User has already voted")
+            # Cancel previous vote
+            previous_vote.delete()
+            return render(request, "votes.html", { "proposal" : proposal, "user_vote" : 0 })
+    
+    if ud == "get":
+        return render(request, "votes.html", { "proposal" : proposal, "user_vote" : 0 })
     
     new_vote = ProposalVote()
     
     if ud == "up":
         new_vote.isVoteUp = True
+        user_vote = 1
     else:
         new_vote.isVoteUp = False
+        user_vote = -1
     
     new_vote.user = user
     new_vote.proposal = proposal
     new_vote.date = datetime.datetime.now()
     new_vote.save()
-    return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
+    
+    return render(request, "votes.html", { "proposal" : proposal, "user_vote" : user_vote })
+    #return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
 #def user_proposal_votes_dict(user):
 #    votes_dict = {}
@@ -143,9 +161,13 @@ def vote_comment(request, ud, comment_id):
     return HttpResponse("Voted " + ud + " " + comment_id + ". It now has " + str(comment.votesUp()) + " votes up.")
 
 def post_comment(request, proposal_id, field):
-    #print (request)
-    text = request.GET.get("text")
-    user_sid = request.GET.get("user_sid")
+    print (request)
+    return HttpResponse(str(request))
+    text = request.POST.get("text")
+    user_sid = request.POST.get("user_sid")
+    
+    print (text)
+    print (user_sid)
     
     comment = Comment()
     comment.text = text
@@ -155,6 +177,8 @@ def post_comment(request, proposal_id, field):
     comment.field = field
     comment.save()
     
-    print ("Saving comment!")
+    allComments = Comment.objects.all().filter(proposal=proposal).filter(field=field)
     
-    return HttpResponse("Saved")
+    return HttpResponse(render_to_string("comments.html", { "comments" : allComments}))
+    
+    #return HttpResponse("Saved")
