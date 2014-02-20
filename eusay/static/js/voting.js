@@ -5,7 +5,7 @@ function vote_up_proposal(proposal_id, vote_div) {
 		url : "/vote_proposal/up/" + proposal_id,
 		success: function (data, textStatus, jqXHR) {
 			//alert(data);
-			console.log(data);
+			//console.log(data);
 			$(vote_div).html(data);
 		},
 		error: function (data) {
@@ -22,8 +22,8 @@ function get_vote(proposal_id, vote_div) {
 		success: function (data) {
 			alert(data);
 			//alert(vote_div);
-			console.log(data);
-			//$(vote_div).html(data);
+			//console.log(data);
+			$(vote_div).html(data);
 		},
 		error: function (data) {
 			alert(data.responseText);
@@ -36,7 +36,7 @@ function vote_down_proposal(proposal_id) {
 	$.ajax({
 		type : "get",
 		url : "/vote_proposal/down/" + proposal_id,
-		success: function (data, textStatus, jqXHR) {
+		success: function (data) {
 			alert(data);
 			console.log(data);
 			$(vote_div).html(data);
