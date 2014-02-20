@@ -74,7 +74,7 @@ h2, h3 {
 		<div class="textbox">
 			<p>{{ proposal.actionDescription }}</p>
 		</div>
-		<div>
+		<div class="comments">
 			<a class="accordion-toggle" href="#actionComments" data-toggle="collapse">Comments</a>
 			<div id="actionComments" class="accordion-body collapse col-xs-12" style="height: auto;">
 					{% for comment in action_comments %}	
@@ -85,11 +85,16 @@ h2, h3 {
 	    				</blockquote>
 	 
 					{% endfor %}
-			<form>
-				<textarea id="newActionComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-				<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'action', document.getElementById('newActionComment').value, '{{ user.sid }}')">Submit</button>
+			<form method="post" action="">
+				{% csrf_token %}
+				<div class="form-group">
+					{{ form.text }}
+				</div>
+				<button type="submit" class="btn btn-default" name="actionComment">Submit</button>
 			</form>
+			</div>
 		</div>
+	</div>
 </div>
 
 <div class="row">
@@ -102,7 +107,7 @@ h2, h3 {
 		<div class="textbox">
 			<p>{{ proposal.backgroundDescription }}</p>
 		</div>
-		<div>
+		<div class="comments">
 			<a class="accordion-toggle" href="#backgroundComments" data-toggle="collapse">Comments</a>
 			<div id="backgroundComments" class="accordion-body collapse col-xs-12" style="height: auto;">
 					{% for comment in background_comments %}	
@@ -113,10 +118,13 @@ h2, h3 {
 	    				</blockquote>
 	 
 					{% endfor %}
-				<form>
-					<textarea id="newBackgroundComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'background', document.getElementById('newBackgroundComment').value, '{{ user.sid }}')">Submit</button>
-				</form>
+					<form method="post" action="">
+						{% csrf_token %}
+						<div class="form-group">
+							{{ form.text }}
+						</div>
+						<button type="submit" class="btn btn-default" name="backgroundComment">Submit</button>
+					</form>
 			</div>
 		</div>
 	</div>
@@ -143,9 +151,12 @@ h2, h3 {
 		    				</blockquote>
 		 
 						{% endfor %}
-				<form>
-					<textarea id="newBeliefsComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
-					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'beliefs', document.getElementById('newBeliefsComment').value, '{{ user.sid }}')">Submit</button>
+					<form method="post" action="">
+					{% csrf_token %}
+					<div class="form-group">
+						{{ form.text }}
+					</div>
+					<button type="submit" class="btn btn-default" name="beliefsComment">Submit</button>
 				</form>
 			</div>
 		</div>

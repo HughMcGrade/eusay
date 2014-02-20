@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
-from eusay.forms import ProposalForm
+from eusay.forms import ProposalForm, CommentForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment
 
@@ -45,7 +45,7 @@ def submit(request):
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data
             proposal = form.save(commit=False)
-            proposal.proposer = User.objects.get(sid="s1234567")
+            proposal.proposer = User.objects.all()[0]
             proposal.save()
             return HttpResponseRedirect('/thanks/') # Redirect after POST
     else:
@@ -63,8 +63,31 @@ def proposal(request, proposalId):
     comments = Comment.objects.all().filter(proposal = proposal)
     action_comments = comments.filter(field = "action")
     background_comments = comments.filter(field = "background")
-    beliefs_comments = comments.filter(field = "beliefs")  
-    return HttpResponse(render_to_string("proposal.html", {"proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user}))
+    beliefs_comments = comments.filter(field = "beliefs")
+
+    if request.method == 'POST': # If the form has been submitted...
+        form = CommentForm(request.POST) # A form bound to the POST data
+        if "actionComment" in request.POST:
+            commentType = "action"
+        elif "backgroundComment" in request.POST:
+            commentType = "background"
+        elif "beliefsComment" in request.POST:
+            commentType = "beliefs"
+
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            comment = form.save(commit=False)
+            comment.user = User.objects.all()[0]
+            comment.date = datetime.datetime.now()
+            comment.proposal = proposal
+            comment.field = commentType
+            comment.save()
+            return HttpResponseRedirect('/thanks/') # Redirect after POST
+    else:
+        form = CommentForm() # An unbound form
+        return render(request, "proposal.html", {"form": form, "proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user})
+
+    # return HttpResponse(render_to_string("proposal.html", {"proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user}))
 
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
