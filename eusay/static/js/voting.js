@@ -15,13 +15,12 @@ function vote_up_proposal(proposal_id, vote_div) {
 	});	
 }
 
-function get_vote(proposal_id, vote_div) {
+function vote_down_proposal(proposal_id, vote_div) {
+	//$.get("/vote_proposal/down/" + proposal_id, function(data){location.reload(true);});
 	$.ajax({
 		type : "get",
-		url : "/vote_proposal/get/" + proposal_id,
+		url : "/vote_proposal/down/" + proposal_id,
 		success: function (data) {
-			alert(data);
-			//alert(vote_div);
 			//console.log(data);
 			$(vote_div).html(data);
 		},
@@ -31,14 +30,13 @@ function get_vote(proposal_id, vote_div) {
 		}
 	});	
 }
-function vote_down_proposal(proposal_id) {
-	//$.get("/vote_proposal/down/" + proposal_id, function(data){location.reload(true);});
+
+function set_proposal_votes_div(proposal_id, vote_div) {
 	$.ajax({
 		type : "get",
-		url : "/vote_proposal/down/" + proposal_id,
+		url : "/vote_proposal/get/" + proposal_id,
 		success: function (data) {
-			alert(data);
-			console.log(data);
+			//console.log(data);
 			$(vote_div).html(data);
 		},
 		error: function (data) {

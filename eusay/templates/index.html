@@ -54,7 +54,7 @@
 		<b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></div>
 		<div id="vote_div_{{ proposal.id }}">
 			<script language="Javascript">
-				get_vote('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
+				set_proposal_votes_div('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
 			</script>
 			<!--<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('vote_div_{{ proposal.id }}'))" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
 			<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }}, document.getElementById('vote_div_{{ proposal.id }}'))" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>-->
