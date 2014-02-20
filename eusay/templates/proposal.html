@@ -70,10 +70,26 @@ h2, h3 {
 	</div><!-- /column -->
 </div><!-- /row -->
 <div class="row">
-	<div class="textbox col-xs-8">
-		<p>{{ proposal.actionDescription }}</p>
-	</div>
-	<div class="col-xs-4">Comments will go here.</div>
+	<div class="col-xs-12">
+		<div class="textbox">
+			<p>{{ proposal.actionDescription }}</p>
+		</div>
+		<div>
+			<a class="accordion-toggle" href="#actionComments" data-toggle="collapse">Comments</a>
+			<div id="actionComments" class="accordion-body collapse col-xs-12" style="height: auto;">
+					{% for comment in action_comments %}	
+					
+					    <blockquote>
+	    				<p>{{ comment.text }}</p>
+	    				<small>{{ comment.user.name }}, {{ comment.date }}</small>
+	    				</blockquote>
+	 
+					{% endfor %}
+			<form>
+				<textarea id="newActionComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
+				<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'action', document.getElementById('newActionComment').value, '{{ user.sid }}')">Submit</button>
+			</form>
+		</div>
 </div>
 
 <div class="row">
@@ -82,10 +98,28 @@ h2, h3 {
 	</div>
 </div>
 <div class="row">
-	<div class="textbox col-xs-8">
-		<p>{{ proposal.backgroundDescription }}</p>
+	<div class="col-xs-12">
+		<div class="textbox">
+			<p>{{ proposal.backgroundDescription }}</p>
+		</div>
+		<div>
+			<a class="accordion-toggle" href="#backgroundComments" data-toggle="collapse">Comments</a>
+			<div id="backgroundComments" class="accordion-body collapse col-xs-12" style="height: auto;">
+					{% for comment in background_comments %}	
+					
+					    <blockquote>
+	    				<p>{{ comment.text }}</p>
+	    				<small>{{ comment.user.name }}, {{ comment.date }}</small>
+	    				</blockquote>
+	 
+					{% endfor %}
+				<form>
+					<textarea id="newBackgroundComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
+					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'background', document.getElementById('newBackgroundComment').value, '{{ user.sid }}')">Submit</button>
+				</form>
+			</div>
+		</div>
 	</div>
-	<div class="col-xs-4">Comments will go here.</div>
 </div>
 
 <div class="row">
@@ -94,10 +128,28 @@ h2, h3 {
 	</div>
 </div>
 <div class="row">
-	<div class="textbox col-xs-8">
-		<p>{{ proposal.beliefsDescription }}</p>
+	<div class="col-xs-12">
+		<div class="textbox">
+			<p>{{ proposal.beliefsDescription }}</p>
+		</div>
+		<div>
+			<a class="accordion-toggle" href="#beliefsComments" data-toggle="collapse">Comments</a>
+			<div id="beliefsComments" class="accordion-body collapse col-xs-12" style="height: auto;">
+						{% for comment in beliefs_comments %}	
+						
+						    <blockquote>
+		    				<p>{{ comment.text }}</p>
+		    				<small>{{ comment.user.name }}, {{ comment.date }}</small>
+		    				</blockquote>
+		 
+						{% endfor %}
+				<form>
+					<textarea id="newBeliefsComment" lines=3 type="text" placeholder="Add a comment" class="col-xs-11"></textarea>
+					<button type="submit" class="btn" onclick="post_comment('{{ proposal.id }}', 'beliefs', document.getElementById('newBeliefsComment').value, '{{ user.sid }}')">Submit</button>
+				</form>
+			</div>
+		</div>
 	</div>
-	<div class="col-xs-4">Comments will go here.</div>
 </div>
 
 {% endblock %}

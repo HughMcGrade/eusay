@@ -37,7 +37,7 @@ def index(request):
     # TODO Get real user
     user = User.objects.all().first()
     
-    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "user_votes" : user_proposal_votes_dict(user)}))
+    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all()}))
 
 def submit(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -56,8 +56,15 @@ def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
 
 def proposal(request, proposalId):
+    # TODO Get real user
+    user = User.objects.all()[0]
+    
     proposal = Proposal.objects.get(id=proposalId)
-    return HttpResponse(render_to_string("proposal.html", {"proposal": proposal}))
+    comments = Comment.objects.all().filter(proposal = proposal)
+    action_comments = comments.filter(field = "action")
+    background_comments = comments.filter(field = "background")
+    beliefs_comments = comments.filter(field = "beliefs")  
+    return HttpResponse(render_to_string("proposal.html", {"proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user}))
 
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
@@ -89,20 +96,20 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.save()
     return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
-def user_proposal_votes_dict(user):
-    votes_dict = {}
-    for proposal in Proposal.objects.all():
-        try:
-            vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
-        except ObjectDoesNotExist:
-            vote = None
-        if vote == None:
-            votes_dict[proposal.id] = 0
-        elif vote.isVoteUp:
-            votes_dict[proposal.id] = 1
-        else:
-            votes_dict[proposal.id] = -1
-    return votes_dict
+#def user_proposal_votes_dict(user):
+#    votes_dict = {}
+#    for proposal in Proposal.objects.all():
+#        try:
+#            vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
+#        except ObjectDoesNotExist:
+#            vote = None
+#        if vote == None:
+#            votes_dict[proposal.id] = 0
+#        elif vote.isVoteUp:
+#            votes_dict[proposal.id] = 1
+#        else:
+#            votes_dict[proposal.id] = -1
+#    return votes_dict
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id=comment_id)#get_object_or_404(Proposal, proposal_id)
@@ -134,3 +141,20 @@ def vote_comment(request, ud, comment_id):
     new_vote.save()
     
     return HttpResponse("Voted " + ud + " " + comment_id + ". It now has " + str(comment.votesUp()) + " votes up.")
+
+def post_comment(request, proposal_id, field):
+    #print (request)
+    text = request.GET.get("text")
+    user_sid = request.GET.get("user_sid")
+    
+    comment = Comment()
+    comment.text = text
+    comment.user = User.objects.all().get(sid=user_sid)
+    comment.date = datetime.datetime.now()
+    comment.proposal = Proposal.objects.all().get(id=proposal_id)
+    comment.field = field
+    comment.save()
+    
+    print ("Saving comment!")
+    
+    return HttpResponse("Saved")
