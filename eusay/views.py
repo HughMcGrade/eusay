@@ -38,6 +38,9 @@ def index(request):
     user = User.objects.all().first()
     
     return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all()}))
+    
+def about(request):
+    return render(request, "about.html")
 
 def submit(request):
     if request.method == 'POST': # If the form has been submitted...
