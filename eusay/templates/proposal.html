@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block script %}
+
+post_comment(document.getElementById('beliefs_comment_form'), document.getElementById('beliefs_comments_div'))
+
+{% endblock %}
+
 {% block style %}
 .textbox {
     background-color: rgb(240, 240, 240);
@@ -159,23 +165,22 @@ hr {
             <p>{{ proposal.beliefsDescription }}</p>
         </div>
         <div>
-            <a class="accordion-toggle" href="#beliefsComments" data-toggle="collapse">{{ beliefs_comments.count }} comments</a>
-            <div id="beliefsComments" class="accordion-body collapse col-xs-12" style="height: auto;">
-                        {% for comment in beliefs_comments %}   
+            <a id="beliefs_comments_count" class="accordion-toggle" href="#beliefs_comments_collapsible" data-toggle="collapse">Comments</a>
+            <div id="beliefs_comments_collapsible" class="accordion-body collapse col-xs-12" style="height: auto;">
                         
-                        <div class="comment">
-                            <p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
-                            <p>{{ comment.text }}</p>
-                            <hr />
+                        <div id="beliefs_comments_div" class="col-xs-12">
+                        	<script language="Javascript">
+                        	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'beliefs', document.getElementById('beliefs_comments_div'), document.getElementById('beliefs_comments_count'));
+                        	</script>
                         </div>
-         
-                        {% endfor %}
-                    <form method="post" action="">
+                        
+                    <form id="beliefs_comment_form" method="post" action="">
                     {% csrf_token %}
                     <div class="form-group">
                         {{ form.text }}
                     </div>
                     <button type="submit" class="btn btn-default" name="beliefsComment">Submit</button>
+                    <!--<button type="button" class="btn btn-default" onclick="post_comment(document.getElementById('beliefs_comment_form'), {{ proposal.id }}, 'beliefs', {{ user.sid }}, document.getElementById('beliefs_comments_div'))" name="beliefs_comment_button">Submit</button>-->
                 </form>
             </div>
         </div>

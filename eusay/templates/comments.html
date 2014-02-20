@@ -1,8 +1,16 @@
-{% for comment in comments %}	
-						
-	<blockquote>
-		<p>{{ comment.text }}</p>
-	 	<small>{{ comment.user.name }}, {{ comment.date }}</small>
-	</blockquote>
-		 
+{% for comment in comments %}   
+                        
+    <div class="comment row">
+    	<div id="text_div" class="col-xs-10">
+        	<p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
+        	<p>{{ comment.text }}</p>
+        </div>
+        <div id="vote_div_{{ comment.id }}" class="col-xs-2">
+			<script language="Javascript">
+				set_comment_votes_div('{{ comment.id }}', document.getElementById('vote_div_{{ comment.id }}'))
+			</script>
+		</div>
+		<hr />
+    </div>
+         
 {% endfor %}

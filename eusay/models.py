@@ -14,6 +14,18 @@ class Comment (models.Model):
     user = models.ForeignKey("User")
     field = models.CharField(max_length=20, null=False)
     proposal = models.ForeignKey("Proposal", null=False)
+    
+    def _getVotes(self, isUp):
+        try:
+            return len(CommentVote.objects.all().filter(comment = self).filter(isVoteUp = isUp))
+        except Exception:
+            return 0
+    
+    def votesUp(self):
+        return self._getVotes(True)
+    
+    def votesDown(self):
+        return self._getVotes(False)
 
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
@@ -31,7 +43,7 @@ class Proposal (models.Model):
     
     def _getVotes(self, isUp):
         try:
-            return len(ProposalVote.objects.all().filter(proposal=self).filter(isVoteUp = isUp))
+            return len(ProposalVote.objects.all().filter(proposal = self).filter(isVoteUp = isUp))
         except Exception:
             return 0
     
