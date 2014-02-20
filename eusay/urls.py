@@ -21,5 +21,6 @@ urlpatterns = patterns('',
     url(r'^vote_comment/(?P<ud>(up|down|get))/(?P<comment_id>\d+)', views.vote_comment),
     url(r'^post_comment/(?P<proposal_id>\d+)/(?P<field>\w+)', views.post_comment),
     url(r'^get_comments/(?P<proposal_id>\d+)/(?P<field>\w+)', views.get_comments),
+    url(r'^about/', views.about),
     url(r'^get_comments_count/(?P<proposal_id>\d+)/(?P<field>\w+)', views.get_comments_count),
 )

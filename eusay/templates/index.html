@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 
 {% block style %}
-
-
+.arrow {
+    color: grey;
+}
+.arrow:hover {
+    cursor: pointer;
+}
 .green {
-	color: green;
+	color: green; !important
 }
 .red {
-	color: red;
+	color: red; !important
 }
 .proposal {
 	min-height: 80px;
@@ -21,15 +25,11 @@
 .row1 {
 	background-color: rgb(240, 240, 240);
 }
-.tri {
-	font-size: 1.3em;
-}
-.tri:hover {
-	color: grey;
-	text-decoration: none;
-}
 .col-xs-2 {
 	font-size: 1.5em;
+}
+.row {
+    padding: 8px 0px;
 }
 {% endblock %}
 
@@ -42,23 +42,22 @@
 <div class="jumbotron">
 	<h1>eu<span class="pink">say</span></h1>
 	<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae orci vel sem ultrices pretium. Sed tristique tellus massa, feugiat elementum urna malesuada lacinia. Quisque egestas massa dolor.</p>
-	<p><a class="btn btn-primary" role="button">Learn more</a></p>
+	<p><a href="/about" class="btn btn-primary" role="button">Learn more</a></p>
 </div>
 </div>
-<div class="col-xs-1"></div>
+<div class="col-xs-1"></div>    
 </div>
 
 {% for proposal in proposals %}
 <div class="row proposal {% cycle "row1" "row2" %}" id="proposal_row_{{ proposal.id }}">
 	<div class="col-xs-8">
-		<b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></div>
-		<div id="vote_div_{{ proposal.id }}">
-			<script language="Javascript">
-				set_proposal_votes_div('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
-			</script>
-			<!--<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('vote_div_{{ proposal.id }}'))" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
-			<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }}, document.getElementById('vote_div_{{ proposal.id }}'))" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>-->
-		</div>
+		<p><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></p>
 	</div>
+	<div id="vote_div_{{ proposal.id }}">
+		<script language="Javascript">
+			set_proposal_votes_div('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
+		</script>
+	</div>
+</div>
 {% endfor %}
 {% endblock %}

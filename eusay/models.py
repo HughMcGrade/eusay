@@ -17,13 +17,13 @@ class Comment (models.Model):
     
     def _getVotes(self, isUp):
         try:
-            return len(CommentVote.objects.all().filter(comment = self).filter(isVoteUp = isUp))
+            return len(CommentVote.objects.all().filter(comment=self).filter(isVoteUp=isUp))
         except Exception:
             return 0
-    
+            
     def votesUp(self):
         return self._getVotes(True)
-    
+        
     def votesDown(self):
         return self._getVotes(False)
 
@@ -43,7 +43,7 @@ class Proposal (models.Model):
     
     def _getVotes(self, isUp):
         try:
-            return len(ProposalVote.objects.all().filter(proposal = self).filter(isVoteUp = isUp))
+            return len(ProposalVote.objects.all().filter(proposal=self).filter(isVoteUp = isUp))
         except Exception:
             return 0
     
