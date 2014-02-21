@@ -86,7 +86,7 @@ def proposal(request, proposalId):
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data
             comment = form.save(commit=False)
-            comment.user = User.objects.all()[0]
+            comment.user = user
             comment.date = datetime.datetime.now()
             comment.proposal = proposal
             comment.field = commentType
