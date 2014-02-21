@@ -11,7 +11,7 @@ class ProposalForm (forms.ModelForm):
         fields = ['title', 'actionDescription', 'backgroundDescription', 'beliefsDescription']
 
 class CommentForm (forms.ModelForm):
-    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control", "rows": "3", "maxlength": "500", "placeholder": "Add a comment"}))
+    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control", "rows": "3", "maxlength": "499", "placeholder": "Add a comment"}))
     class Meta:
     	model = Comment
     	fields = ['text']

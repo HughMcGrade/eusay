@@ -64,6 +64,19 @@ hr {
     margin: 0px;
     padding: 0px;
 }
+.commentVotes {
+    font-size: 1em;
+    text-align: center;
+}
+.voteUp {
+    float: left;
+    margin-top: 20px;
+}
+.voteDown {
+    float: right;
+    margin-top: 20px;
+}
+}
 {% endblock %}
 
 {% block content %}
@@ -93,21 +106,11 @@ hr {
         <div class="comments">
             <a class="accordion-toggle" href="#actionComments" data-toggle="collapse">{{ action_comments.count }} comments</a>
             <div id="actionComments" class="accordion-body collapse col-xs-12" style="height: auto;">
-                    {% for comment in action_comments %}    
-                    
-<!--                    <blockquote>
-                        <p>{{ comment.text }}</p>
-                        <small>{{ comment.user.name }}, {{ comment.date }}</small>
-                        </blockquote>
--->
-                        <div class="comment">
-                            <p class="authorInfo">{{comment.user.name }}, {{comment.date }}, {{ comment.votesUp }}, {{ comment.votesDown }}</p>
-                            <p>{{ comment.text }}</p>
-                            <hr />
-                        </div>
-
-
-                    {% endfor %}
+                    <div id="action_comments_div" class="comment">
+                       	<script language="Javascript">
+                       	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'action', document.getElementById('action_comments_div'), document.getElementById('action_comments_count'));
+                       	</script>
+                       </div>
             <form method="post" action="">
                 {% csrf_token %}
                 <div class="form-group">
@@ -133,15 +136,11 @@ hr {
         <div class="comments">
             <a class="accordion-toggle" href="#backgroundComments" data-toggle="collapse">{{ background_comments.count }} comments</a>
             <div id="backgroundComments" class="accordion-body collapse col-xs-12" style="height: auto;">
-                    {% for comment in background_comments %}    
-                    
-                    <div class="comment">
-                        <p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
-                        <p>{{ comment.text }}</p>
-                        <hr />
-                    </div>
-     
-                    {% endfor %}
+                     <div id="background_comments_div" class="comment">
+                        	<script language="Javascript">
+                        	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'background', document.getElementById('background_comments_div'), document.getElementById('background_comments_count'));
+                        	</script>
+                        </div>
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="form-group">
@@ -164,11 +163,11 @@ hr {
         <div class="textbox">
             <p>{{ proposal.beliefsDescription }}</p>
         </div>
-        <div>
+        <div class="comments">
             <a id="beliefs_comments_count" class="accordion-toggle" href="#beliefs_comments_collapsible" data-toggle="collapse">Comments</a>
-            <div id="beliefs_comments_collapsible" class="accordion-body collapse col-xs-12" style="height: auto;">
+            <div id="beliefs_comments_collapsible" class="accordion-body collapse" style="height: auto;">
                         
-                        <div id="beliefs_comments_div" class="col-xs-12">
+                        <div id="beliefs_comments_div" class="comment">
                         	<script language="Javascript">
                         	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'beliefs', document.getElementById('beliefs_comments_div'), document.getElementById('beliefs_comments_count'));
                         	</script>

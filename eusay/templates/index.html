@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block script %}
+function yolo() {
+	$(".jumbotron").slideUp();
+};
+{% endblock %}
+
 {% block style %}
 .arrow {
     color: grey;
@@ -31,6 +37,15 @@
 .row {
     padding: 8px 0px;
 }
+#closeX {
+	float: right;
+	margin-top: -30px;
+	margin-right: -30px;
+}
+#closeX:hover {
+	color: #ed174e;
+	cursor: pointer;
+}
 {% endblock %}
 
 
@@ -40,8 +55,9 @@
 <div class="col-xs-1"></div>
 <div class="col-xs-10">
 <div class="jumbotron">
+	<div id="closeX" onclick="yolo()">X</div>
 	<h1>eu<span class="pink">say</span></h1>
-	<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae orci vel sem ultrices pretium. Sed tristique tellus massa, feugiat elementum urna malesuada lacinia. Quisque egestas massa dolor.</p>
+	<p>Vote on proposals. Make your own. Have your voice heard.</p>
 	<p><a href="/about" class="btn btn-primary" role="button">Learn more</a></p>
 </div>
 </div>

@@ -5,7 +5,7 @@
         	<p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
         	<p>{{ comment.text }}</p>
         </div>
-        <div id="vote_div_{{ comment.id }}" class="col-xs-2">
+        <div id="vote_div_{{ comment.id }}" class="col-xs-2 commentVotes">
 			<script language="Javascript">
 				set_comment_votes_div('{{ comment.id }}', document.getElementById('vote_div_{{ comment.id }}'))
 			</script>
