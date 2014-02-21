@@ -16,18 +16,23 @@ from eusay.forms import ProposalForm, CommentForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment
 
+import random
+rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
+get_rand_name = lambda: rand_names[round((random.random() * 100) % 50)]
+
 def add_user(request):
     user = User()
-    user.name = "Jim"
-    user.sid = "s7654321"
+    user.name = get_rand_name()
+    user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
     user.signUpDate = datetime.datetime.now()
     user.candidateStatus = "None"
     user.save()
-    return HttpResponse(user.name + " added.")
+    request.session['user_sid'] = user.sid
+    return HttpResponse(user.name + " with matric number " + user.sid  + " added.")
 
 def get_users(request):
     users = User.objects.all()
-    s = ""
+    s = "Current user is " + request.session.get('user_sid', 'None!') + "<br />"
     for user in users:
         s = s + user.name + ", "
     return HttpResponse(s)
@@ -108,7 +113,7 @@ def vote_proposal(request, ud, proposal_id):
             else:
                 user_vote = -1
             print ("User vote for " + proposal_id +  " = " + str(user_vote))
-            return render(request, "votes.html", { "object" : proposal, "user_vote" : user_vote, "type" : "proposal" })
+            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -118,10 +123,10 @@ def vote_proposal(request, ud, proposal_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "votes.html", { "object" : proposal, "user_vote" : 0, "type" : "proposal" })
+            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0 })
     
     if ud == "get":
-        return render(request, "votes.html", { "object" : proposal, "user_vote" : 0, "type" : "proposal" })
+        return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0 })
     
     new_vote = ProposalVote()
     
@@ -137,7 +142,7 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "votes.html", { "object" : proposal, "user_vote" : user_vote, "type" : "proposal" })
+    return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote })
     #return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
 '''def user_proposal_votes_dict(user):
@@ -170,7 +175,7 @@ def vote_comment(request, ud, comment_id):
                 user_vote = 1
             else:
                 user_vote = -1
-            return render(request, "votes.html", { "object" : comment, "user_vote" : user_vote, "type" : "comment" })
+            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -180,10 +185,10 @@ def vote_comment(request, ud, comment_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "votes.html", { "object" : comment, "user_vote" : 0, "type" : "comment" })
+            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0 })
     
     if ud == "get":
-        return render(request, "votes.html", { "object" : comment, "user_vote" : 0, "type" : "comment" })
+        return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0 })
     
     new_vote = CommentVote()
     
@@ -199,7 +204,7 @@ def vote_comment(request, ud, comment_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "votes.html", { "object" : comment, "user_vote" : user_vote, "type" : "comment" })
+    return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote })
 
 def post_comment(request, proposal_id, field):
     '''text = request.POST.get("text")
