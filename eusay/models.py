@@ -10,7 +10,7 @@ from django.db import models
 class Comment (models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=500)
-    date = models.DateField()
+    date = models.DateTimeField()
     user = models.ForeignKey("User")
     field = models.CharField(max_length=20, null=False)
     proposal = models.ForeignKey("Proposal", null=False)
@@ -30,7 +30,7 @@ class Comment (models.Model):
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
     isVoteUp = models.BooleanField()
-    date = models.DateField()
+    date = models.DateTimeField()
     user = models.ForeignKey("User")
     
 class Proposal (models.Model):
@@ -40,6 +40,7 @@ class Proposal (models.Model):
     backgroundDescription = models.CharField(max_length=2000)
     beliefsDescription = models.CharField(max_length=2000)
     proposer = models.ForeignKey("User")#, related_name="proposed")
+    submissionDateTime = models.DateField(null = True)
     
     def _getVotes(self, isUp):
         try:

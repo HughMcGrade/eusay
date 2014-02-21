@@ -16,7 +16,6 @@ from eusay.forms import ProposalForm, CommentForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment
 
-
 def add_user(request):
     user = User()
     user.name = "Jim"
@@ -37,7 +36,7 @@ def index(request):
     # TODO Get real user
     user = User.objects.all().first()
     
-    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all()}))
+    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "type" : "proposal" }))
     
 def about(request):
     return render(request, "about.html")
@@ -49,6 +48,7 @@ def submit(request):
             # Process the data in form.cleaned_data
             proposal = form.save(commit=False)
             proposal.proposer = User.objects.all()[0]
+            proposal.submissionDateTime = datetime.datetime.now()
             proposal.save()
             return HttpResponseRedirect('/thanks/') # Redirect after POST
     else:
@@ -108,7 +108,7 @@ def vote_proposal(request, ud, proposal_id):
             else:
                 user_vote = -1
             print ("User vote for " + proposal_id +  " = " + str(user_vote))
-            return render(request, "votes.html", { "x" : proposal, "user_vote" : user_vote })
+            return render(request, "votes.html", { "object" : proposal, "user_vote" : user_vote, "type" : "proposal" })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -118,10 +118,10 @@ def vote_proposal(request, ud, proposal_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "votes.html", { "x" : proposal, "user_vote" : 0 })
+            return render(request, "votes.html", { "object" : proposal, "user_vote" : 0, "type" : "proposal" })
     
     if ud == "get":
-        return render(request, "votes.html", { "x" : proposal, "user_vote" : 0 })
+        return render(request, "votes.html", { "object" : proposal, "user_vote" : 0, "type" : "proposal" })
     
     new_vote = ProposalVote()
     
@@ -137,7 +137,7 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "votes.html", { "x" : proposal, "user_vote" : user_vote })
+    return render(request, "votes.html", { "object" : proposal, "user_vote" : user_vote, "type" : "proposal" })
     #return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
 '''def user_proposal_votes_dict(user):
@@ -170,7 +170,7 @@ def vote_comment(request, ud, comment_id):
                 user_vote = 1
             else:
                 user_vote = -1
-            return render(request, "votes.html", { "x" : comment, "user_vote" : user_vote })
+            return render(request, "votes.html", { "object" : comment, "user_vote" : user_vote, "type" : "comment" })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -180,10 +180,10 @@ def vote_comment(request, ud, comment_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "votes.html", { "x" : comment, "user_vote" : 0 })
+            return render(request, "votes.html", { "object" : comment, "user_vote" : 0, "type" : "comment" })
     
     if ud == "get":
-        return render(request, "votes.html", { "x" : comment, "user_vote" : 0 })
+        return render(request, "votes.html", { "object" : comment, "user_vote" : 0, "type" : "comment" })
     
     new_vote = CommentVote()
     
@@ -199,7 +199,7 @@ def vote_comment(request, ud, comment_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "votes.html", { "x" : comment, "user_vote" : user_vote })
+    return render(request, "votes.html", { "object" : comment, "user_vote" : user_vote, "type" : "comment" })
 
 def post_comment(request, proposal_id, field):
     '''text = request.POST.get("text")
