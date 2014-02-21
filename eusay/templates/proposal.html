@@ -86,9 +86,14 @@ hr {
     <h2>{{ proposal.title }}</h2>
     </div>
 </div>
-
-<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }})" href="#" class="tri green">&#9650;</a> {{ proposal.votesUp }} </div>
-<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }})" href="#" class="tri red">&#9660;</a> {{ proposal.votesDown }} </div>
+<div class="row">
+    <div id="vote_div_{{ proposal.id }}">
+	    <script language="Javascript">
+		    set_proposal_votes_div('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
+	        </script>
+    </div>
+    <div class="col-xs-10"></div>
+</div>
 <div class="col-xs-10"></div>
 
 <hr />

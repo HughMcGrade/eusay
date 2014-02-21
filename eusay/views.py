@@ -56,7 +56,7 @@ def submit(request):
             proposal.proposer = User.objects.all()[0]
             proposal.submissionDateTime = datetime.datetime.now()
             proposal.save()
-            return HttpResponseRedirect('/thanks/') # Redirect after POST
+            return HttpResponseRedirect('/proposal/'+str(proposal.id)) # Redirect after POST
     else:
         user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
         form = ProposalForm() # An unbound form
