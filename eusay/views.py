@@ -28,7 +28,8 @@ def add_user(request):
     user.candidateStatus = "None"
     user.save()
     request.session['user_sid'] = user.sid
-    return HttpResponse(user.name + " with matric number " + user.sid  + " added.")
+    return HttpResponse(user.name)
+    #return HttpResponse(user.name + " with matric number " + user.sid  + " added.")
 
 def get_users(request):
     users = User.objects.all()
@@ -39,12 +40,12 @@ def get_users(request):
 
 def index(request):
     # TODO Get real user
-    user = User.objects.all().first()
-    
-    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "type" : "proposal" }))
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "type" : "proposal", "user" :  user}))
     
 def about(request):
-    return render(request, "about.html")
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    return render(request, "about.html", { 'user' : user})
 
 def submit(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -57,15 +58,15 @@ def submit(request):
             proposal.save()
             return HttpResponseRedirect('/thanks/') # Redirect after POST
     else:
+        user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
         form = ProposalForm() # An unbound form
-        return render(request, 'submit.html', {'form': form})
+        return render(request, 'submit.html', {'form': form, 'user': user})
 
 def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
 
 def proposal(request, proposalId):
-    # TODO Get real user
-    user = User.objects.all()[0]
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
     
     proposal = Proposal.objects.get(id=proposalId)
     comments = Comment.objects.all().filter(proposal = proposal)
@@ -100,8 +101,7 @@ def proposal(request, proposalId):
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
-    # TODO Get real user
-    user = User.objects.all().first()
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
     
     # Check if they have already voted
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
@@ -113,7 +113,7 @@ def vote_proposal(request, ud, proposal_id):
             else:
                 user_vote = -1
             print ("User vote for " + proposal_id +  " = " + str(user_vote))
-            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote })
+            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote, "user" : user })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -123,10 +123,10 @@ def vote_proposal(request, ud, proposal_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0 })
+            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0, "user" : user })
     
     if ud == "get":
-        return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0 })
+        return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0, "user" : user })
     
     new_vote = ProposalVote()
     
@@ -142,7 +142,7 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote })
+    return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote, "user" : user })
     #return HttpResponse("Voted " + ud + " " + proposal_id + ". It now has " + str(proposal.votesUp()) + " votes up.")
 
 '''def user_proposal_votes_dict(user):
@@ -162,9 +162,7 @@ def vote_proposal(request, ud, proposal_id):
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
-    
-    # TODO Get real user
-    user = User.objects.all().first()
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
     
     # Check if they have already voted
     if CommentVote.objects.all().filter(comment = comment).filter(user = user).count() == 1:
@@ -175,7 +173,7 @@ def vote_comment(request, ud, comment_id):
                 user_vote = 1
             else:
                 user_vote = -1
-            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote })
+            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote, "user" : user })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -185,10 +183,10 @@ def vote_comment(request, ud, comment_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0 })
+            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0, "user" : user })
     
     if ud == "get":
-        return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0 })
+        return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0, "user" : user })
     
     new_vote = CommentVote()
     
@@ -204,7 +202,7 @@ def vote_comment(request, ud, comment_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote })
+    return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote, "user" : user })
 
 def post_comment(request, proposal_id, field):
     '''text = request.POST.get("text")
@@ -220,6 +218,8 @@ def post_comment(request, proposal_id, field):
     comment.proposal = Proposal.objects.all().get(id=proposal_id)
     comment.field = field
     comment.save()'''
+    
+    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
     
     form = CommentForm(request.POST) # A form bound to the POST data
     if "actionComment" in request.POST:

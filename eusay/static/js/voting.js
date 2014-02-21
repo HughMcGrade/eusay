@@ -167,6 +167,19 @@ function set_proposal_field_comments_div_and_count(proposal_id, field, comment_d
       });
 }
 
+function new_user() {
+	$.ajax({
+          type: 'get',
+          url: "/add_user/",
+            success: function (data) {
+            	location.reload(true);
+            },
+            error: function(data) {
+            	location.reload(true);
+            }
+      });
+}
+
 /*function post_comment(proposal_id, field, text, user_sid, comment_div) {
 	//alert("/post_comment/" + proposal_id + "/" + fieldObject.value + "?text=" + text + "&user_sid=" + user_sid);
 	
