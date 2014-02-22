@@ -109,7 +109,7 @@ def vote_proposal(request, ud, proposal_id):
                 user_vote = 1
             else:
                 user_vote = -1
-            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote, "user" : user })
+            return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -119,10 +119,10 @@ def vote_proposal(request, ud, proposal_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0, "user" : user })
+            return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
     
     if ud == "get":
-        return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : 0, "user" : user })
+        return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
     
     new_vote = ProposalVote()
     
@@ -138,7 +138,7 @@ def vote_proposal(request, ud, proposal_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "proposal_votes.html", { "object" : proposal, "user_vote" : user_vote, "user" : user })
+    return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
@@ -154,7 +154,7 @@ def vote_comment(request, ud, comment_id):
                 user_vote = 1
             else:
                 user_vote = -1
-            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote, "user" : user })
+            return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
         elif previous_vote.isVoteUp and ud == "down":
             # Toggle vote from up to down
             previous_vote.delete()
@@ -164,11 +164,11 @@ def vote_comment(request, ud, comment_id):
         else:
             # Cancel previous vote
             previous_vote.delete()
-            return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0, "user" : user })
+            return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
     
     if ud == "get":
         # Get hasn't voted
-        return render(request, "comment_votes.html", { "object" : comment, "user_vote" : 0, "user" : user })
+        return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
     
     new_vote = CommentVote()
     if ud == "up":
@@ -185,7 +185,7 @@ def vote_comment(request, ud, comment_id):
     new_vote.date = datetime.datetime.now()
     new_vote.save()
     
-    return render(request, "comment_votes.html", { "object" : comment, "user_vote" : user_vote, "user" : user })
+    return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
 
 def post_comment(request, proposal_id, field):
     user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))

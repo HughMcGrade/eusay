@@ -1,11 +1,11 @@
 {% if user_vote == 1 %}
-<div class="green voteUp"><a onclick="vote_up_comment({{ object.id }}, document.getElementById('vote_div_{{ object.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow green"></span></a> {{ object.votesUp }} </div>
+<div class="green voteUp"><a onclick="vote_up_comment({{ comment.id }}, document.getElementById('comment_vote_div_{{ comment.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow green"></span></a> {{ comment.votesUp }} </div>
 {% else %}
-<div class="voteUp"><a onclick="vote_up_comment({{ object.id }}, document.getElementById('vote_div_{{ object.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow"></span></a> {{ object.votesUp }} </div>
+<div class="voteUp"><a onclick="vote_up_comment({{ comment.id }}, document.getElementById('comment_vote_div_{{ comment.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow"></span></a> {{ comment.votesUp }} </div>
 {% endif %}
 
 {%if user_vote == -1 %}
-<div class="red voteDown"><a onclick="vote_down_comment({{ object.id }}, document.getElementById('vote_div_{{ object.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow red"></span></a> {{ object.votesDown }} </div>
+<div class="red voteDown"><a onclick="vote_down_comment({{ comment.id }}, document.getElementById('comment_vote_div_{{ comment.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow red"></span></a> {{ comment.votesDown }} </div>
 {% else %}
-<div class="voteDown"><a onclick="vote_down_comment({{ object.id }}, document.getElementById('vote_div_{{ object.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow"></span></a> {{ object.votesDown }} </div>
+<div class="voteDown"><a onclick="vote_down_comment({{ comment.id }}, document.getElementById('comment_vote_div_{{ comment.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow"></span></a> {{ comment.votesDown }} </div>
 {% endif %}

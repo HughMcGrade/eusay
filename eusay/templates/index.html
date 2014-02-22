@@ -69,9 +69,9 @@ function yolo() {
 	<div class="col-xs-8">
 		<p><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></p>
 	</div>
-	<div id="vote_div_{{ proposal.id }}">
+	<div id="proposal_vote_div_{{ proposal.id }}">
 		<script language="Javascript">
-			set_proposal_votes_div('{{ proposal.id }}', document.getElementById('vote_div_{{ proposal.id }}'))
+			set_proposal_votes_div('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
 		</script>
 	</div>
 </div>

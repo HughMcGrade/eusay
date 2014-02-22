@@ -96,10 +96,6 @@ function set_comment_votes_div(comment_id, vote_div) {
 	});
 }
 
-function append_new_comment(div) {
-	$(div).append("New comment!")
-}
-
 function set_comment_post(form, comment_div, post_url) {
 
     var frm = $(form);

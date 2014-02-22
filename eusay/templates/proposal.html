@@ -92,10 +92,10 @@ hr {
     </div>
 </div>
 <div class="row">
-    <div id="proposal_vote_div">
+    <div id="proposal_vote_div_{{ proposal.id }}">
 	    <script language="Javascript">
-		    set_proposal_votes_div('{{ proposal.id }}', document.getElementById('proposal_vote_div'))
-	        </script>
+		    set_proposal_votes_div('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
+	    </script>
     </div>
     <div class="col-xs-8"></div>
 </div>
