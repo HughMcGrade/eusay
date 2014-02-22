@@ -20,7 +20,7 @@ import random
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50)]
 
-def add_user(request):
+def _generate_new_user(request):
     user = User()
     user.name = get_rand_name()
     user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
@@ -28,6 +28,17 @@ def add_user(request):
     user.candidateStatus = "None"
     user.save()
     request.session['user_sid'] = user.sid
+    return user
+
+def _get_current_user(request):
+    user_sid = request.session.get('user_sid', None)
+    if not user_sid:
+        return _generate_new_user(request)
+    else:
+        return User.objects.get(sid=user_sid)
+
+def add_user(request):
+    user = _generate_new_user(request)
     return HttpResponse(user.name)
 
 def get_users(request):
@@ -38,25 +49,25 @@ def get_users(request):
     return HttpResponse(s)
 
 def index(request):
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    user = _get_current_user(request)
     return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "type" : "proposal", "user" :  user}))
     
 def about(request):
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    user = _get_current_user(request)
     return render(request, "about.html", { 'user' : user})
 
 def submit(request):
+    user = _get_current_user(request)
     if request.method == 'POST': # If the form has been submitted...
         form = ProposalForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data
             proposal = form.save(commit=False)
-            proposal.proposer = User.objects.all()[0]
+            proposal.proposer = user
             proposal.submissionDateTime = datetime.datetime.now()
             proposal.save()
             return HttpResponseRedirect('/proposal/'+str(proposal.id)) # Redirect after POST
     else:
-        user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
         form = ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form, 'user': user})
 
@@ -64,7 +75,7 @@ def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
 
 def proposal(request, proposalId):
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    user = _get_current_user(request)
     proposal = Proposal.objects.get(id=proposalId)
     comments = Comment.objects.all().filter(proposal = proposal)
     action_comments = comments.filter(field = "action")
@@ -98,7 +109,7 @@ def proposal(request, proposalId):
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    user = _get_current_user(request)
     
     # Check if they have already voted
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
@@ -142,8 +153,7 @@ def vote_proposal(request, ud, proposal_id):
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
-    
+    user = _get_current_user(request)
     # Check if they have already voted
     if CommentVote.objects.all().filter(comment = comment).filter(user = user).count() == 1:
         # Has already voted
@@ -188,7 +198,7 @@ def vote_comment(request, ud, comment_id):
     return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
 
 def post_comment(request, proposal_id, field):
-    user = User.objects.get(sid=request.session.get('user_sid', 's1234567'))
+    user = _get_current_user(request)
     proposal = Proposal.objects.get(id=proposal_id)
     
     form = CommentForm(request.POST) # A form bound to the POST data

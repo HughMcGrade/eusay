@@ -7,10 +7,10 @@ To Do:
 ------
 * Tidy up all code **a lot**
 * Set up EASE authentication ([1][ease1]) ([2][ease2])
-* Markdown comments would be cool ([1][django_markdown])
+* Markdown comments would be cool ([3][django_markdown])
+* Include proposer on proposals page/list
 * Set up Google Analytics
 * Add features for representatives and candidates
-
 
 Questions
 ------------
