@@ -1,14 +1,15 @@
 eusay
 =====
-eusa wants to know what students think. students want to share their proposals. eusay provides the solution.
+EUSA wants to know what students think and students want to share their ideas - eusay provides the solution.
 
 
 To do:
 ------
-* Tidy up all code *a lot*
+* Tidy up all code **a lot**
 * Set up EASE authentication ([1][ease1]) ([2][ease2])
 * Markdown comments would be cool ([1][django_markdown])
 * Set up Google Analytics
+* Add features for representatives and candidates
 
 
 Questions
