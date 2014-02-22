@@ -1,9 +1,9 @@
 eusay
 =====
-EUSA wants to know what students think and students want to share their ideas - eusay provides the solution.
+EUSA wants to know what students think and students want to share their ideas - *eusay* provides the solution.
 
 
-To do:
+To Do:
 ------
 * Tidy up all code **a lot**
 * Set up EASE authentication ([1][ease1]) ([2][ease2])
