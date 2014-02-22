@@ -100,40 +100,20 @@ function append_new_comment(div) {
 	$(div).append("New comment!")
 }
 
-/*function post_comment(comment_text, proposal_id, field, user_sid, comment_div) {
-    $.ajax({
-        type: "post",
-        url: "post_comment/" + proposal_id + "/" + field,
-        data: { 'text' : comment_text },
-        success: function (data) {
-        	console.log(data);
-        	alert(data);
-            $(comment_div).html(data);
-        },
-        error: function(data) {
-        	console.log(data.responseText);
-        	alert(data);
-            $(comment_div).html("Couldn't retrieve comments");
-        }
-    });
-}*/
-function post_comment(form, comment_div) {
+function set_comment_post(form, comment_div, post_url) {
 
     var frm = $(form);
     console.log("hello");
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
-            url: frm.attr('action'),
+            url: /*frm.attr('action')*/ post_url,
             data: frm.serialize(),
             success: function (data) {
-            	console.log(data);
-            	alert(data);
                 $(comment_div).html(data);
             },
             error: function(data) {
             	console.log(data.responseText);
-            	alert(data);
                 $(comment_div).html("Couldn't retrieve comments");
             }
         });
@@ -179,24 +159,3 @@ function new_user() {
             }
       });
 }
-
-/*function post_comment(proposal_id, field, text, user_sid, comment_div) {
-	//alert("/post_comment/" + proposal_id + "/" + fieldObject.value + "?text=" + text + "&user_sid=" + user_sid);
-	
-	$.ajax({
-                        url: "/post_comment/" + proposal_id + "/" + field,
-                        data: { 'text' : text, 'user_sid' : user_sid },
-                        dataType: 'post',
-                        type: 'get',
-                        success: function(json) {
-                                append_new_comment(comment_div)
-                        }
-                });
-	
-	
-	$.get("/post_comment/" + proposal_id + "/" + field, { 'text' : text, 'user_sid' : user_sid }, function(data)
-	{
-		$(fieldObject).append("New comment!")
-		//location.reload(true);
-	});
-}*/

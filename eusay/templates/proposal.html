@@ -2,7 +2,12 @@
 
 {% block script %}
 
-post_comment(document.getElementById('beliefs_comment_form'), document.getElementById('beliefs_comments_div'))
+$(document).ready(function() { 
+			// Set comment post methods
+            set_comment_post(document.getElementById('action_comment_form'), document.getElementById('action_comments_div'), "/post_comment/{{ proposal.id }}/action");
+            set_comment_post(document.getElementById('background_comment_form'), document.getElementById('background_comments_div'), "/post_comment/{{ proposal.id }}/background");
+            set_comment_post(document.getElementById('beliefs_comment_form'), document.getElementById('beliefs_comments_div'), "/post_comment/{{ proposal.id }}/beliefs");
+        });
 
 {% endblock %}
 
@@ -115,12 +120,13 @@ hr {
                        	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'action', document.getElementById('action_comments_div'), document.getElementById('action_comments_count'));
                        	</script>
                        </div>
-            <form method="post" action="">
+            <form id="action_comment_form" method="post" action="">
                 {% csrf_token %}
+                <input name="actionComment" hidden="true"></label>
                 <div class="form-group">
                     {{ form.text }}
                 </div>
-                <button type="submit" class="btn btn-default" name="actionComment">Submit</button>
+                <button type="submit" class="btn btn-default">Submit</button>
             </form>
             </div>
         </div>
@@ -142,15 +148,16 @@ hr {
             <div id="backgroundComments" class="accordion-body collapse col-xs-12" style="height: auto;">
                      <div id="background_comments_div" class="comment">
                         	<script language="Javascript">
-                        	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'background', document.getElementById('background_comments_div'), document.getElementById('background_comments_count'));
+                        		set_proposal_field_comments_div_and_count({{ proposal.id }}, 'background', document.getElementById('background_comments_div'), document.getElementById('background_comments_count'));
                         	</script>
                         </div>
-                    <form method="post" action="">
+                    <form id="background_comment_form" method="post" action="">
                         {% csrf_token %}
+                        <input name="backgroundComment" hidden="true"></label>
                         <div class="form-group">
                             {{ form.text }}
                         </div>
-                        <button type="submit" class="btn btn-default" name="backgroundComment">Submit</button>
+                        <button type="submit" class="btn btn-default">Submit</button>
                     </form>
             </div>
         </div>
@@ -179,10 +186,12 @@ hr {
                         
                     <form id="beliefs_comment_form" method="post" action="">
                     {% csrf_token %}
+                    <input name="beliefsComment" hidden="true"></label>
                     <div class="form-group">
                         {{ form.text }}
                     </div>
-                    <button type="submit" class="btn btn-default" name="beliefsComment">Submit</button>
+                    <button type="post" class="btn btn-default">Submit</button>
+                    <!--<button type="button" class="btn btn-default" name="beliefsComment" onclick="post_comment(document.getElementById('beliefs_comments_div'), {{ proposal.id }}, "beliefs", {{ user.sid }}, document.getElementById('beliefs_comments_div'))">Submit</button>-->
                     <!--<button type="button" class="btn btn-default" onclick="post_comment(document.getElementById('beliefs_comment_form'), {{ proposal.id }}, 'beliefs', {{ user.sid }}, document.getElementById('beliefs_comments_div'))" name="beliefs_comment_button">Submit</button>-->
                 </form>
             </div>
