@@ -1,11 +1,11 @@
 {% if user_vote == 1 %}
-<div class="col-xs-2 green"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow green"></span></a> {{ proposal.votesUp }} </div>
+<div class="col-xs-2 green"><a onclick="voteUpProposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow green"></span></a> {{ proposal.votesUp }} </div>
 {% else %}
-<div class="col-xs-2"><a onclick="vote_up_proposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow"></span></a> {{ proposal.votesUp }} </div>
+<div class="col-xs-2"><a onclick="voteUpProposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-up arrow"></span></a> {{ proposal.votesUp }} </div>
 {% endif %}
 
 {%if user_vote == -1 %}
-<div class="col-xs-2 red"><a onclick="vote_down_proposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow red"></span></a> {{ proposal.votesDown }} </div>
+<div class="col-xs-2 red"><a onclick="voteDownProposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow red"></span></a> {{ proposal.votesDown }} </div>
 {% else %}
-<div class="col-xs-2"><a onclick="vote_down_proposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow"></span></a> {{ proposal.votesDown }} </div>
+<div class="col-xs-2"><a onclick="voteDownProposal({{ proposal.id }}, document.getElementById('proposal_vote_div_{{ proposal.id }}'))"><span class="glyphicon glyphicon-chevron-down arrow"></span></a> {{ proposal.votesDown }} </div>
 {% endif %}

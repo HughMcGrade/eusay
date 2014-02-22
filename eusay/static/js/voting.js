@@ -1,157 +1,79 @@
-function vote_up_proposal(proposal_id, vote_div) {
-	//$.get("/vote_proposal/up/" + proposal_id, function(data){location.reload(true);});
+// Perform get request to 'url' and place the response inside 'div'
+function performSetDivAjaxGetRequest(url, div) {
 	$.ajax({
 		type : "get",
-		url : "/vote_proposal/up/" + proposal_id,
-		success: function (data, textStatus, jqXHR) {
-			//alert(data);
-			//console.log(data);
-			$(vote_div).html(data);
+		url : url,
+		success : function(response) {
+			$(div).html(response);
 		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
-		}
-	});	
-}
-
-function vote_down_proposal(proposal_id, vote_div) {
-	//$.get("/vote_proposal/down/" + proposal_id, function(data){location.reload(true);});
-	$.ajax({
-		type : "get",
-		url : "/vote_proposal/down/" + proposal_id,
-		success: function (data) {
-			//console.log(data);
-			$(vote_div).html(data);
-		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
-		}
-	});	
-}
-
-function set_proposal_votes_div(proposal_id, vote_div) {
-	$.ajax({
-		type : "get",
-		url : "/vote_proposal/get/" + proposal_id,
-		success: function (data) {
-			//console.log(data);
-			$(vote_div).html(data);
-		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
-		}
-	});	
-}
-
-function vote_up_comment(comment_id, vote_div) {
-	//$.get("/vote_comment/up/" + comment_id, function(data){location.reload(true);});
-	$.ajax({
-		type : "get",
-		url : "/vote_comment/up/" + comment_id,
-		success: function (data) {
-			//alert(data);
-			//console.log(data);
-			$(vote_div).html(data);
-		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
-		}
-	});	
-}
-
-function vote_down_comment(comment_id, vote_div) {
-	//$.get("/vote_comment/down/" + comment_id, function(data){location.reload(true);});
-	$.ajax({
-		type : "get",
-		url : "/vote_comment/down/" + comment_id,
-		success: function (data) {
-			//alert(data);
-			//console.log(data);
-			$(vote_div).html(data);
-		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
+		error : function(response) {
+			alert("Request failed");
+			// TODO improve error handling
+			//console.log(response);
 		}
 	});
 }
 
-function set_comment_votes_div(comment_id, vote_div) {
-	$.ajax({
-		type : "get",
-		url : "/vote_comment/get/" + comment_id,
-		success: function (data) {
-			//alert(data);
-			//console.log(data);
-			$(vote_div).html(data);
-		},
-		error: function (data) {
-			alert(data.responseText);
-			console.log(data);
-		}
+function voteUpProposal(proposalID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_proposal/up/" + proposalID, voteDiv);
+}
+
+function voteDownProposal(proposalID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_proposal/down/" + proposalID, voteDiv);
+}
+
+function setProposalVoteDiv(proposalID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_proposal/get/" + proposalID, voteDiv);
+}
+
+function voteUpComment(commentID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_comment/up/" + commentID, voteDiv);
+}
+
+function voteDownComment(commentID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_comment/down/" + commentID, voteDiv);
+}
+
+function setCommentVotesDiv(commentID, voteDiv) {
+	performSetDivAjaxGetRequest("/vote_comment/get/" + commentID, voteDiv);
+}
+
+// Post serialised 'form' (comments form) to 'postURL' and place the response inside 'commentDiv'
+function setCommentPost(form, commentDiv, postURL) {
+	var frm = $(form);
+	frm.submit(function() {
+		$.ajax({
+			type : frm.attr('method'),
+			url : postURL,
+			data : frm.serialize(),
+			success : function(response) {
+				$(commentDiv).html(response);
+			},
+			error : function(response) {
+				//console.log(response);
+				$(commentDiv).html("Couldn't retrieve comments");
+			}
+		});
+		return false;
 	});
 }
 
-function set_comment_post(form, comment_div, post_url) {
-
-    var frm = $(form);
-    console.log("hello");
-    frm.submit(function () {
-        $.ajax({
-            type: frm.attr('method'),
-            url: /*frm.attr('action')*/ post_url,
-            data: frm.serialize(),
-            success: function (data) {
-                $(comment_div).html(data);
-            },
-            error: function(data) {
-            	console.log(data.responseText);
-                $(comment_div).html("Couldn't retrieve comments");
-            }
-        });
-        return false;
-    });
+// Set comments ('commentDiv') and comments count('commentCountContainer') for field('field') on proposal ('proposalID') page
+function setProposalCommentField(proposalID, field, commentDiv, commentCountContainer) {
+	performSetDivAjaxGetRequest("/get_comments/" + proposalID + "/" + field, commentDiv);
+	performSetDivAjaxGetRequest("/get_comments_count/" + proposalID + "/" + field, commentCountContainer);
 }
 
-function set_proposal_field_comments_div_and_count(proposal_id, field, comment_div, comment_count_container) {
-      $.ajax({
-          type: 'get',
-          url: "/get_comments/" + proposal_id + "/" + field,
-            success: function (data) {
-                $(comment_div).html(data);
-            },
-            error: function(data) {
-            	console.log(data);
-                $(comment_div).html("Couldn't retrieve comments");
-            }
-      });
-      $.ajax({
-          type: 'get',
-          url: "/get_comments_count/" + proposal_id + "/" + field,
-            success: function (data) {
-            	console.log(data);
-                $(comment_count_container).html(data);
-            },
-            error: function(data) {
-            	console.log(data);
-                $(comment_count_container).html("Comments");
-            }
-      });
-}
-
-function new_user() {
+// Create a new user (for the current session user) and reload the page
+function createNewUser() {
 	$.ajax({
-          type: 'get',
-          url: "/add_user/",
-            success: function (data) {
-            	location.reload(true);
-            },
-            error: function(data) {
-            	location.reload(true);
-            }
-      });
+		type : 'get',
+		url : "/add_user/",
+		success : function(response) {
+			location.reload(true);
+		},
+		error : function(response) {
+			location.reload(true);
+		}
+	});
 }

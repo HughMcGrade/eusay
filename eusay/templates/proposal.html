@@ -4,9 +4,9 @@
 
 $(document).ready(function() { 
 			// Set comment post methods
-            set_comment_post(document.getElementById('action_comment_form'), document.getElementById('action_comments_div'), "/post_comment/{{ proposal.id }}/action");
-            set_comment_post(document.getElementById('background_comment_form'), document.getElementById('background_comments_div'), "/post_comment/{{ proposal.id }}/background");
-            set_comment_post(document.getElementById('beliefs_comment_form'), document.getElementById('beliefs_comments_div'), "/post_comment/{{ proposal.id }}/beliefs");
+            setCommentPost(document.getElementById('action_comment_form'), document.getElementById('action_comments_div'), "/post_comment/{{ proposal.id }}/action");
+            setCommentPost(document.getElementById('background_comment_form'), document.getElementById('background_comments_div'), "/post_comment/{{ proposal.id }}/background");
+            setCommentPost(document.getElementById('beliefs_comment_form'), document.getElementById('beliefs_comments_div'), "/post_comment/{{ proposal.id }}/beliefs");
         });
 
 {% endblock %}
@@ -94,7 +94,7 @@ hr {
 <div class="row">
     <div id="proposal_vote_div_{{ proposal.id }}">
 	    <script language="Javascript">
-		    set_proposal_votes_div('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
+		    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
 	    </script>
     </div>
     <div class="col-xs-8"></div>
@@ -117,7 +117,7 @@ hr {
             <div id="actionComments" class="accordion-body collapse col-xs-12" style="height: auto;">
                     <div id="action_comments_div" class="comment">
                        	<script language="Javascript">
-                       	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'action', document.getElementById('action_comments_div'), document.getElementById('action_comments_count'));
+                       	setProposalCommentField({{ proposal.id }}, 'action', document.getElementById('action_comments_div'), document.getElementById('action_comments_count'));
                        	</script>
                        </div>
             <form id="action_comment_form" method="post" action="">
@@ -148,7 +148,7 @@ hr {
             <div id="backgroundComments" class="accordion-body collapse col-xs-12" style="height: auto;">
                      <div id="background_comments_div" class="comment">
                         	<script language="Javascript">
-                        		set_proposal_field_comments_div_and_count({{ proposal.id }}, 'background', document.getElementById('background_comments_div'), document.getElementById('background_comments_count'));
+                        		setProposalCommentField({{ proposal.id }}, 'background', document.getElementById('background_comments_div'), document.getElementById('background_comments_count'));
                         	</script>
                         </div>
                     <form id="background_comment_form" method="post" action="">
@@ -180,7 +180,7 @@ hr {
                         
                         <div id="beliefs_comments_div" class="comment">
                         	<script language="Javascript">
-                        	set_proposal_field_comments_div_and_count({{ proposal.id }}, 'beliefs', document.getElementById('beliefs_comments_div'), document.getElementById('beliefs_comments_count'));
+                        	setProposalCommentField({{ proposal.id }}, 'beliefs', document.getElementById('beliefs_comments_div'), document.getElementById('beliefs_comments_count'));
                         	</script>
                         </div>
                         
