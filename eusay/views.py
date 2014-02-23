@@ -50,7 +50,8 @@ def get_users(request):
 
 def index(request):
     user = _get_current_user(request)
-    return HttpResponse(render_to_string("index.html", {"proposals": Proposal.objects.all(), "type" : "proposal", "user" :  user}))
+    proposals = reversed(sorted(Proposal.objects.all(), key = lambda p: p.getScore()))
+    return HttpResponse(render_to_string("index.html", {"proposals": proposals, "type" : "proposal", "user" :  user}))
     
 def about(request):
     user = _get_current_user(request)

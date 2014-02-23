@@ -5,7 +5,7 @@ Created on 18 Feb 2014
 '''
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-
+import datetime
 
 class Comment (models.Model):
     id = models.AutoField(primary_key=True)
@@ -15,17 +15,17 @@ class Comment (models.Model):
     field = models.CharField(max_length=20, null=False)
     proposal = models.ForeignKey("Proposal", null=False)
     
-    def _getVotes(self, isUp):
+    def _get_votes_count(self, isUp):
         try:
             return len(CommentVote.objects.all().filter(comment=self).filter(isVoteUp=isUp))
         except Exception:
             return 0
             
-    def votesUp(self):
-        return self._getVotes(True)
+    def get_votes_up_count(self):
+        return self._get_votes_count(True)
         
-    def votesDown(self):
-        return self._getVotes(False)
+    def get_votes_down_count(self):
+        return self._get_votes_count(False)
 
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
@@ -42,17 +42,44 @@ class Proposal (models.Model):
     proposer = models.ForeignKey("User")#, related_name="proposed")
     submissionDateTime = models.DateField(null = True)
     
-    def _getVotes(self, isUp):
+    def _get_votes_count(self, isUp):
         try:
             return len(ProposalVote.objects.all().filter(proposal=self).filter(isVoteUp = isUp))
         except Exception:
             return 0
     
-    def votesUp(self):
-        return self._getVotes(True)
+    def get_votes_up_count(self):
+        return self._get_votes_count(True)
     
-    def votesDown(self):
-        return self._getVotes(False)
+    def get_votes_down_count(self):
+        return self._get_votes_count(False)
+    
+    def _hours_since(self, date):
+        utc_now = datetime.datetime.utcnow()#(datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(timestamp))
+        utc_event = datetime.datetime.utcfromtimestamp(date.timestamp())
+        return (utc_now - utc_event).total_seconds() / 3600.0
+    
+    def _weight_instance(self, hour_age, gravity=1.8):
+        return 1 / pow((hour_age+2), gravity)  
+    
+    def _proximity_coefficient(self):
+        return 1
+    
+    def getScore(self):
+        score = 0
+        comments = Comment.objects.all().filter(proposal=self)
+        for comment in comments:
+            score += self._weight_instance(hour_age = self._hours_since(comment.date)) * 4
+        
+        votes = ProposalVote.objects.all().filter(proposal=self)
+        for vote in votes:
+            if vote.isVoteUp:
+                score += self._weight_instance(hour_age = self._hours_since(vote.date)) * 2
+            else:
+                score += self._weight_instance(hour_age = self._hours_since(vote.date)) * 1
+        
+        vote_up_count = self.get_votes_up_count()
+        return score * self._proximity_coefficient() + (vote_up_count - self.get_votes_down_count())
     
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal)
