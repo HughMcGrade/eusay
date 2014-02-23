@@ -3,7 +3,7 @@
     <div class="comment row">
     	<div id="text_div" class="col-xs-10">
         	<p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
-        	<p>{{ comment.text }}</p>
+        	<p>{{ comment.text | urlize }}</p>
         </div>
         <div id="comment_vote_div_{{ comment.id }}" class="col-xs-2 commentVotes">
 			<script language="Javascript">
