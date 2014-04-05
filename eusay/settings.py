@@ -29,9 +29,9 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-FIXTURES_DIRS = (
-    os.path.join(BASE_DIR, "fixtures/")
-)
+# FIXTURES_DIRS = (
+#     os.path.join(BASE_DIR, "fixtures/")
+# )
 
 
 # Application definition

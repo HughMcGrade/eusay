@@ -7,7 +7,7 @@ eusay was born during the Smart Data Hack in the 2014 Innovative Learning Week a
 
 Requirements
 ------------
-eusay runs on Django on Python 3. The database is SQLite.
+eusay runs on Django on Python 3. The database is SQLite, but will probably be PostgreSQL soon.
 Our test server runs Apache 2.2.15.
 There aren't any other requirements.
 
@@ -15,25 +15,18 @@ There aren't any other requirements.
 Setup
 -----
 Navigate to the main eusay directory and run `python manage.py syncdb` to create the database.  
-If you want some example data, add
-```
-FIXTURES_DIRS = (
-    os.path.join(BASE_DIR, "fixtures/")
-)
-```
-to settings.py and run `python manage.py loaddata exampledata.json`.  
+If you want some example data, run `python manage.py loaddata exampledata`.  
 Set up a local server with `python manage.py runserver`.
 
 
 To Do:
 ------
-* Make settings.py syncable with git without breaking anything (if we don't do this we end up with the awful setup instructions seen above)
+* Make settings.py syncable with git without breaking anything
 * Markdown comments would be cool ([1][django_markdown])
 * Include proposer on proposals page/list
 * Add features for representatives and candidates
 * Right now the front page loads every proposal there is. Set up a page system or a nice AJAX load-on-scroll thing.
 * Set up EASE authentication ([1][ease1]) ([2][ease2]) ([This has to wait](#footnote1))
-* Decide what to do about users without EASE. Should we set up our own CoSign implementation? Just use Django's user system? Or stick with the random user thing we have now?
 
 
 Questions
