@@ -1,10 +1,13 @@
 {% extends "base.html" %}
-{% load endless %}
 
-{% block script %}
+{% block js %}
+{{ block.super }}
+<script>
 function yolo() {
 	$(".jumbotron").slideUp();
 };
+</script>
+<script>$.endlessPaginate();</script>
 {% endblock %}
 
 {% block style %}
@@ -51,7 +54,6 @@ function yolo() {
 
 
 {% block content %}
-
 <div class="row">
 <div class="col-xs-1"></div>
 <div class="col-xs-10">
@@ -65,18 +67,6 @@ function yolo() {
 <div class="col-xs-1"></div>    
 </div>
 
-{% lazy_paginate proposals %}
-{% for proposal in proposals %}
-<div class="row proposal {% cycle "row1" "row2" %}" id="proposal_row_{{ proposal.id }}">
-	<div class="col-xs-8">
-		<p><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></p>
-	</div>
-	<div id="proposal_vote_div_{{ proposal.id }}">
-		<script language="Javascript">
-			setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
-		</script>
-	</div>
-</div>
-{% endfor %}
-{% show_more %}
+{% include content_template %}
+
 {% endblock %}

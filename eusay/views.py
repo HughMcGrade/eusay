@@ -50,8 +50,19 @@ def get_users(request):
 
 def index(request):
     user = _get_current_user(request)
-    proposals = reversed(sorted(Proposal.objects.all(), key = lambda p: p.getScore()))
-    return HttpResponse(render_to_string("index.html", {"proposals": proposals, "type" : "proposal", "user" :  user}))
+    template = "index.html" # main HTML
+    content_template = "index_proposals.html" # just the proposals
+    proposals = sorted(Proposal.objects.all(), key = lambda p: p.getScore())
+    proposals.reverse()
+    context = {
+        "proposals": proposals,
+        "type" : "proposal",
+        "user" :  user,
+        "content_template": content_template,
+    }
+    if request.is_ajax():
+        template = content_template
+    return render(request, template, context)
     
 def about(request):
     user = _get_current_user(request)

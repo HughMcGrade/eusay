@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # http://django-endless-pagination.readthedocs.org
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
 )
 
 # Quick-start development settings - unsuitable for production
@@ -49,7 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eusay',
-    'endless_pagination' # http://django-endless-pagination.readthedocs.org
+    'endless_pagination',
 )
 
 MIDDLEWARE_CLASSES = (
