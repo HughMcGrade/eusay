@@ -9,8 +9,7 @@ Requirements
 ------------
 eusay runs on Django on Python 3. The database is SQLite, but will probably be PostgreSQL soon.
 Our test server runs Apache 2.2.15.
-There aren't any other requirements.
-
+See requirements.txt.
 
 Setup
 -----
