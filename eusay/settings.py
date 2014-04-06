@@ -8,10 +8,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
+# Required for django-endless-pagination plugin
+# http://django-endless-pagination.readthedocs.org
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Required for django-endless-pagination plugin
+# http://django-endless-pagination.readthedocs.org
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django.core.context_processors.request',
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -29,10 +38,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# FIXTURES_DIRS = (
-#     os.path.join(BASE_DIR, "fixtures/")
-# )
-
 
 # Application definition
 
@@ -43,7 +48,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'eusay'
+    'eusay',
+    'endless_pagination' # http://django-endless-pagination.readthedocs.org
 )
 
 MIDDLEWARE_CLASSES = (

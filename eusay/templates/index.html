@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load endless %}
 
 {% block script %}
 function yolo() {
@@ -64,6 +65,7 @@ function yolo() {
 <div class="col-xs-1"></div>    
 </div>
 
+{% lazy_paginate proposals %}
 {% for proposal in proposals %}
 <div class="row proposal {% cycle "row1" "row2" %}" id="proposal_row_{{ proposal.id }}">
 	<div class="col-xs-8">
@@ -76,4 +78,5 @@ function yolo() {
 	</div>
 </div>
 {% endfor %}
+{% show_more %}
 {% endblock %}
