@@ -51,17 +51,18 @@ def get_users(request):
 def index(request):
     user = _get_current_user(request)
     template = "index.html" # main HTML
-    content_template = "index_proposals.html" # just the proposals
+    proposals_template = "index_proposals.html" # just the proposals
     proposals = sorted(Proposal.objects.all(), key = lambda p: p.getScore())
     proposals.reverse()
     context = {
         "proposals": proposals,
         "type" : "proposal",
         "user" :  user,
-        "content_template": content_template,
+        "proposals_template": proposals_template,
     }
+	# ajax requests only return the proposals, not the whole page
     if request.is_ajax():
-        template = content_template
+        template = proposals_template
     return render(request, template, context)
     
 def about(request):

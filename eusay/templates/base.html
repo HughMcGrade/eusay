@@ -8,14 +8,16 @@
 
 <title>{% block title %}eusay{% endblock %}</title>
 
+<!-- Bootstrap core CSS -->
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+
+<!-- Bootstrap core JavaScript, etc. -->
+<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
 {% block js %}
-<!--<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>-->
 <script src="{% static "js/voting.js" %}"></script>
 <script src="{% static "js/endless-pagination.js" %}"></script>
 {% endblock %}
-
-<!-- Bootstrap core CSS -->
-<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
@@ -84,12 +86,5 @@ body {
 {% block content %}
 {% endblock %}
 </div>
-
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="{% static "js/bootstrap.min.js" %}"></script>
 </body>
 </html>

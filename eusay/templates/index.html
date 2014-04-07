@@ -7,7 +7,11 @@ function yolo() {
 	$(".jumbotron").slideUp();
 };
 </script>
-<script>$.endlessPaginate();</script>
+<script>
+$(document).ready(function() {
+    $.endlessPaginate();
+});
+</script>
 {% endblock %}
 
 {% block style %}
@@ -67,6 +71,8 @@ function yolo() {
 <div class="col-xs-1"></div>    
 </div>
 
-{% include content_template %}
+<div class="endless_container">
+{% include proposals_template %}
+</div>
 
 {% endblock %}
