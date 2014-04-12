@@ -1,16 +1,30 @@
 {% load endless %}
 
-{% lazy_paginate proposals %}
+{% lazy_paginate 9 proposals %}
 {% for proposal in proposals %}
-<div class="row proposal {% cycle "row1" "row2" %}" id="proposal_row_{{ proposal.id }}">
-	<div class="col-xs-8">
-		<p><b><a href="/proposal/{{ proposal.id }}" class="proposalName">{{ proposal.title }}</a></b></p>
+
+{% if forloop.counter0|divisibleby:3 %}<div class="row">{% endif %}
+<div class="col-sm-4">
+<div class="proposal" id="proposal_{{ proposal.id }}">
+	<div class="proposalName">
+		<b><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}<span></span></a></b>
 	</div>
-	<div id="proposal_vote_div_{{ proposal.id }}">
-		<script language="Javascript">
-			setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
-		</script>
+	<div class="votes">
+		<div class="votesUp">{{ proposal.get_votes_up_count }} for</div>
+		<div class="votesDown">{{ proposal.get_votes_down_count }} against</div>
+	</div> <!-- /.votes -->
+	<div class="submissionTime">
+		{{ proposal.submissionDateTime }}
 	</div>
-</div>
+</div><!-- /.proposal -->
+	
+	<!-- <div id="proposal_vote_div_{{ proposal.id }}">
+			<script language="Javascript">
+				setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
+			</script>
+		</div> -->
+
+</div> <!-- /.col -->
+{% if forloop.counter|divisibleby:3 %}</div><!-- /.row -->{% endif %}
 {% endfor %}
-{% show_more "Show more proposals" "Loading" %}
+{% show_more "Show more proposals" "..." %}

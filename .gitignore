@@ -5,3 +5,4 @@ local_settings.py
 db.sqlite3
 eusay/settings.py
 venv
+.DS_Store
