@@ -12,6 +12,7 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block style %}
+{{ block.super }}
 .textbox {
     background-color: rgb(240, 240, 240);
     padding: 8px;
@@ -80,7 +81,6 @@ hr {
 .voteDown {
     float: right;
     margin-top: 20px;
-}
 }
 {% endblock %}
 
