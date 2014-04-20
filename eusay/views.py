@@ -69,6 +69,11 @@ def about(request):
     user = _get_current_user(request)
     return render(request, "about.html", { 'user' : user})
 
+def profile(request, user_id):
+    current_user = _get_current_user(request)
+    profile = User.objects.get(sid=user_id)
+    return render(request, "profile.html", {'user' : current_user, 'profile' : profile})
+
 def submit(request):
     user = _get_current_user(request)
     if request.method == 'POST': # If the form has been submitted...

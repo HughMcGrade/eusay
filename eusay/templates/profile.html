@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ profile.name }}</h2>
+<p>Join date: {{ profile.signUpDate }}</p>
+{% if profile.candidateStatus == "None" %}
+<p>They don't have a special status.</p>
+{% else %}
+<p>Status: {{ profile.candidateStatus }}</p>
+{% endif %}
+{% endblock %}

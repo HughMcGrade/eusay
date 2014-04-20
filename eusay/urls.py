@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^get_comments/(?P<proposal_id>\d+)/(?P<field>\w+)', views.get_comments),
     url(r'^about/', views.about),
     url(r'^get_comments_count/(?P<proposal_id>\d+)/(?P<field>\w+)', views.get_comments_count),
+    url(r'^profile/(?P<user_id>s\d{7}$)', views.profile),
 )
