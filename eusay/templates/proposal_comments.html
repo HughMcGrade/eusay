@@ -1,14 +1,11 @@
-
-{% load endless %}
 {% load filters %}
 
-{% comment %} {% lazy_paginate 10 comments %} {% endcomment %}
 {% for comment in comments %}
 <div class="comment row">
     	
   <div class="col-xs-10">
     <p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
-    <p id="comment_{{ comment.id }}_text">{{ comment.text | urlize }}</p>
+    <p id="comment_{{ comment.id }}_text">{{ comment.text | replace_bad_words | urlize }}</p>
   </div>
   <div id="comment_vote_div_{{ comment.id }}" class="col-xs-2 commentVotes">
     {{ comment|comment_user_vote:user }}
@@ -33,7 +30,7 @@
 
   {% if comment.get_replies %}
   <div id="replies_{{ comment.id }}_collapsible" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
-    {{ comment|comment_replies:request }}
+    {{ comment | comment_replies:request }}
   </div>
   
   {% endif %}
@@ -54,4 +51,3 @@
   <hr />
 </div>
 {% endfor %}
-{% comment %} {% show_more "Show more comments" "..." %} {% endcomment %}
