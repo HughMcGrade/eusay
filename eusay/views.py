@@ -30,7 +30,7 @@ def _generate_new_user(request):
     request.session['user_sid'] = user.sid
     return user
 
-def _get_current_user(request):
+def get_current_user(request):
     user_sid = request.session.get('user_sid', None)
     if not user_sid:
         return _generate_new_user(request)
@@ -49,10 +49,10 @@ def get_users(request):
     return HttpResponse(s)
 
 def index(request):
-    user = _get_current_user(request)
+    user = get_current_user(request)
     template = "index.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
-    proposals = sorted(Proposal.objects.all(), key = lambda p: p.getScore())
+    proposals = sorted(Proposal.objects.all(), key = lambda p: p.get_score())
     proposals.reverse()
     context = {
         "proposals": proposals,
@@ -66,7 +66,7 @@ def index(request):
     return render(request, template, context)
     
 def about(request):
-    user = _get_current_user(request)
+    user = get_current_user(request)
     return render(request, "about.html", { 'user' : user})
 
 def profile(request, user_id):
@@ -75,7 +75,7 @@ def profile(request, user_id):
     return render(request, "profile.html", {'user' : current_user, 'profile' : profile})
 
 def submit(request):
-    user = _get_current_user(request)
+    user = get_current_user(request)
     if request.method == 'POST': # If the form has been submitted...
         form = ProposalForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
@@ -93,41 +93,36 @@ def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
 
 def proposal(request, proposalId):
-    user = _get_current_user(request)
+    user = get_current_user(request)
     proposal = Proposal.objects.get(id=proposalId)
-    comments = Comment.objects.all().filter(proposal = proposal)
-    action_comments = comments.filter(field = "action")
-    background_comments = comments.filter(field = "background")
-    beliefs_comments = comments.filter(field = "beliefs")
+    comments = Comment.objects.all().filter(proposal = proposal).filter(replyTo = None)
 
     # TODO duplication currently for graceful deprecation
     
+    #if request.is_ajax():
+    #    return render(request, "proposal_comments.html", {"proposal" : proposal, "comments" : comments, "user": user })
+
     if request.method == 'POST': # If the form has been submitted...
         form = CommentForm(request.POST) # A form bound to the POST data
-        if "actionComment" in request.POST:
-            commentType = "action"
-        elif "backgroundComment" in request.POST:
-            commentType = "background"
-        elif "beliefsComment" in request.POST:
-            commentType = "beliefs"
-
+        comment = form.save(commit=False)
+        if 'reply_to' in request.POST and request.POST['reply_to']:
+            # Comment is a reply
+            comment.replyTo = Comment.objects.get(id = request.POST['reply_to'])
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data
-            comment = form.save(commit=False)
             comment.user = user
             comment.date = datetime.datetime.now()
             comment.proposal = proposal
-            comment.field = commentType
             comment.save()
-            return HttpResponseRedirect('/thanks/') # Redirect after POST
-    else:
-        form = CommentForm() # An unbound form
-        return render(request, "proposal.html", {"form": form, "proposal": proposal, "action_comments" : action_comments, "background_comments" : background_comments, "beliefs_comments" : beliefs_comments, "user" : user})
+            #return HttpResponseRedirect('/thanks/') # Redirect after POST
+    
+    form = CommentForm() # An unbound form
+    return render(request, "proposal.html", {"form": form, "proposal": proposal, "comments" : comments, "user" : user, "comments_template" : "proposal_comments.html"})
 
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
-    user = _get_current_user(request)
+    user = get_current_user(request)
     
     # Check if they have already voted
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
@@ -171,7 +166,7 @@ def vote_proposal(request, ud, proposal_id):
 
 def vote_comment(request, ud, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
-    user = _get_current_user(request)
+    user = get_current_user(request)
     # Check if they have already voted
     if CommentVote.objects.all().filter(comment = comment).filter(user = user).count() == 1:
         # Has already voted
@@ -215,38 +210,10 @@ def vote_comment(request, ud, comment_id):
     
     return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
 
-def post_comment(request, proposal_id, field):
-    user = _get_current_user(request)
-    proposal = Proposal.objects.get(id=proposal_id)
-    
-    form = CommentForm(request.POST) # A form bound to the POST data
-    if "actionComment" in request.POST:
-        commentType = "action"
-    elif "backgroundComment" in request.POST:
-        commentType = "background"
-    elif "beliefsComment" in request.POST:
-        commentType = "beliefs"
-
-    if form.is_valid(): # All validation rules pass
-        # Process the data in form.cleaned_data
-        comment = form.save(commit=False)
-        comment.user = user
-        comment.date = datetime.datetime.now()
-        comment.proposal = proposal
-        comment.field = commentType
-        comment.save()
-    else:
-        # TODO Invalid comment?
-        pass
-    
-    return get_comments(request, proposal_id, field)
-    
-def get_comments(request, proposal_id, field):
+def get_comments(request, proposal_id, reply_to):
     proposal = Proposal.objects.all().get(id = proposal_id)
-    comments = Comment.objects.all().filter(proposal=proposal).filter(field=field)
-    return HttpResponse(render_to_string("comments.html", { "comments" : comments }))
-
-def get_comments_count(request, proposal_id, field):
-    proposal = Proposal.objects.all().get(id = proposal_id)
-    count = Comment.objects.all().filter(proposal=proposal).filter(field=field).count()
-    return HttpResponse(str(count) + " comments")
+    comments = Comment.objects.all().filter(proposal=proposal)
+    form = CommentForm() # An unbound form
+    if reply_to:
+        comments = comments.filter(replyTo = reply_to)
+    return render(request, "proposal_comments.html", { "comments" : comments, "request" : request, "user" : get_current_user(request), 'form' : form })

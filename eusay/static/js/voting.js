@@ -1,6 +1,28 @@
+/*
+// This could be used if the CSRF token is a problem
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}*/
+
 // Perform get request to 'url' and place the response inside 'div'
 function performSetDivAjaxGetRequest(url, div) {
-	$.ajax({
+    /*
+
+    // This could be used if the CSRF token is a problem
+    
+    var csrftoken = $.cookie("csrftoken");
+
+    $.ajaxSetup({
+	crossDomain: false, // obviates need for sameOrigin test
+	beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+		xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+	}
+    });*/
+
+    $.ajax({
 		type : "get",
 		url : url,
 		success : function(response) {
@@ -38,30 +60,15 @@ function setCommentVotesDiv(commentID, voteDiv) {
 	performSetDivAjaxGetRequest("/vote_comment/get/" + commentID, voteDiv);
 }
 
-// Post serialised 'form' (comments form) to 'postURL' and place the response inside 'commentDiv'
-function setCommentPost(form, commentDiv, postURL) {
-	var frm = $(form);
-	frm.submit(function() {
-		$.ajax({
-			type : frm.attr('method'),
-			url : postURL,
-			data : frm.serialize(),
-			success : function(response) {
-				$(commentDiv).html(response);
-			},
-			error : function(response) {
-				//console.log(response);
-				$(commentDiv).html("Couldn't retrieve comments");
-			}
-		});
-		return false;
-	});
-}
-
-// Set comments ('commentDiv') and comments count('commentCountContainer') for field('field') on proposal ('proposalID') page
-function setProposalCommentField(proposalID, field, commentDiv, commentCountContainer) {
-	performSetDivAjaxGetRequest("/get_comments/" + proposalID + "/" + field, commentDiv);
-	performSetDivAjaxGetRequest("/get_comments_count/" + proposalID + "/" + field, commentCountContainer);
+// Reload 'commentsDiv' for proposal. For replies 'replyTo' should be non-null.
+function reloadComments(commentDiv, proposal, replyTo) {
+    if (replyTo == null) {
+	var ajaxUrl = "/get_comments/" + proposal;
+    }
+    else {
+	var ajaxUrl = "/get_comments/" + proposal + "/" + replyTo;
+    }
+    performSetDivAjaxGetRequest(ajaxUrl, commentDiv);
 }
 
 // Create a new user (for the current session user) and reload the page

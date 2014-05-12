@@ -1,0 +1,57 @@
+
+{% load endless %}
+{% load filters %}
+
+{% comment %} {% lazy_paginate 10 comments %} {% endcomment %}
+{% for comment in comments %}
+<div class="comment row">
+    	
+  <div class="col-xs-10">
+    <p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
+    <p id="comment_{{ comment.id }}_text">{{ comment.text | urlize }}</p>
+  </div>
+  <div id="comment_vote_div_{{ comment.id }}" class="col-xs-2 commentVotes">
+    {{ comment|comment_user_vote:user }}
+  </div>
+
+  {% if comment.get_replies %}
+
+  <a id="replies_{{ comment.id }}_count" class="accordion-toggle" href="#replies_{{ comment.id }}_collapsible" data-toggle="collapse">
+    View {{ comment.get_replies|length}} Repl{{ comment.get_replies|pluralize:"y,ies"}}
+  </a>
+
+  {% if not comment.replyTo %} | {% endif %}
+
+  {% endif %}
+
+  {% if not comment.replyTo %}
+
+  <a id="reply_to_{{ comment.id }}_count" class="accordion-toggle" href="#reply_to_{{ comment.id }}_collapsible" data-toggle="collapse">Reply</a>
+  
+  {% endif %}
+  
+
+  {% if comment.get_replies %}
+  <div id="replies_{{ comment.id }}_collapsible" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
+    {{ comment|comment_replies:request }}
+  </div>
+  
+  {% endif %}
+  
+  {% if not comment.replyTo %}
+  <div id="reply_to_{{ comment.id }}_collapsible" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
+    <form id="reply_to_{{ comment.id }}_form" method="post" action="">
+      {% csrf_token %}
+      <div class="form-group">
+	{{ form.text }}
+	<input type="hidden" name="reply_to" id="reply_to" value="{{ comment.id }}" />
+      </div>
+      <button type="post" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <hr />
+</div>
+{% endfor %}
+{% comment %} {% show_more "Show more comments" "..." %} {% endcomment %}

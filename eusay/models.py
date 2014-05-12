@@ -12,8 +12,8 @@ class Comment (models.Model):
     text = models.CharField(max_length=500)
     date = models.DateTimeField()
     user = models.ForeignKey("User")
-    field = models.CharField(max_length=20, null=False)
     proposal = models.ForeignKey("Proposal", null=False)
+    replyTo = models.ForeignKey("self", null=True)
     
     def _get_votes_count(self, isUp):
         try:
@@ -26,6 +26,12 @@ class Comment (models.Model):
         
     def get_votes_down_count(self):
         return self._get_votes_count(False)
+
+    def get_replies(self):
+        return Comment.objects.filter(replyTo = self)
+
+    def get_score(self):
+        return get_votes_up_count() - get_votes_down_count()
 
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
@@ -65,21 +71,24 @@ class Proposal (models.Model):
     def _proximity_coefficient(self):
         return 1
     
-    def getScore(self):
+    def get_score(self):
+        
         score = 0
+        
+        # Take sum of weighted value for each comment
         comments = Comment.objects.all().filter(proposal=self)
         for comment in comments:
             score += self._weight_instance(hour_age = self._hours_since(comment.date)) * 4
         
         votes = ProposalVote.objects.all().filter(proposal=self)
         for vote in votes:
+            hour_age = self._hours_since(vote.date)
             if vote.isVoteUp:
-                score += self._weight_instance(hour_age = self._hours_since(vote.date)) * 2
+                score += self._weight_instance(hour_age) * 2
             else:
-                score += self._weight_instance(hour_age = self._hours_since(vote.date)) * 1
+                score += self._weight_instance(hour_age) * 1
         
-        vote_up_count = self.get_votes_up_count()
-        return score * self._proximity_coefficient() + (vote_up_count - self.get_votes_down_count())
+        return score * self._proximity_coefficient() + self.get_votes_up_count() - self.get_votes_down_count()
     
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal)
