@@ -15,3 +15,15 @@ class CommentForm (forms.ModelForm):
     class Meta:
     	model = Comment
     	fields = ['text']
+
+class HideCommentActionForm (forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textare(attrs={"class":"form-control", "rows":"3", "maxlength":"1999", "placeholder":"Why should this comment be removed?"}))
+    class Meta:
+        model = HideCommentAction
+        fields = ['reason']
+
+class HideProposalActionForm (forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textare(attrs={"class":"form-control", "rows":"3", "maxlength":"1999", "placeholder":"Why should this proposal be removed?"}))
+    class Meta:
+        model = HideProposalAction
+        fields = ['reason']

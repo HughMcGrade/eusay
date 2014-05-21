@@ -101,4 +101,15 @@ class User (models.Model):
     name = models.CharField(max_length=50)
     signUpDate = models.DateField()
     candidateStatus = models.CharField(max_length=20)
-    
+    isModerator = models.BooleanField(default=False)
+
+class HideAction (models.Model):
+    moderator = models.ForeignKey(User)
+    date = models.DateTimeField()
+    reason = models.CharField(max_length=2000)
+
+class HideCommentAction (HideAction):
+    comment = models.ForeignKey(Comment)
+
+class HideProposalAction (HideAction):
+    proposal = models.ForeignKey(Proposal)
