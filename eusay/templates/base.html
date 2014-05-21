@@ -70,6 +70,15 @@ body {
         <li><a href="/submit">Submit</a></li>
         <li><a href="/about">About</a></li>
       </ul>
+      <ul class="nav navbar-nav">
+	<li class="dropdown">
+	  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Moderation<b class="caret"></b></a>
+	<ul class="dropdown-menu">
+          <li><a href="/proposal_hides">Hidden Proposals</a></li>
+          <li><a href="/comment_hides">Hidden Comments</a></li>
+        </ul>
+	</li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Welcome, {{ user.name }} <b class="caret"></b></a>

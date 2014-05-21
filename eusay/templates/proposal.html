@@ -98,6 +98,13 @@ hr {
 
 {% block content %}
 
+{% if hide %}
+<h1>This proposal has been hidden: {{ hide.reason }}</h1>
+<br />
+<a id="unhide_link" class="accordion-toggle" href="#hide_accordion" data-toggle="collapse">View Proposal</a>
+<div id="hide_accordion" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
+{% endif %}
+
 <div class="row">
     <div class="column-xs-12">
     <h2>{{ proposal.title }}</h2>
@@ -109,6 +116,11 @@ hr {
 		    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
 	    </script>
     </div>
+    {% if user.isModerator and not hide%}
+    <div>
+      <a href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+    </div>
+    {% endif %}
     <div class="col-xs-8"></div>
 </div>
 
@@ -169,4 +181,11 @@ hr {
     </div>
   </div>
 </div>
+
+{% if hide %}
+
+</div>
+
+{% endif %}
+
 {% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table table-striped">
+<thead>
+  <th>Proposal</th>
+  <th>Reason</th>
+  <th>Moderator</th>
+  <th>Date</th>
+</thead>
+<tbody>
+  {% for h in hiddens %}
+  <tr>
+    <td>
+      <a href="/proposal/{{h.proposal.id}}">{{ h.proposal.title }}</a>
+    </td>
+    <td>
+      {{ h.reason }}
+    </td>
+    <td>
+      {{ h.moderator.name }}
+    </td>
+    <td>
+      {{ h.date }}
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

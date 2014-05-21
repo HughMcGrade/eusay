@@ -3,11 +3,11 @@
 {% for comment in comments %}
 <div class="comment row">
     	
-  <div class="col-xs-10">
+  <div class="col-xs-9">
     <p class="authorInfo">{{comment.user.name }}, {{comment.date }}</p>
     <p id="comment_{{ comment.id }}_text">{{ comment.text | replace_bad_words | urlize }}</p>
   </div>
-  <div id="comment_vote_div_{{ comment.id }}" class="col-xs-2 commentVotes">
+  <div id="comment_vote_div_{{ comment.id }}" class="col-xs-3 commentVotes">
     {{ comment|comment_user_vote:user }}
   </div>
 
@@ -17,13 +17,26 @@
     View {{ comment.get_replies|length}} Repl{{ comment.get_replies|pluralize:"y,ies"}}
   </a>
 
-  {% if not comment.replyTo %} | {% endif %}
+  {% if not comment.replyTo %} |
+  {% else %}
+  | <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  {% endif %}
+
+  {% elif comment.replyTo %}
+
+  {% if user.isModerator %}
+  <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  {% endif %}
 
   {% endif %}
 
   {% if not comment.replyTo %}
 
   <a id="reply_to_{{ comment.id }}_count" class="accordion-toggle" href="#reply_to_{{ comment.id }}_collapsible" data-toggle="collapse">Reply</a>
+  
+  {% if user.isModerator %}
+  | <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  {% endif %}
   
   {% endif %}
   

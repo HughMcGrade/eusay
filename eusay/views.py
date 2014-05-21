@@ -12,13 +12,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
-from eusay.forms import ProposalForm, CommentForm
+from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
-    Comment
+    Comment, HideCommentAction, HideProposalAction
 
 import random
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50)]
+
+def _render_message(request, title, message):
+    return render(request, "message.html", { "title" : title, "message" : message })
 
 def _generate_new_user(request):
     user = User()
@@ -52,7 +55,7 @@ def index(request):
     user = get_current_user(request)
     template = "index.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
-    proposals = sorted(Proposal.objects.all(), key = lambda p: p.get_score())
+    proposals = sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
     proposals.reverse()
     context = {
         "proposals": proposals,
@@ -95,8 +98,12 @@ def thanks(request):
 def proposal(request, proposalId):
     user = get_current_user(request)
     proposal = Proposal.objects.get(id=proposalId)
-    comments = Comment.objects.all().filter(proposal = proposal).filter(replyTo = None)
-
+    '''
+    # For sorted:
+    comments = sorted([c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = None) if not c.is_hidden()], key=lambda c: c.get_score())
+    comments.reverse()
+    '''
+    comments = [c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = None) if not c.is_hidden()]
     # TODO duplication currently for graceful deprecation
     
     #if request.is_ajax():
@@ -116,8 +123,12 @@ def proposal(request, proposalId):
             comment.save()
             #return HttpResponseRedirect('/thanks/') # Redirect after POST
     
+    hide = None
+    if proposal.is_hidden():
+        hide = HideProposalAction.objects.all().get(proposal=proposal)
+
     form = CommentForm() # An unbound form
-    return render(request, "proposal.html", {"form": form, "proposal": proposal, "comments" : comments, "user" : user, "comments_template" : "proposal_comments.html"})
+    return render(request, "proposal.html", {"form": form, "proposal": proposal, "comments" : comments, "user" : user, "comments_template" : "proposal_comments.html", "hide" : hide})
 
 def vote_proposal(request, ud, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
@@ -212,8 +223,70 @@ def vote_comment(request, ud, comment_id):
 
 def get_comments(request, proposal_id, reply_to):
     proposal = Proposal.objects.all().get(id = proposal_id)
-    comments = Comment.objects.all().filter(proposal=proposal)
     form = CommentForm() # An unbound form
     if reply_to:
-        comments = comments.filter(replyTo = reply_to)
+        '''
+        # For sorted:
+        comments = sorted([c for c in comments.filter(replyTo = reply_to) if not c.is_hidden()])
+        comments.reverse()'''
+        comments = [c for c in Comment.objects.all().filter(proposal=proposal).filter(replyTo = reply_to) if not c.is_hidden()]
+    else:
+        comments = [c for c in Comment.objects.all().filter(proposal=proposal) if not c.is_hidden()]
     return render(request, "proposal_comments.html", { "comments" : comments, "request" : request, "user" : get_current_user(request), 'form' : form })
+
+def hide_comment(request, comment_id):
+    user = get_current_user(request)
+    if not user.isModerator:
+        return _render_message(request, "Error", "Only moderators may hide comments")
+    else:
+        comment = Comment.objects.all().get(id = comment_id)
+        if request.method == "POST":
+            form = HideCommentActionForm(request.POST)
+            if form.is_valid():
+                hide_action = form.save(commit=False)
+                hide_action.moderator = user
+                hide_action.date = datetime.datetime.now()
+                hide_action.comment = comment
+                hide_action.save()
+                return _render_message(request, "Hidden", "The comment has been hidden and the hide action logged")
+            else:
+                # TODO Could improve handling of invalid form, though it is unlikely here
+                return _render_message(request, "Error", "Invalid hide comment form")
+        form = HideCommentActionForm()
+        return render(request, "hide_comment_form.html", { "comment" : comment, "form" : form })
+
+def hide_proposal(request, proposal_id):
+    user = get_current_user(request)
+    if not user.isModerator:
+        return _render_error(request, "Only moderators may hide proposals")
+    else:
+        proposal = Proposal.objects.all().get(id = proposal_id)
+        if request.method == "POST":
+            form = HideProposalActionForm(request.POST)
+            if form.is_valid():
+                hide_action = form.save(commit=False)
+                hide_action.moderator = user
+                hide_action.date = datetime.datetime.now()
+                hide_action.proposal = proposal
+                hide_action.save()
+                return _render_message(request, "Hidden", "The proposal has been hidden and the hide action logged")
+            else:
+                # TODO Could improve handling of invalid form, though it is unlikely here
+                return _render_message(request, "Error", "Invalid hide proposal form")
+        form = HideProposalActionForm()
+        return render(request, "hide_proposal_form.html", { "proposal" : proposal, "form" : form })
+
+def comment_hides(request):
+    hiddens = HideCommentAction.objects.all()
+    return render(request, "hidden_comment_list.html", { "hiddens" : hiddens })
+
+def proposal_hides(request):
+    hiddens = HideProposalAction.objects.all()
+    return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
+
+# Temporary for debugging
+def make_mod(request):
+    user = get_current_user(request)
+    user.isModerator = True
+    user.save()
+    return _render_message(request, "Temporary", "You are now a moderator")

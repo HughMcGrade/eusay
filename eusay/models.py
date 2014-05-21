@@ -31,7 +31,10 @@ class Comment (models.Model):
         return Comment.objects.filter(replyTo = self)
 
     def get_score(self):
-        return get_votes_up_count() - get_votes_down_count()
+        return self.get_votes_up_count() - self.get_votes_down_count()
+
+    def is_hidden(self):
+        return HideCommentAction.objects.all().filter(comment=self).exists()
 
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
@@ -89,6 +92,9 @@ class Proposal (models.Model):
                 score += self._weight_instance(hour_age) * 1
         
         return score * self._proximity_coefficient() + self.get_votes_up_count() - self.get_votes_down_count()
+
+    def is_hidden(self):
+        return HideProposalAction.objects.all().filter(proposal=self).exists()
     
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal)
