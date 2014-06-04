@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from eusay.views import get_current_user
 from eusay.forms import CommentForm
 from django.conf import settings
+import re
 
 register = template.Library()
 
@@ -31,7 +32,11 @@ def comment_replies(comment, request):
 def replace_bad_words(value):
     #Replaces profanities in strings with safe words
     # For instance, "shit" becomes "s--t"
-    bad_words_seen = [w for w in settings.PROFANITIES_LIST if w in value.lower()]
+    words = re.sub("[^\w]", " ", value).split()
+    bad_words_seen = []
+    for word in words:
+        if word.lower() in settings.PROFANITIES_LIST:
+            bad_words_seen.append(word)
     if bad_words_seen:
         for word in bad_words_seen:
             value = value.replace(word, "%s%s%s" % (word[0], '-'*(len(word)-2), word[-1]))
