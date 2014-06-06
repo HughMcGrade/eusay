@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'eusay',
     'endless_pagination',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,6 +66,12 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'eusay.urls'
 
 WSGI_APPLICATION = 'eusay.wsgi.application'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny', # TODO: permissions for API access. for now, allow any
+    )
+}
 
 
 # Database
