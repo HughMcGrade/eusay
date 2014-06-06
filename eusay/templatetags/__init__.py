@@ -1,6 +1,8 @@
 from django.conf import settings
+import os
 
-text_file = open("badwords.txt", "r")
+file_location = os.path.join(settings.BASE_DIR, "badwords.txt")
+text_file = open(file_location, "r")
 lines = text_file.readlines()
 for line in lines:
     line = line[:-1]

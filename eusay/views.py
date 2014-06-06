@@ -4,13 +4,14 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 
-import datetime
-
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
+
+from rest_framework import generics
+from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentSerializer
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -26,8 +27,10 @@ def _render_message(request, title, message):
 def _generate_new_user(request):
     user = User()
     user.name = get_rand_name()
-    user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
-    user.signUpDate = datetime.datetime.now()
+    if not User.objects.all():
+        user.sid = "s1"
+    else:
+        user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
     user.candidateStatus = "None"
     user.save()
     request.session['user_sid'] = user.sid
@@ -85,7 +88,6 @@ def submit(request):
             # Process the data in form.cleaned_data
             proposal = form.save(commit=False)
             proposal.proposer = user
-            proposal.submissionDateTime = datetime.datetime.now()
             proposal.save()
             return HttpResponseRedirect('/proposal/'+str(proposal.id)) # Redirect after POST
     else:
@@ -118,7 +120,6 @@ def proposal(request, proposalId):
         if form.is_valid(): # All validation rules pass
             # Process the data in form.cleaned_data
             comment.user = user
-            comment.date = datetime.datetime.now()
             comment.proposal = proposal
             comment.save()
             #return HttpResponseRedirect('/thanks/') # Redirect after POST
@@ -170,7 +171,6 @@ def vote_proposal(request, ud, proposal_id):
     
     new_vote.user = user
     new_vote.proposal = proposal
-    new_vote.date = datetime.datetime.now()
     new_vote.save()
     
     return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
@@ -216,7 +216,6 @@ def vote_comment(request, ud, comment_id):
     
     new_vote.user = user
     new_vote.comment = comment
-    new_vote.date = datetime.datetime.now()
     new_vote.save()
     
     return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
@@ -245,7 +244,6 @@ def hide_comment(request, comment_id):
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
-                hide_action.date = datetime.datetime.now()
                 hide_action.comment = comment
                 hide_action.save()
                 return _render_message(request, "Hidden", "The comment has been hidden and the hide action logged")
@@ -266,7 +264,6 @@ def hide_proposal(request, proposal_id):
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
-                hide_action.date = datetime.datetime.now()
                 hide_action.proposal = proposal
                 hide_action.save()
                 return _render_message(request, "Hidden", "The proposal has been hidden and the hide action logged")
@@ -290,3 +287,14 @@ def make_mod(request):
     user.isModerator = True
     user.save()
     return _render_message(request, "Temporary", "You are now a moderator")
+
+
+class ProposalList(generics.ListAPIView):
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalListSerializer
+    lookup_field = 'id'
+
+
+class ProposalDetail(generics.RetrieveAPIView):
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalDetailSerializer
