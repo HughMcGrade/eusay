@@ -14,7 +14,7 @@ See requirements.txt.
 Setup
 -----
 Navigate to the main eusay directory and run `python manage.py syncdb` to create the database.  
-If you want some example data, run `python manage.py loaddata exampledata`.  
+If you want some example data, run `python manage.py loaddata exampledata`.
 Set up a local server with `python manage.py runserver`.
 
 
@@ -24,8 +24,8 @@ To Do:
 * Markdown comments would be cool ([1][django_markdown])
 * Include proposer on proposals page/list
 * Add features for representatives and candidates
-* Right now the front page loads every proposal there is. Set up a page system or a nice AJAX load-on-scroll thing.
 * Set up EASE authentication ([1][ease1]) ([2][ease2]) ([This has to wait](#footnote1))
+* See [Trello](https://trello.com/b/yVdFBRrd/eusay) for more todos
 
 
 Questions
