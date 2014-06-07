@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load filters %}
 
 {% block js %}
 
@@ -94,6 +95,12 @@ hr {
     float: right;
     margin-top: 20px;
 }
+.textbox img, .comment img {
+    max-width: 50%;
+}
+.textbox blockquote {
+    font-size: 14px;
+}
 {% endblock %}
 
 {% block content %}
@@ -134,7 +141,7 @@ hr {
 <div class="row">
     <div class="col-xs-12">
         <div class="textbox">
-            <p>{{ proposal.actionDescription }}</p>
+            <p>{{ proposal.actionDescription|my_markdown }}</p>
         </div>
     </div>
 </div>
@@ -147,7 +154,7 @@ hr {
 <div class="row">
     <div class="col-xs-12">
         <div class="textbox">
-            <p>{{ proposal.backgroundDescription }}</p>
+            <p>{{ proposal.backgroundDescription|my_markdown }}</p>
         </div>
     </div>
 </div>
@@ -160,7 +167,7 @@ hr {
 <div class="row">
     <div class="col-xs-12">
         <div class="textbox">
-            <p>{{ proposal.beliefsDescription }}</p>
+            <p>{{ proposal.beliefsDescription|my_markdown }}</p>
         </div>
     </div>
 </div>

@@ -1,14 +1,17 @@
 from django import template
 from eusay.models import CommentVote
 from django.template.loader import render_to_string
+from django.template.defaultfilters import stringfilter
+from django.utils.safestring import mark_safe
 from eusay.views import get_current_user
 from eusay.forms import CommentForm
 from django.conf import settings
 import re
+import markdown
 
 register = template.Library()
 
-@register.filter(name='comment_user_vote')
+@register.filter
 def comment_user_vote(comment, user):
     try:
         vote = CommentVote.objects.all().filter(comment = comment).get(user = user)
@@ -22,13 +25,14 @@ def comment_user_vote(comment, user):
         user_vote = -1
     return render_to_string('comment_votes.html', { 'comment' : comment, 'user_vote' : user_vote })
 
-@register.filter(name='comment_replies')
+@register.filter
 def comment_replies(comment, request):
     user = get_current_user(request)
     form = CommentForm() # An unbound form
     return render_to_string('proposal_comments.html', { 'request' : request, 'comments': comment.get_replies(), 'user' : user, 'form' : form })
 
-@register.filter("replace_bad_words")
+@register.filter
+@stringfilter
 def replace_bad_words(value):
     #Replaces profanities in strings with safe words
     # For instance, "shit" becomes "s--t"
@@ -41,3 +45,12 @@ def replace_bad_words(value):
         for word in bad_words_seen:
             value = value.replace(word, "%s%s%s" % (word[0], '-'*(len(word)-2), word[-1]))
     return value
+
+@register.filter(is_safe=True)
+@stringfilter
+def my_markdown(value):
+    extensions = ["nl2br", ]
+    return mark_safe(markdown.markdown(value,
+                                       extensions,
+                                       safe_mode=True,
+                                       enable_attributes=False))

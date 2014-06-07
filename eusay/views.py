@@ -85,11 +85,12 @@ def submit(request):
     if request.method == 'POST': # If the form has been submitted...
         form = ProposalForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data
             proposal = form.save(commit=False)
             proposal.proposer = user
             proposal.save()
             return HttpResponseRedirect('/proposal/'+str(proposal.id)) # Redirect after POST
+        else:
+            return HttpResponse(form.errors)
     else:
         form = ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form, 'user': user})
