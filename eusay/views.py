@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from rest_framework import generics
-from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentSerializer
+from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -289,12 +289,56 @@ def make_mod(request):
     return _render_message(request, "Temporary", "You are now a moderator")
 
 
+class MultipleFieldLookupMixin(object):
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+    def get_object(self):
+        queryset = self.get_queryset()                  # Get the base queryset
+        queryset = self.filter_queryset(queryset)       # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            filter[field] = self.kwargs[field]
+        return get_object_or_404(queryset, **filter)    # Lookup the object
+
+
 class ProposalList(generics.ListAPIView):
+    """
+    View a list of proposals.
+    """
     queryset = Proposal.objects.all()
     serializer_class = ProposalListSerializer
-    lookup_field = 'id'
-
+    paginate_by = 5
 
 class ProposalDetail(generics.RetrieveAPIView):
+    """
+    View a proposal's details.
+    """
     queryset = Proposal.objects.all()
     serializer_class = ProposalDetailSerializer
+    lookup_field = 'id' # proposal id
+
+
+class CommentList(generics.ListAPIView):
+    """
+    View the comments of a specific proposal.
+    """
+    lookup_field = 'id' # proposal id
+    serializer_class = CommentListSerializer
+    def get_queryset(self):
+        """
+        This view should return a list of all the comments
+        for a particular proposal.
+        """
+        proposalId = self.kwargs['id'] # kwarg from URL
+        return Comment.objects.filter(proposal__id=proposalId)
+
+
+class CommentDetail(generics.RetrieveAPIView):
+    """
+    View a single comment.
+    """
+    serializer_class = CommentDetailSerializer
+    queryset = Comment.objects.all()
+    lookup_field = 'id' # comment id
