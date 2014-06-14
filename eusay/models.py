@@ -106,7 +106,7 @@ class Proposal (models.Model):
         return Comment.objects.filter(proposal=self)
     
 class ProposalVote (Vote):
-    proposal = models.ForeignKey(Proposal)
+    proposal = models.ForeignKey(Proposal, )
     
 class CommentVote (Vote):
     comment = models.ForeignKey(Comment)
@@ -123,8 +123,14 @@ class HideAction (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 
+    def save(self, *args, **kwargs):
+        if not self.moderator.isModerator:
+            raise Exception("Only moderators may perform hide actions!")
+        else:
+            super(HideAction, self).save()
+
 class HideCommentAction (HideAction):
-    comment = models.ForeignKey(Comment)
+    comment = models.ForeignKey(Comment, related_name="hideActions")
 
 class HideProposalAction (HideAction):
-    proposal = models.ForeignKey(Proposal)
+    proposal = models.ForeignKey(Proposal, related_name="hideActions")
