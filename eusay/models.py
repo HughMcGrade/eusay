@@ -22,7 +22,7 @@ class Comment (models.Model):
             return len(CommentVote.objects.all().filter(comment=self).filter(isVoteUp=isUp))
         except Exception:
             return 0
-            
+
     def get_votes_up_count(self):
         return self._get_votes_count(True)
         
@@ -106,10 +106,10 @@ class Proposal (models.Model):
         return Comment.objects.filter(proposal=self)
     
 class ProposalVote (Vote):
-    proposal = models.ForeignKey(Proposal, )
+    proposal = models.ForeignKey(Proposal, related_name="votes")
     
 class CommentVote (Vote):
-    comment = models.ForeignKey(Comment)
+    comment = models.ForeignKey(Comment, related_name="votes")
     
 class User (models.Model):
     sid = models.CharField(max_length=20, primary_key=True)
