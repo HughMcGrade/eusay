@@ -295,17 +295,6 @@ def search(request):
     return render(request, "search/search.html", {"user": user, "results": results})
 
 
-def json_search(request):
-    results = []
-    if request.method == "GET":
-        if "q" in request.GET:
-            query = str(request.GET.get("q"))
-            searchqueryset = SearchQuerySet().all().filter(content=query)
-            results = [x.title for x in searchqueryset]
-    results_json = json.dumps(results)
-    return HttpResponse(results_json, mimetype="application/json")
-
-
 # Temporary for debugging
 # TODO: remove this when users + mods are implemented
 def make_mod(request):
