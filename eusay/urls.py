@@ -30,4 +30,6 @@ urlpatterns = patterns('',
     url(r'^comment_hides', views.comment_hides),
     url(r'^proposal_hides', views.proposal_hides),
     url(r'^make_mod', views.make_mod),
+    # url(r'^similar_proposals/$', views.get_similar_proposals),
+    url(r'^search/', views.search)
 )

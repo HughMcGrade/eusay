@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 
 from rest_framework import generics
 from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
+from haystack.query import SearchQuerySet
+from haystack.views import SearchView, search_view_factory
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -281,6 +283,21 @@ def comment_hides(request):
 def proposal_hides(request):
     hiddens = HideProposalAction.objects.all()
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
+
+
+# def get_similar_proposals(request):
+
+def search(request):
+    user = get_current_user(request)
+    query = str(request.GET.get("q"))
+
+    results = SearchQuerySet().all().filter(content=query)
+    view = search_view_factory(
+        view_class=SearchView,
+        searchqueryset=SearchQuerySet().all(),
+        form_class="SearchForm"
+    )
+    return render(request, "search/search.html", {"user": user, "results": results})
 
 # Temporary for debugging
 def make_mod(request):
