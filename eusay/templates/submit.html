@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 
+{% block js %}
+<!--<script>
+$.ajax({
+    url: "/api/search?q=",
+    success: function(response) {
+        // $(div).html(response);
+        alert("yeah " + response);
+    },
+    dataType: json
+})
+$("#title").focusout(function() {
+    $("#similar").text
+})
+</script>-->
+{% endblock %}
+
 {% block content %}
 <form method="post" action="">
   {% csrf_token %}
@@ -7,6 +23,9 @@
   <div class="form-group">
     <label for="title">Title</label>
     {{ form.title }}
+  </div>
+
+  <div id="similar">
   </div>
 
   <div class="form-group">

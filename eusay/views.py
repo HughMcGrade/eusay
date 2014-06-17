@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
+import json
 
 from rest_framework import generics
 from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
@@ -285,21 +286,28 @@ def proposal_hides(request):
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
 
 
-# def get_similar_proposals(request):
-
 def search(request):
     user = get_current_user(request)
-    query = str(request.GET.get("q"))
-
-    results = SearchQuerySet().all().filter(content=query)
-    view = search_view_factory(
-        view_class=SearchView,
-        searchqueryset=SearchQuerySet().all(),
-        form_class="SearchForm"
-    )
+    if request.method == "GET":
+        if "q" in request.GET:
+            query = str(request.GET.get("q"))
+            results = SearchQuerySet().all().filter(content=query)
     return render(request, "search/search.html", {"user": user, "results": results})
 
+
+def json_search(request):
+    results = []
+    if request.method == "GET":
+        if "q" in request.GET:
+            query = str(request.GET.get("q"))
+            searchqueryset = SearchQuerySet().all().filter(content=query)
+            results = [x.title for x in searchqueryset]
+    results_json = json.dumps(results)
+    return HttpResponse(results_json, mimetype="application/json")
+
+
 # Temporary for debugging
+# TODO: remove this when users + mods are implemented
 def make_mod(request):
     user = get_current_user(request)
     user.isModerator = True
@@ -335,21 +343,22 @@ class ProposalDetail(generics.RetrieveAPIView):
     """
     queryset = Proposal.objects.all()
     serializer_class = ProposalDetailSerializer
-    lookup_field = 'id' # proposal id
+    lookup_field = 'id'  # proposal id
 
 
 class CommentList(generics.ListAPIView):
     """
     View the comments of a specific proposal.
     """
-    lookup_field = 'id' # proposal id
+    lookup_field = 'id'  # proposal id
     serializer_class = CommentListSerializer
+
     def get_queryset(self):
         """
         This view should return a list of all the comments
         for a particular proposal.
         """
-        proposalId = self.kwargs['id'] # kwarg from URL
+        proposalId = self.kwargs['id']  # kwarg from URL
         return Comment.objects.filter(proposal__id=proposalId)
 
 
@@ -359,4 +368,27 @@ class CommentDetail(generics.RetrieveAPIView):
     """
     serializer_class = CommentDetailSerializer
     queryset = Comment.objects.all()
-    lookup_field = 'id' # comment id
+    lookup_field = 'id'  # comment id
+
+
+class SearchResults(generics.ListAPIView):
+    serializer_class = ProposalListSerializer
+    # TODO: add pagination here! otherwise this could get huge. important.
+    # paginate_by = 3 #  this breaks the view because you can't get the len() of a generator.
+    def get_queryset(self):
+        """
+        Return search results.
+        """
+        def to_queryset(searchqueryset):
+            """
+            This helper function converts a SearchQuerySet (from the search)
+            into a QuerySet.
+            """
+            for item in searchqueryset:
+                yield item.object
+
+        queryset = Proposal.objects.none()  # empty queryset by default
+        query = self.request.QUERY_PARAMS.get('q')
+        if query:
+            queryset = to_queryset(SearchQuerySet().all().filter(content=query))
+        return queryset
