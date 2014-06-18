@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 
 {% block js %}
-<!--<script>
-$.ajax({
-    url: "/api/search?q=",
-    success: function(response) {
-        // $(div).html(response);
-        alert("yeah " + response);
-    },
-    dataType: json
-})
-$("#title").focusout(function() {
-    $("#similar").text
-})
-</script>-->
+<script>
+// $.ajax({
+//     url: "/api/search?q=",
+//     success: function(response) {
+//         // $(div).html(response);
+//         alert("yeah " + response);
+//     },
+//     dataType: json
+// });
+$(document).ready(function() {
+    $("#title").change(function() {
+        var query = $("#title").val();
+        $.getJSON("/api/search?format=json&q=" + query, function(data) {
+            var output = "<ul>";
+            for (var i in data.results) {
+                output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes</li>";
+            };
+            output += "</ul>";
+            if (data.count != 0) {
+                $("#similarList").html(output);
+                $("#similar").fadeIn();
+            };
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block style %}
+{{ block.super }}
+#similar {
+    display: none;
+}
 {% endblock %}
 
 {% block content %}
@@ -25,7 +45,9 @@ $("#title").focusout(function() {
     {{ form.title }}
   </div>
 
-  <div id="similar">
+  <div id="similar" class="alert alert-info">
+      <p><b>Heads up!</b> These proposals might be similar to yours:</p>
+      <div id="similarList"></div>
   </div>
 
   <div class="form-group">

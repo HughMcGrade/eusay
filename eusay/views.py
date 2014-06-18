@@ -4,17 +4,14 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 
-from django import forms
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
-import json
 
 from rest_framework import generics
-from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
+from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
+    CommentListSerializer
 from haystack.query import SearchQuerySet
-from haystack.views import SearchView, search_view_factory
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -33,7 +30,7 @@ def _generate_new_user(request):
     if not User.objects.all():
         user.sid = "s1"
     else:
-        user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
+        user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
     user.candidateStatus = "None"
     user.save()
     request.session['user_sid'] = user.sid
@@ -48,8 +45,9 @@ def get_current_user(request):
 
 def add_user(request):
     user = _generate_new_user(request)
-    return HttpResponse(user.name)
+    return HttpResponse(user.name + ": " + user.sid)
 
+# TODO: remove this, since it's for debugging
 def get_users(request):
     users = User.objects.all()
     s = "Current user is " + request.session.get('user_sid', 'None!') + "<br />"
@@ -362,8 +360,7 @@ class CommentDetail(generics.RetrieveAPIView):
 
 class SearchResults(generics.ListAPIView):
     serializer_class = ProposalListSerializer
-    # TODO: add pagination here! otherwise this could get huge. important.
-    # paginate_by = 3 #  this breaks the view because you can't get the len() of a generator.
+    paginate_by = 5
     def get_queryset(self):
         """
         Return search results.
@@ -372,9 +369,10 @@ class SearchResults(generics.ListAPIView):
             """
             This helper function converts a SearchQuerySet (from the search)
             into a QuerySet.
+            We don't use a generator here because pagination requires that you can
+            take the len() of a list, a generators don't have a len().
             """
-            for item in searchqueryset:
-                yield item.object
+            return [item.object for item in searchqueryset]
 
         queryset = Proposal.objects.none()  # empty queryset by default
         query = self.request.QUERY_PARAMS.get('q')
