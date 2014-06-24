@@ -24,7 +24,7 @@ get_rand_name = lambda: rand_names[round((random.random() * 100) % 50)]
 def _render_message(request, title, message):
     return render(request, "message.html", { "title" : title, "message" : message })
 
-def _generate_new_user(request):
+def generate_new_user(request):
     user = User()
     user.name = get_rand_name()
     if not User.objects.all():
@@ -39,12 +39,12 @@ def _generate_new_user(request):
 def get_current_user(request):
     user_sid = request.session.get('user_sid', None)
     if not user_sid:
-        return _generate_new_user(request)
+        return generate_new_user(request)
     else:
         return User.objects.get(sid=user_sid)
 
 def add_user(request):
-    user = _generate_new_user(request)
+    user = generate_new_user(request)
     return HttpResponse(user.name)
 
 def get_users(request):
@@ -58,7 +58,7 @@ def index(request):
     user = get_current_user(request)
     template = "index.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
-    proposals = sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
+    proposals = Proposal.get_proposals()
     proposals.reverse()
     context = {
         "proposals": proposals,
@@ -103,10 +103,10 @@ def proposal(request, proposalId):
     proposal = Proposal.objects.get(id=proposalId)
     '''
     # For sorted:
-    comments = sorted([c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = None) if not c.is_hidden()], key=lambda c: c.get_score())
+    comments = sorted(proposal.get_visible_comments(), key=lambda c: c.get_score())
     comments.reverse()
     '''
-    comments = [c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = None) if not c.is_hidden()]
+    comments = proposal.get_visible_comments()
     # TODO duplication currently for graceful deprecation
     
     #if request.is_ajax():
@@ -224,14 +224,13 @@ def vote_comment(request, ud, comment_id):
 def get_comments(request, proposal_id, reply_to):
     proposal = Proposal.objects.all().get(id = proposal_id)
     form = CommentForm() # An unbound form
-    if reply_to:
-        '''
+    
+    '''
         # For sorted:
-        comments = sorted([c for c in comments.filter(replyTo = reply_to) if not c.is_hidden()])
+        comments = sorted(proposal.get_visible_comments(reply_to))
         comments.reverse()'''
-        comments = [c for c in Comment.objects.all().filter(proposal=proposal).filter(replyTo = reply_to) if not c.is_hidden()]
-    else:
-        comments = [c for c in Comment.objects.all().filter(proposal=proposal) if not c.is_hidden()]
+    comments = proposal.get_visible_comments(reply_to)
+    
     return render(request, "proposal_comments.html", { "comments" : comments, "request" : request, "user" : get_current_user(request), 'form' : form })
 
 def hide_comment(request, comment_id):
