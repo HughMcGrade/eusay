@@ -2,14 +2,7 @@
 
 {% block js %}
 <script>
-// $.ajax({
-//     url: "/api/search?q=",
-//     success: function(response) {
-//         // $(div).html(response);
-//         alert("yeah " + response);
-//     },
-//     dataType: json
-// });
+// find similar proposals
 $(document).ready(function() {
     $("#title").change(function() {
         var query = $("#title").val();
