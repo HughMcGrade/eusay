@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Search</h2>
+
+{% if results %}
+{% for result in results %}
+         <p>
+         <a href="/proposal/{{ result.object.id }}">{{ result.object.title }}</a>
+         </p>
+{% endfor %}
+{% else %}
+Nothing found!
+{% endif %}
+{% endblock %}

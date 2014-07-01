@@ -15,6 +15,7 @@ Setup
 -----
 Navigate to the main eusay directory and run `python manage.py syncdb` to create the database.  
 If you want some example data, run `python manage.py loaddata exampledata`.
+Run `python manage.py rebuild_index` to create a search index.
 Set up a local server with `python manage.py runserver`.
 
 

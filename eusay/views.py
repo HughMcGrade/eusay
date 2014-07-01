@@ -11,7 +11,9 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from rest_framework import generics
-from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
+from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
+    CommentListSerializer
+from haystack.query import SearchQuerySet
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
@@ -30,7 +32,7 @@ def generate_new_user(request):
     if not User.objects.all():
         user.sid = "s1"
     else:
-        user.sid = "s" + str(int(str(User.objects.all().last().sid)[1:]) + 1)
+        user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
     user.candidateStatus = "None"
     user.save()
     request.session['user_sid'] = user.sid
@@ -47,6 +49,7 @@ def add_user(request):
     user = generate_new_user(request)
     return HttpResponse(user.name)
 
+# TODO: remove this, since it's for debugging
 def get_users(request):
     users = User.objects.all()
     s = "Current user is " + request.session.get('user_sid', 'None!') + "<br />"
@@ -281,7 +284,18 @@ def proposal_hides(request):
     hiddens = HideProposalAction.objects.all()
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
 
+
+def search(request):
+    user = get_current_user(request)
+    if request.method == "GET":
+        if "q" in request.GET:
+            query = str(request.GET.get("q"))
+            results = SearchQuerySet().all().filter(content=query)
+    return render(request, "search/search.html", {"user": user, "results": results})
+
+
 # Temporary for debugging
+# TODO: remove this when users + mods are implemented
 def make_mod(request):
     user = get_current_user(request)
     user.isModerator = True
@@ -317,21 +331,22 @@ class ProposalDetail(generics.RetrieveAPIView):
     """
     queryset = Proposal.objects.all()
     serializer_class = ProposalDetailSerializer
-    lookup_field = 'id' # proposal id
+    lookup_field = 'id'  # proposal id
 
 
 class CommentList(generics.ListAPIView):
     """
     View the comments of a specific proposal.
     """
-    lookup_field = 'id' # proposal id
+    lookup_field = 'id'  # proposal id
     serializer_class = CommentListSerializer
+
     def get_queryset(self):
         """
         This view should return a list of all the comments
         for a particular proposal.
         """
-        proposalId = self.kwargs['id'] # kwarg from URL
+        proposalId = self.kwargs['id']  # kwarg from URL
         return Comment.objects.filter(proposal__id=proposalId)
 
 
@@ -341,4 +356,27 @@ class CommentDetail(generics.RetrieveAPIView):
     """
     serializer_class = CommentDetailSerializer
     queryset = Comment.objects.all()
-    lookup_field = 'id' # comment id
+    lookup_field = 'id'  # comment id
+
+
+class SearchResults(generics.ListAPIView):
+    serializer_class = ProposalListSerializer
+    paginate_by = 5
+    def get_queryset(self):
+        """
+        Return search results.
+        """
+        def to_queryset(searchqueryset):
+            """
+            This helper function converts a SearchQuerySet (from the search)
+            into a QuerySet.
+            We don't use a generator here because pagination requires that you can
+            take the len() of a list, a generators don't have a len().
+            """
+            return [item.object for item in searchqueryset]
+
+        queryset = Proposal.objects.none()  # empty queryset by default
+        query = self.request.QUERY_PARAMS.get('q')
+        if query:
+            queryset = to_queryset(SearchQuerySet().all().filter(content=query))
+        return queryset

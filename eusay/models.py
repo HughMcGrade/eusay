@@ -121,9 +121,15 @@ class CommentVote (Vote):
 class User (models.Model):
     sid = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    createdAt = models.DateField(auto_now_add=True)
+    createdAt = models.DateTimeField(default=datetime.datetime.now, editable=False)
     candidateStatus = models.CharField(max_length=20)
     isModerator = models.BooleanField(default=False)
+
+    def save(self):
+        if not self.sid:
+            self.createdAt = datetime.datetime.now()
+        super(User, self).save()
+
 
 class HideAction (models.Model):
     moderator = models.ForeignKey(User)

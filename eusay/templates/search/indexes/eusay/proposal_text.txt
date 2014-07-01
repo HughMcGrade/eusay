@@ -1,0 +1,4 @@
+{{ object.title }}
+{{ object.actionDescription }}
+{{ object.backgroundDescription }}
+{{ object.beliefsDescription }}
