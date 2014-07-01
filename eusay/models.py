@@ -41,6 +41,9 @@ class Comment (models.Model):
     def __unicode__(self):
         return "%s" % self.text
 
+    def get_visible_comments(self, proposal, reply_to=None):
+        return [c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = reply_to) if not c.is_hidden()]
+
 class Vote (models.Model):
     id = models.AutoField(primary_key=True)
     isVoteUp = models.BooleanField()
@@ -102,8 +105,12 @@ class Proposal (models.Model):
     def is_hidden(self):
         return HideProposalAction.objects.all().filter(proposal=self).exists()
 
-    def get_comments(self):
-        return Comment.objects.filter(proposal=self)
+    def get_visible_comments(self, reply_to=None):
+        return [c for c in self.comments.filter(replyTo = reply_to) if not c.is_hidden()]
+
+    @staticmethod
+    def get_proposals():
+        return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
     
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal, related_name="votes")
