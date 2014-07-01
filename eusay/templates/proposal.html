@@ -9,8 +9,6 @@
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 
 <script>
-
-
 $(document).ready(function() {
     $('form').each(function(index, form) {
 	$(form).ajaxForm({ complete : function() { 
@@ -18,89 +16,8 @@ $(document).ready(function() {
 	}});
     });
 });
-
-
 </script>
 
-{% endblock %}
-
-{% block style %}
-{{ block.super }}
-.textbox {
-    background-color: rgb(240, 240, 240);
-    padding: 8px;
-}
-h2, h3 {
-    margin-left: 0px;
-    padding-left: 8px;
-}
-.green {
-    color: green;
-}
-.red {
-    color: red;
-}
-.col-xs-1 {
-    margin: 5px 5px 5px 0px;
-    padding-left: 10px;
-}
-
-.green {
-    color: green;
-}
-.red {
-    color: red;
-}
-.proposal {
-    min-height: 80px;
-    border-left: 5px rgb(237, 23, 78) solid;
-    margin-bottom: 10px;
-}
-.proposalName {
-    color: black;
-    font-size: 1.4em
-}
-.row1 {
-    background-color: rgb(240, 240, 240);
-}
-.tri {
-    font-size: 1.3em;
-}
-.tri:hover {
-    color: grey;
-    text-decoration: none;
-}
-.col-xs-2 {
-    font-size: 1.5em;
-}
-.authorInfo {
-    color: grey;
-    font-size: 0.8em;
-    margin-bottom: 0.2em;
-    margin-top: 1em;
-}
-hr {
-    margin: 0px;
-    padding: 0px;
-}
-.commentVotes {
-    font-size: 1em;
-    text-align: center;
-}
-.voteUp {
-    float: left;
-    margin-top: 20px;
-}
-.voteDown {
-    float: right;
-    margin-top: 20px;
-}
-.textbox img, .comment img {
-    max-width: 50%;
-}
-.textbox blockquote {
-    font-size: 14px;
-}
 {% endblock %}
 
 {% block content %}
@@ -118,6 +35,11 @@ hr {
     </div>
 </div>
 <div class="row">
+    <div class="col-xs-12">
+        <p>Tags: {% for tag in proposal.tags.all %}<a class="tag" href="/tag/{{ tag.id }}">{{ tag.name }}</a>{% endfor %}</p>
+    </div>
+</div>
+<div class="row">
     <div id="proposal_vote_div_{{ proposal.id }}">
 	    <script language="Javascript">
 		    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
@@ -130,8 +52,6 @@ hr {
     {% endif %}
     <div class="col-xs-8"></div>
 </div>
-
-<hr />
 
 <div class="row">
     <div class="col-xs-12">

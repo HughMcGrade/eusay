@@ -17,7 +17,7 @@ from haystack.query import SearchQuerySet
 
 from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
-    Comment, HideCommentAction, HideProposalAction
+    Comment, HideCommentAction, HideProposalAction, Tag
 
 import random
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
@@ -100,6 +100,26 @@ def submit(request):
 
 def thanks(request):
     return HttpResponse(render_to_string("thanks.html"))
+
+
+def tag(request, tagId):
+    user = get_current_user(request)
+    tag = Tag.objects.get(id=tagId)
+    template = "tag.html" # main HTML
+    proposals_template = "index_proposals.html" # just the proposals
+    proposals = Proposal.get_proposals(tag=tag)
+    proposals.reverse()
+    context = {
+        "proposals": proposals,
+        "user" :  user,
+        "proposals_template": proposals_template,
+        "tag": tag,
+    }
+    # ajax requests only return the proposals, not the whole page
+    if request.is_ajax():
+        template = proposals_template
+    return render(request, template, context)
+
 
 def proposal(request, proposalId):
     user = get_current_user(request)

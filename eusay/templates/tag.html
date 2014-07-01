@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block js %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    $.endlessPaginate();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h2>Proposals tagged {{ tag.name }}</h2>
+  <p>{{ tag.description }}</p>
+</div>
+{% include proposals_template %}
+{% endblock %}

@@ -2,3 +2,4 @@
 {{ object.actionDescription }}
 {{ object.backgroundDescription }}
 {{ object.beliefsDescription }}
+{% for tag in object.tags.all %}{{ tag.name }} {% endfor %}

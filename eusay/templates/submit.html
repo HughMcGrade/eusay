@@ -22,13 +22,6 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 
-{% block style %}
-{{ block.super }}
-#similar {
-    display: none;
-}
-{% endblock %}
-
 {% block content %}
 <form method="post" action="">
   {% csrf_token %}

@@ -14,7 +14,5 @@ class ProposalIndex(indexes.SearchIndex, indexes.Indexable):
 
     # TODO: decide whether a proposal's comments should be included in its index.
 
-    # TODO: include tags/category fields in search template.
-
     def get_model(self):
         return Proposal
