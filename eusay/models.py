@@ -109,7 +109,7 @@ class Proposal (models.Model):
         return [c for c in self.comments.filter(replyTo = reply_to) if not c.is_hidden()]
 
     @staticmethod
-    def get_proposals():
+    def get_visible_proposals():
         return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
     
 class ProposalVote (Vote):

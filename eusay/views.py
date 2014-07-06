@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.contrib.sessions.backends.db import SessionStore
 
 from rest_framework import generics
 from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer, CommentListSerializer
@@ -19,7 +20,7 @@ from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
 
 import random
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
-get_rand_name = lambda: rand_names[round((random.random() * 100) % 50)]
+get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
 
 def _render_message(request, title, message):
     return render(request, "message.html", { "title" : title, "message" : message })
@@ -58,7 +59,7 @@ def index(request):
     user = get_current_user(request)
     template = "index.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
-    proposals = Proposal.get_proposals()
+    proposals = Proposal.get_visible_proposals()
     proposals.reverse()
     context = {
         "proposals": proposals,
@@ -229,8 +230,11 @@ def get_comments(request, proposal_id, reply_to):
         # For sorted:
         comments = sorted(proposal.get_visible_comments(reply_to))
         comments.reverse()'''
-    comments = proposal.get_visible_comments(reply_to)
-    
+    if reply_to:
+        comments = proposal.get_visible_comments(reply_to)
+    else:
+        comments = proposal.get_visible_comments()
+
     return render(request, "proposal_comments.html", { "comments" : comments, "request" : request, "user" : get_current_user(request), 'form' : form })
 
 def hide_comment(request, comment_id):
