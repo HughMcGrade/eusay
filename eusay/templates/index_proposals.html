@@ -5,24 +5,21 @@
 
 {% if forloop.counter0|divisibleby:3 %}<div class="row">{% endif %}
 <div class="col-sm-4">
-<div class="proposal" id="proposal_{{ proposal.id }}">
+<div class="proposalCard" id="proposal_{{ proposal.id }}">
 	<div class="proposalName">
 		<b><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}<span></span></a></b>
 	</div>
-	<div class="votes">
+	<div class="cardVotes">
 		<div class="votesUp">{{ proposal.get_votes_up_count }} for</div>
 		<div class="votesDown">{{ proposal.get_votes_down_count }} against</div>
 	</div> <!-- /.votes -->
+    <div class="cardTags">
+        Tags: {{ proposal.tags.all | join:", " }}
+    </div>
 	<div class="submissionTime">
-		{{ proposal.submissionDateTime }}
+		{{ proposal.createdAt | date:"j N Y" }}
 	</div>
 </div><!-- /.proposal -->
-	
-	<!-- <div id="proposal_vote_div_{{ proposal.id }}">
-			<script language="Javascript">
-				setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'))
-			</script>
-		</div> -->
 
 </div> <!-- /.col -->
 {% if forloop.counter|divisibleby:3 %}</div><!-- /.row -->{% endif %}

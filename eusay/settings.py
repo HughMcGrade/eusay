@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
 )
 
 # Quick-start development settings - unsuitable for production
@@ -34,8 +35,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-# TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
-# STATIC_URL = os.path.join(BASE_DIR, "static")
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 ALLOWED_HOSTS = []
 
@@ -50,8 +50,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eusay',
+
+    # Added
     'endless_pagination',
     'rest_framework',
+    'haystack',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -83,6 +86,22 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Search
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+"""
+Using a realtime signal processor means that the search index is updated every time a
+proposal is added or deleted. Since eusay is small, this should be fine - but
+if we have performance issues, we can use BaseSignalProcessor and manually run a cron
+job to rebuild the index every few hours or something.
+"""
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

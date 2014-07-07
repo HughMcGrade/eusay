@@ -50,6 +50,16 @@ class Vote (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey("User")
 
+
+class Tag(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)  # optional - but I think this might be a nice field to have
+
+    def __unicode__(self):
+        return self.name
+
+
 class Proposal (models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
@@ -59,6 +69,10 @@ class Proposal (models.Model):
     proposer = models.ForeignKey("User")#, related_name="proposed")
     createdAt = models.DateTimeField(auto_now_add=True, null=True)
     lastModified = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField(Tag, related_name="proposals")
+
+    def __unicode__(self):
+        return self.title
 
     def _get_votes_count(self, isUp):
         try:
@@ -109,9 +123,12 @@ class Proposal (models.Model):
         return [c for c in self.comments.filter(replyTo = reply_to) if not c.is_hidden()]
 
     @staticmethod
-    def get_visible_proposals():
-        return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
-    
+    def get_visible_proposals(tag=None):
+        if tag:
+            return sorted([p for p in tag.proposals.all() if not p.is_hidden()], key = lambda p: p.get_score())
+        else:
+            return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
+
 class ProposalVote (Vote):
     proposal = models.ForeignKey(Proposal, related_name="votes")
     
@@ -121,9 +138,18 @@ class CommentVote (Vote):
 class User (models.Model):
     sid = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    createdAt = models.DateField(auto_now_add=True)
+    createdAt = models.DateTimeField(default=datetime.datetime.now, editable=False)
     candidateStatus = models.CharField(max_length=20)
     isModerator = models.BooleanField(default=False)
+
+    def save(self):
+        if not self.sid:
+            self.createdAt = datetime.datetime.now()
+        super(User, self).save()
+
+    def __unicode__(self):
+        return self.name + " (" + self.sid + ")"
+
 
 class HideAction (models.Model):
     moderator = models.ForeignKey(User)

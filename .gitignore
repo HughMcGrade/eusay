@@ -7,3 +7,4 @@ eusay/settings.py
 venv
 .DS_Store
 .idea
+eusay/whoosh_index

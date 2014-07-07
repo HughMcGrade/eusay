@@ -6,7 +6,7 @@ class ProposalForm (forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",
                                                           "id": "title",
                                                           "maxlength": "100",
-                                                          "placeholder": "The title of your policy -"
+                                                          "placeholder": "The title of your policy - "
                                                                          "be as descriptive as possible."}))
     actionDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                                      "rows": "6",
