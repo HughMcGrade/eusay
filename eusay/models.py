@@ -142,7 +142,7 @@ class User (models.Model):
     candidateStatus = models.CharField(max_length=20)
     isModerator = models.BooleanField(default=False)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.sid:
             self.createdAt = datetime.datetime.now()
         super(User, self).save()

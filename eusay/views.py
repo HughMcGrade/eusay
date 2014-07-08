@@ -6,7 +6,7 @@ Created on 18 Feb 2014
 
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.sessions.backends.db import SessionStore
@@ -24,8 +24,8 @@ import random
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
 
-def _render_message(request, title, message):
-    return render(request, "message.html", { "title" : title, "message" : message })
+def _render_message_to_string(title, message):
+    return render_to_string("message.html", { "title" : title, "message" : message })
 
 def generate_new_user(request):
     user = User()
@@ -263,7 +263,7 @@ def get_comments(request, proposal_id, reply_to):
 def hide_comment(request, comment_id):
     user = get_current_user(request)
     if not user.isModerator:
-        return _render_message(request, "Error", "Only moderators may hide comments")
+        return HttpResponseForbidden(_render_message_to_string("Error", "Only moderators may hide comments"))
     else:
         comment = Comment.objects.all().get(id = comment_id)
         if request.method == "POST":
@@ -273,17 +273,17 @@ def hide_comment(request, comment_id):
                 hide_action.moderator = user
                 hide_action.comment = comment
                 hide_action.save()
-                return _render_message(request, "Hidden", "The comment has been hidden and the hide action logged")
+                return HttpResponse(_render_message_to_string("Hidden", "The comment has been hidden and the hide action logged"))
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
-                return _render_message(request, "Error", "Invalid hide comment form")
+                return HttpResponse(_render_message_to_string("Error", "Invalid hide comment form"))
         form = HideCommentActionForm()
         return render(request, "hide_comment_form.html", { "comment" : comment, "form" : form })
 
 def hide_proposal(request, proposal_id):
     user = get_current_user(request)
     if not user.isModerator:
-        return _render_error(request, "Only moderators may hide proposals")
+        return HttpResponseForbidden(_render_message_to_string("Error", "Only moderators may hide proposals"))
     else:
         proposal = Proposal.objects.all().get(id = proposal_id)
         if request.method == "POST":
@@ -293,10 +293,10 @@ def hide_proposal(request, proposal_id):
                 hide_action.moderator = user
                 hide_action.proposal = proposal
                 hide_action.save()
-                return _render_message(request, "Hidden", "The proposal has been hidden and the hide action logged")
+                return HttpResponse(_render_message_to_string("Hidden", "The proposal has been hidden and the hide action logged"))
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
-                return _render_message(request, "Error", "Invalid hide proposal form")
+                return HttpResponse(_render_message_to_string("Error", "Invalid hide proposal form"))
         form = HideProposalActionForm()
         return render(request, "hide_proposal_form.html", { "proposal" : proposal, "form" : form })
 
@@ -324,7 +324,7 @@ def make_mod(request):
     user = get_current_user(request)
     user.isModerator = True
     user.save()
-    return _render_message(request, "Temporary", "You are now a moderator")
+    return HttpResponse(_render_message_to_string("Temporary", "You are now a moderator"))
 
 
 class MultipleFieldLookupMixin(object):
