@@ -108,7 +108,7 @@ def tag(request, tagId):
     tag = Tag.objects.get(id=tagId)
     template = "tag.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
-    proposals = Proposal.get_proposals(tag=tag)
+    proposals = Proposal.get_visible_proposals(tag=tag)
     proposals.reverse()
     context = {
         "proposals": proposals,
