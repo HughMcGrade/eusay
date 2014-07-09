@@ -156,7 +156,7 @@ def proposal(request, proposalId):
     form = CommentForm() # An unbound form
     return render(request, "proposal.html", {"form": form, "proposal": proposal, "comments" : comments, "user" : user, "comments_template" : "proposal_comments.html", "hide" : hide})
 
-def vote_proposal(request, ud, proposal_id):
+def vote_proposal(request, vote_request_type, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
     
     user = get_current_user(request)
@@ -165,16 +165,16 @@ def vote_proposal(request, ud, proposal_id):
     if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
         # Has already voted
         previous_vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
-        if ud == "get":
+        if vote_request_type == "get":
             if previous_vote.isVoteUp:
                 user_vote = 1
             else:
                 user_vote = -1
             return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
-        elif previous_vote.isVoteUp and ud == "down":
+        elif previous_vote.isVoteUp and vote_request_type == "down":
             # Toggle vote from up to down
             previous_vote.delete()
-        elif not previous_vote.isVoteUp and ud == "up":
+        elif not previous_vote.isVoteUp and vote_request_type == "up":
             # Toggle vote from down to up
             previous_vote.delete()
         else:
@@ -182,12 +182,12 @@ def vote_proposal(request, ud, proposal_id):
             previous_vote.delete()
             return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
     
-    if ud == "get":
+    if vote_request_type == "get":
         return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
     
     new_vote = ProposalVote()
     
-    if ud == "up":
+    if vote_request_type == "up":
         new_vote.isVoteUp = True
         user_vote = 1
     else:
@@ -200,24 +200,24 @@ def vote_proposal(request, ud, proposal_id):
     
     return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
 
-def vote_comment(request, ud, comment_id):
+def vote_comment(request, vote_request_type, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
     user = get_current_user(request)
     # Check if they have already voted
     if CommentVote.objects.all().filter(comment = comment).filter(user = user).count() == 1:
         # Has already voted
         previous_vote = CommentVote.objects.all().filter(comment = comment).get(user = user)
-        if ud == "get":
+        if vote_request_type == "get":
             # Get previous vote
             if previous_vote.isVoteUp:
                 user_vote = 1
             else:
                 user_vote = -1
             return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
-        elif previous_vote.isVoteUp and ud == "down":
+        elif previous_vote.isVoteUp and vote_request_type == "down":
             # Toggle vote from up to down
             previous_vote.delete()
-        elif not previous_vote.isVoteUp and ud == "up":
+        elif not previous_vote.isVoteUp and vote_request_type == "up":
             # Toggle vote from down to up
             previous_vote.delete()
         else:
@@ -225,12 +225,12 @@ def vote_comment(request, ud, comment_id):
             previous_vote.delete()
             return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
     
-    if ud == "get":
+    if vote_request_type == "get":
         # Get hasn't voted
         return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
     
     new_vote = CommentVote()
-    if ud == "up":
+    if vote_request_type == "up":
         # Set up vote
         new_vote.isVoteUp = True
         user_vote = 1
