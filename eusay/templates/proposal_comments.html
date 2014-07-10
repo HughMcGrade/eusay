@@ -1,7 +1,7 @@
 {% load filters %}
 
 {% for comment in comments %}
-<div class="comment row">
+<div class="comment row comment_{{ comment.id }}">
     	
   <div class="col-xs-9">
     <p class="authorInfo">{{comment.user.name }}, {{comment.createdAt }}</p>

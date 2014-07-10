@@ -187,3 +187,9 @@ hr {
 #similar {
     display: none;
 }
+#editUserForm {
+    display: none;
+}
+#editUserText:hover {
+    cursor: pointer;
+}

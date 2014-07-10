@@ -3,17 +3,15 @@ Created on 18 Feb 2014
 
 @author: Hugh
 '''
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 import datetime
-
 
 class Comment (models.Model):
     id = models.AutoField(primary_key=True)
     text = models.CharField(max_length=500) # TODO: is this a good length? implement client-side character count
     createdAt = models.DateTimeField(auto_now_add=True)
     lastModified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey("User")
+    user = models.ForeignKey("User", related_name="comments")
     proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
     
@@ -66,7 +64,7 @@ class Proposal (models.Model):
     actionDescription = models.CharField(max_length=2000)
     backgroundDescription = models.CharField(max_length=2000)
     beliefsDescription = models.CharField(max_length=2000)
-    proposer = models.ForeignKey("User")#, related_name="proposed")
+    proposer = models.ForeignKey("User", related_name="proposed")
     createdAt = models.DateTimeField(auto_now_add=True, null=True)
     lastModified = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(Tag, related_name="proposals")
@@ -136,11 +134,40 @@ class CommentVote (Vote):
     comment = models.ForeignKey(Comment, related_name="votes")
     
 class User (models.Model):
-    sid = models.CharField(max_length=20, primary_key=True)
+    # The first element in each tuple is the actual value to be stored,
+    # and the second element is the human-readable name.
+    USER_STATUS_CHOICES = (
+        ("User", "Regular User"),
+        ("Staff", "EUSA Staff"),
+        ("Candidate", "EUSA Candidate"),
+        ("Officeholder", "EUSA Officeholder")
+    )
+    sid = models.CharField("student ID", max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    createdAt = models.DateTimeField(default=datetime.datetime.now, editable=False)
-    candidateStatus = models.CharField(max_length=20)
-    isModerator = models.BooleanField(default=False)
+    createdAt = models.DateTimeField("date created",
+                                     default=datetime.datetime.now,
+                                     editable=False)
+    userStatus = models.CharField("user status",
+                                  max_length=12,
+                                  choices=USER_STATUS_CHOICES,
+                                  default="User")
+    title = models.CharField(max_length=100)
+    isModerator = models.BooleanField("moderator", default=False)
+    hasProfile = models.BooleanField("public profile", default=False)
+
+    def get_proposals_voted_for(self):
+        """
+        Returns a QuerySet of proposals that the user has voted for.
+        """
+        user_votes = ProposalVote.objects.filter(user=self).filter(isVoteUp=True)
+        return Proposal.objects.filter(votes__in=user_votes)
+
+    def get_proposals_voted_against(self):
+        """
+        Returns a QuerySet of proposals that the user has voted against.
+        """
+        user_votes = ProposalVote.objects.filter(user=self).filter(isVoteUp=False)
+        return Proposal.objects.filter(votes__in=user_votes)
 
     def save(self, *args, **kwargs):
         if not self.sid:
@@ -149,7 +176,6 @@ class User (models.Model):
 
     def __unicode__(self):
         return self.name + " (" + self.sid + ")"
-
 
 class HideAction (models.Model):
     moderator = models.ForeignKey(User)

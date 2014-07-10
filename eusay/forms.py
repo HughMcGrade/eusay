@@ -1,5 +1,6 @@
 from django import forms
-from eusay.models import Proposal, Comment, HideProposalAction, HideCommentAction
+from eusay.models import Proposal, Comment, HideProposalAction, \
+    HideCommentAction, User
 
 
 class ProposalForm (forms.ModelForm):
@@ -57,3 +58,35 @@ class HideProposalActionForm (forms.ModelForm):
     class Meta:
         model = HideProposalAction
         fields = ['reason']
+
+
+class UserForm(forms.ModelForm):
+    name = forms.CharField(required=False,
+                           widget=forms.TextInput(
+                               attrs={"placeholder": "New username",
+                                      "class": "form-control"}))
+    hasProfile = forms.BooleanField(required=False,
+                                    initial=False,
+                                    widget=forms.CheckboxInput(
+                                attrs={"id": "hasProfileCheckbox"}))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("current_user")
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.fields["name"] = forms.CharField(required=False,
+                                              initial=user.name,
+                                              widget=forms.TextInput(
+                                              attrs={"placeholder": "New username",
+                                                     "class": "form-control"}))
+
+    class Meta:
+        model = User
+        fields = ["name", "hasProfile"]
+
+    def clean_name(self):
+        cleaned_name = self.cleaned_data["name"]
+        if cleaned_name == "":
+            raise forms.ValidationError("Username cannot be blank.")
+        if User.objects.exclude(sid=self.instance.sid).filter(name=cleaned_name).exists():
+            raise forms.ValidationError("Username %s already exists." % cleaned_name)
+        return cleaned_name

@@ -7,7 +7,7 @@ Created on 18 Feb 2014
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.contrib.sessions.backends.db import SessionStore
 
@@ -16,7 +16,8 @@ from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, 
     CommentListSerializer
 from haystack.query import SearchQuerySet
 
-from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, HideCommentActionForm
+from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, \
+    HideCommentActionForm, UserForm
 from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment, HideCommentAction, HideProposalAction, Tag
 
@@ -79,10 +80,44 @@ def about(request):
     user = get_current_user(request)
     return render(request, "about.html", {'user': user})
 
-def profile(request, user_id):
-    current_user = _get_current_user(request)
-    profile = User.objects.get(sid=user_id)
-    return render(request, "profile.html", {'user': current_user, 'profile': profile})
+def profile(request, username):
+    current_user = get_current_user(request)
+    profile = User.objects.get(name=username)
+    if current_user == profile:
+        # own profile
+        if request.method == "POST":
+            # if the form as been submitted
+            form = UserForm(request.POST,
+                            instance=current_user,
+                            current_user=current_user)
+            if form.is_valid():
+                form.save()
+                return redirect("/user/%s" % request.POST.get("name"))
+            else:
+                errors = form.errors
+                return render(request,
+                              "own_profile.html",
+                              {"user": current_user,
+                               "profile": profile,
+                               "form": form,
+                               "errors": errors})
+        form = UserForm(current_user=current_user) # unbound form
+        return render(request,
+                      "own_profile.html",
+                      {'user': current_user,
+                       'profile': profile,
+                       'form': form})
+    elif profile.hasProfile:
+        # another's (public) profile
+        return render(request,
+                      "profile.html",
+                      {'user': current_user,
+                       'profile': profile})
+    else:
+        return render(request,
+                      "no_profile.html",
+                      {"user": current_user,
+                       "username": username})
 
 def submit(request):
     user = get_current_user(request)

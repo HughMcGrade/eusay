@@ -11,7 +11,7 @@
 <script>
 $(document).ready(function() {
     $('form').each(function(index, form) {
-	$(form).ajaxForm({ complete : function() { 
+	$(form).ajaxForm({ complete : function() {
 			reloadComments(document.getElementById('comments_div'), '{{ proposal.id }}', null);
 	}});
     });

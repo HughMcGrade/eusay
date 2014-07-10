@@ -1,10 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>{{ profile.name }}</h2>
-<p>Join date: {{ profile.signUpDate }}</p>
-{% if profile.candidateStatus == "None" %}
-<p>They don't have a special status.</p>
-{% else %}
-<p>Status: {{ profile.candidateStatus }}</p>
-{% endif %}
+<p>Join date: {{ profile.createdAt|date:"F j, Y" }}</p>
+<p>Status: {{ profile.userStatus }}{% if profile.title %}: {{ profile.title }}{% endif %}</p>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Submissions</div>
+            <table class="table">
+            <tr>
+                <th>Proposal</th>
+                <th>Tags</th>
+                <th>Date submitted</th>
+            </tr>
+            {% for proposal in profile.proposed.all %}
+            <tr>
+                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td>{{ proposal.tags.all | join:", " }}</td>
+                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">{{ profile.name }} hasn't submitted any proposals yet.</td></tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Voted for</div>
+            <table class="table">
+            <tr>
+                <th>Proposal</th>
+                <th>Tags</th>
+                <th>Date voted</th>
+            </tr>
+            {% for proposal in profile.get_proposals_voted_for %}
+            <tr>
+                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td>{{ proposal.tags.all | join:", " }}</td>
+                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">{{ profile.name }} hasn't voted for any proposals.</td></tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Voted against</div>
+            <table class="table">
+            <tr>
+                <th>Proposal</th>
+                <th>Tags</th>
+                <th>Date voted</th>
+            </tr>
+            {% for proposal in profile.get_proposals_voted_against %}
+            <tr>
+                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td>{{ proposal.tags.all | join:", " }}</td>
+                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">{{ profile.name }} hasn't voted against any proposals.</td></tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
