@@ -27,6 +27,29 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Comments</div>
+            <table class="table">
+            <tr>
+                <th>Proposal</th>
+                <th>Comment</th>
+                <th>Date</th>
+            </tr>
+            {% for comment in profile.comments.all %}
+            <tr>
+                <td><a href="/proposal/{{ comment.proposal.id }}">{{ comment.proposal.title }}</a></td>
+                <td><a href="/proposal/{{ comment.proposal.id }}/#comment_{{ comment.id }}">{{ comment.text }}</a></td>
+                <td>{{ comment.createdAt|date:"F j, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">{{ profile.name }} hasn't made any comments yet.</td></tr>
+            {% endfor %}
+        </table>
+        </div>
+    </div>
+</div>
+<div class="row">
     <div class="col-md-6 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">Voted for</div>
