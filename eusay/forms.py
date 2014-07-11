@@ -12,15 +12,18 @@ class ProposalForm (forms.ModelForm):
     actionDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                                      "rows": "6",
                                                                      "id": "actionDescription",
-                                                                     "maxlength": "2000"}))
+                                                                     "maxlength": "2000",
+                                                                     "onkeyup": "countChars(this, 1)"}))
     backgroundDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                                          "rows": "6",
                                                                          "id": "backgroundDescription",
-                                                                         "maxlength": "2000"}))
+                                                                         "maxlength": "2000",
+                                                                         "onkeyup": "countChars(this, 2)"}))
     beliefsDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                                       "rows": "6",
                                                                       "id": "beliefsDescription",
-                                                                      "maxlength": "2000"}))
+                                                                      "maxlength": "2000",
+                                                                      "onkeyup": "countChars(this, 3)"}))
 
     class Meta:
         model = Proposal

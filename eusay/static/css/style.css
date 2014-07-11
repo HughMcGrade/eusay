@@ -193,3 +193,7 @@ hr {
 #editUserText:hover {
     cursor: pointer;
 }
+.charNum {
+    color: grey;
+    font-size: 0.9em;
+}
