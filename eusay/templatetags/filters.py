@@ -8,6 +8,7 @@ from eusay.forms import CommentForm
 from django.conf import settings
 import re
 import markdown
+import bleach
 
 register = template.Library()
 
@@ -50,7 +51,5 @@ def replace_bad_words(value):
 @stringfilter
 def my_markdown(value):
     extensions = ["nl2br", ]
-    return mark_safe(markdown.markdown(value,
-                                       extensions,
-                                       safe_mode=True,
-                                       enable_attributes=False))
+    return mark_safe(bleach.clean(markdown.markdown(value),
+                                  strip_comments=False))
