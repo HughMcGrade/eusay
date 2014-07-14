@@ -10,11 +10,22 @@
 
 <script>
 $(document).ready(function() {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     $('form').each(function(index, form) {
 	$(form).ajaxForm({ complete : function() {
+=======
+    $('#comment_form').ajaxForm({ complete : function() { 
+>>>>>>> Stashed changes
+=======
+    $('#comment_form').ajaxForm({ complete : function() { 
+>>>>>>> Stashed changes
+=======
+    $('#comment_form').ajaxForm({ complete : function() { 
+>>>>>>> Stashed changes
 			reloadComments(document.getElementById('comments_div'), '{{ proposal.id }}', null);
-	}});
-    });
+    }});
 });
 </script>
 
