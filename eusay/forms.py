@@ -64,15 +64,9 @@ class HideProposalActionForm (forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    name = forms.CharField(required=False,
-                           widget=forms.TextInput(
-                               attrs={"placeholder": "New username",
-                                      "class": "form-control"}))
-    hasProfile = forms.BooleanField(required=False,
-                                    initial=False,
-                                    widget=forms.CheckboxInput(
-                                attrs={"id": "hasProfileCheckbox"}))
-
+    # Name = CharField
+    # hasProfile = BooleanField
+    
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("current_user")
         super(UserForm, self).__init__(*args, **kwargs)
@@ -81,6 +75,12 @@ class UserForm(forms.ModelForm):
                                               widget=forms.TextInput(
                                               attrs={"placeholder": "New username",
                                                      "class": "form-control"}))
+        has_profile_attrs={"id": "hasProfileCheckbox"}
+        if user.hasProfile:
+            has_profile_attrs["checked"] = ""
+        self.fields['hasProfile'] = forms.BooleanField(required=False,
+                                    initial=False,
+                                    widget=forms.CheckboxInput(attrs=has_profile_attrs))
 
     class Meta:
         model = User
