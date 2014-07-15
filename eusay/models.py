@@ -141,7 +141,7 @@ class User (models.Model):
         ("Officeholder", "EUSA Officeholder")
     )
     sid = models.CharField("student ID", max_length=20, primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True, null=False)
     createdAt = models.DateTimeField("date created",
                                      default=datetime.datetime.now,
                                      editable=False)
