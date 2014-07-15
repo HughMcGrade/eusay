@@ -1,5 +1,3 @@
 {{ object.title }}
-{{ object.actionDescription }}
-{{ object.backgroundDescription }}
-{{ object.beliefsDescription }}
+{{ object.text }}
 {% for tag in object.tags.all %}{{ tag.name }} {% endfor %}

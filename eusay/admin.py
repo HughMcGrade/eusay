@@ -9,8 +9,11 @@ class TagAdmin(admin.ModelAdmin):
 
 class ProposalAdmin(admin.ModelAdmin):
     exclude = ("id",)
-    readonly_fields = ("title", "actionDescription", "beliefsDescription",
-                       "backgroundDescription", "createdAt", "lastModified", "proposer")
+    readonly_fields = ("title",
+                       "text",
+                       "createdAt",
+                       "lastModified",
+                       "proposer")
     list_display = ("title", "proposer",)
 
     # overriding this function means that proposals cannot be
@@ -21,7 +24,7 @@ class ProposalAdmin(admin.ModelAdmin):
 
 class UserAdmin(admin.ModelAdmin):
     readonly_fields = ("sid", "name", "createdAt")
-    list_display = ("sid", "name", "userStatus")
+    list_display = ("sid", "name", "userStatus", "title")
 
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proposal, ProposalAdmin)

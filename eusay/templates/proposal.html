@@ -50,42 +50,10 @@ $(document).ready(function() {
     {% endif %}
     <div class="col-xs-8"></div>
 </div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <h3>What will we do?</h3>
-    </div><!-- /column -->
-</div><!-- /row -->
 <div class="row">
     <div class="col-xs-12">
         <div class="textbox">
-            <p>{{ proposal.actionDescription|my_markdown }}</p>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <h3>What is the background to this?</h3>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="textbox">
-            <p>{{ proposal.backgroundDescription|my_markdown }}</p>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <h3>What beliefs motivate the actions you propose?</h3>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="textbox">
-            <p>{{ proposal.beliefsDescription|my_markdown }}</p>
+            <p>{{ proposal.text|my_markdown }}</p>
         </div>
     </div>
 </div>

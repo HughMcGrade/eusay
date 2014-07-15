@@ -118,9 +118,7 @@ class VoteTest (TestCase):
         self.proposal = Proposal.objects.create(
             title="",
             proposer=self.proposer,
-            actionDescription="",
-            backgroundDescription="",
-            beliefsDescription="")
+            text="")
         self.comment = Comment.objects.create(
             text="",
             user=self.proposer,
@@ -233,9 +231,7 @@ class ProposalTest (TestCase):
         self.assertIn('proposal', response.context)
         proposal = response.context['proposal']
         self.assertEqual(proposal.title, 'EUSA should support Scottish independence')
-        self.assertEqual(proposal.actionDescription, ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquet molestie ornare. Nam auctor eget ligula ac facilisis. In hac habitasse platea dictumst. Aliquam porta, enim nec ultrices sagittis, ipsum ipsum semper tortor, sit amet dignissim felis lorem vel nibh. Aenean pellentesque magna ante, et lacinia lectus gravida sit amet. Mauris vel odio nec elit suscipit tristique non vitae lectus. Ut aliquet hendrerit purus a eleifend. ')
-        self.assertEqual(proposal.backgroundDescription, ' Donec auctor felis commodo, ullamcorper libero vitae, luctus purus. Donec eu libero at eros suscipit lacinia. Phasellus nec augue at nunc viverra iaculis eget at libero. Praesent orci tellus, aliquet in felis ut, luctus semper urna. Vestibulum non lacus scelerisque, ornare nibh nec, tincidunt velit. Proin sit amet egestas diam. Sed eget aliquam diam. Duis id sagittis arcu. Pellentesque non bibendum neque. Fusce cursus eget quam a bibendum. Donec enim libero, faucibus vitae luctus tempor, venenatis a neque. Praesent nec nibh non justo sagittis viverra vitae vitae enim. Aenean vitae adipiscing arcu. ')
-        self.assertEqual(proposal.beliefsDescription, ' Duis consequat mi blandit turpis tincidunt facilisis. Nullam varius faucibus quam non accumsan. Phasellus ac mattis mi, at sagittis nibh. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed consectetur tempus justo eget aliquam. Phasellus pharetra elit at magna placerat, sit amet luctus magna vestibulum. Proin condimentum nibh id augue pretium, et sodales neque sagittis. Curabitur ut augue dictum, sollicitudin enim sit amet, dictum mauris. Praesent quis auctor massa. Praesent mollis a purus vitae convallis. Nulla eros tortor, cursus non diam nec, hendrerit fringilla ipsum. Praesent lacus lorem, fringilla sit amet mauris quis, placerat rutrum massa. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam sed viverra mi. Ut dui quam, iaculis eu dignissim et, laoreet ac turpis. Morbi scelerisque mi quis posuere accumsan. ')
+        self.assertEqual(proposal.text, ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquet molestie ornare. Nam auctor eget ligula ac facilisis. In hac habitasse platea dictumst. Aliquam porta, enim nec ultrices sagittis, ipsum ipsum semper tortor, sit amet dignissim felis lorem vel nibh. Aenean pellentesque magna ante, et lacinia lectus gravida sit amet. Mauris vel odio nec elit suscipit tristique non vitae lectus. Ut aliquet hendrerit purus a eleifend. ')
         comment = proposal.comments.all()[0]
         self.assertEqual(comment.text, 'Scotland should be more #yolo!!!!')
         # TODO Test for tag once set up in fixtures

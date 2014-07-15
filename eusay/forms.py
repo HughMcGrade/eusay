@@ -8,26 +8,16 @@ class ProposalForm (forms.ModelForm):
                                                           "id": "title",
                                                           "maxlength": "100",
                                                           "placeholder": "The title of your policy - "
-                                                                         "be as descriptive as possible."}))
-    actionDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
-                                                                     "rows": "6",
-                                                                     "id": "actionDescription",
-                                                                     "maxlength": "2000",
-                                                                     "onkeyup": "countChars(this, 1)"}))
-    backgroundDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
-                                                                         "rows": "6",
-                                                                         "id": "backgroundDescription",
-                                                                         "maxlength": "2000",
-                                                                         "onkeyup": "countChars(this, 2)"}))
-    beliefsDescription = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
-                                                                      "rows": "6",
-                                                                      "id": "beliefsDescription",
-                                                                      "maxlength": "2000",
-                                                                      "onkeyup": "countChars(this, 3)"}))
+                                                                         "be descriptive."}))
+    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
+                                                        "maxlength": "6000",
+                                                        "id": "text",
+                                                        "onkeyup": "countChars(this)"}))
+
 
     class Meta:
         model = Proposal
-        fields = ['title', 'actionDescription', 'backgroundDescription', 'beliefsDescription']
+        fields = ['title', 'text']
 
 
 class CommentForm (forms.ModelForm):

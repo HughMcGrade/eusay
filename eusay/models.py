@@ -61,9 +61,7 @@ class Tag(models.Model):
 class Proposal (models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
-    actionDescription = models.CharField(max_length=2000)
-    backgroundDescription = models.CharField(max_length=2000)
-    beliefsDescription = models.CharField(max_length=2000)
+    text = models.TextField()
     proposer = models.ForeignKey("User", related_name="proposed")
     createdAt = models.DateTimeField(auto_now_add=True, null=True)
     lastModified = models.DateTimeField(auto_now=True)
