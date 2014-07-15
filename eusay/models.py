@@ -191,3 +191,14 @@ class HideCommentAction (HideAction):
 
 class HideProposalAction (HideAction):
     proposal = models.ForeignKey(Proposal, related_name="hideActions")
+
+class Report (models.Model):
+    reporter = models.ForeignKey(User)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    reason = models.CharField(max_length=2000)
+
+class CommentReport (Report):
+    comment = models.ForeignKey(Comment, related_name="reports")
+
+class ProposalReport (Report):
+    proposal = models.ForeignKey(Proposal, related_name="reports")

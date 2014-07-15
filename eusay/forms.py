@@ -1,6 +1,6 @@
 from django import forms
 from eusay.models import Proposal, Comment, HideProposalAction, \
-    HideCommentAction, User
+    HideCommentAction, User, CommentReport, ProposalReport
 
 
 class ProposalForm (forms.ModelForm):
@@ -35,7 +35,7 @@ class HideCommentActionForm (forms.ModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
                                                           "rows":"3",
                                                           "maxlength":"1999",
-                                                          "placeholder":"Why should this comment be removed?"}))
+                                                          "placeholder":"Why should this comment be hidden?"}))
 
     class Meta:
         model = HideCommentAction
@@ -46,10 +46,31 @@ class HideProposalActionForm (forms.ModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
                                                           "rows":"3",
                                                           "maxlength":"1999",
-                                                          "placeholder":"Why should this proposal be removed?"}))
+                                                          "placeholder":"Why should this proposal be hidden?"}))
 
     class Meta:
         model = HideProposalAction
+        fields = ['reason']
+
+class CommentReportForm (forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
+                                                          "rows":"3",
+                                                          "maxlength":"1999",
+                                                          "placeholder":"Why should this comment be hidden?"}))
+
+    class Meta:
+        model = CommentReport
+        fields = ['reason']
+
+
+class ProposalReportForm (forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
+                                                          "rows":"3",
+                                                          "maxlength":"1999",
+                                                          "placeholder":"Why should this proposal be hidden?"}))
+
+    class Meta:
+        model = ProposalReport
         fields = ['reason']
 
 

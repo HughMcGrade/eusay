@@ -334,7 +334,7 @@ def hide_proposal(request, proposal_id):
                 hide_action.moderator = user
                 hide_action.proposal = proposal
                 hide_action.save()
-                return HttpResponse(_render_message_to_string("Hidden", "The proposal has been hidden and the hide action logged"))
+                return HttpResponse(_render_message_to_string("Hidden", "The proposal has been hidden and the hide action logged."))
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
                 return HttpResponse(_render_message_to_string("Error", "Invalid hide proposal form"))
@@ -348,6 +348,42 @@ def comment_hides(request):
 def proposal_hides(request):
     hiddens = HideProposalAction.objects.all()
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
+
+def report_comment(request, comment_id):
+    user = get_current_user(request)
+    comment = Comment.objects.all().get(id = comment_id)
+    if request.method == "POST":
+        form = ReportCommentForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.reporter = user
+            report.comment = comment
+            report.save()
+            return HttpResponse(_render_message_to_string("Reported", "Your report has been submitted to the moderators."))
+        else:
+            # TODO Could improve handling of invalid form, though it is unlikely here
+            return HttpResponse(_render_message_to_string("Error", "Invalid report comment form"))
+    else:
+        form = HideCommentActionForm()
+        return render(request, "report_comment_form.html", { "comment" : comment, "form" : form })
+
+def report_proposal(request, proposal_id):
+    user = get_current_user(request)
+    proposal = Proposal.objects.all().get(id = proposal_id)
+    if request.method == "POST":
+        form = HideProposalActionForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.reporter = user
+            report.proposal = proposal
+            report.save()
+            return HttpResponse(_render_message_to_string("Reported", "Your report has been submitted to the moderators."))
+        else:
+            # TODO Could improve handling of invalid form, though it is unlikely here
+            return HttpResponse(_render_message_to_string("Error", "Invalid report proposal form"))
+    else:
+        form = ProposalReportForm()
+        return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form })
 
 
 def search(request):
