@@ -33,5 +33,6 @@ urlpatterns = patterns('',
     url(r'^comment_hides', views.comment_hides),
     url(r'^proposal_hides', views.proposal_hides),
     url(r'^make_mod', views.make_mod),
-    url(r'^search/', views.search)
+    url(r'^search/', views.search),
+    url(r'^remove_comment/(?P<comment_id>\d+)', views.remove_comment),
 )

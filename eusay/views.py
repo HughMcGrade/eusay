@@ -22,6 +22,8 @@ from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment, HideCommentAction, HideProposalAction, Tag
 
 import random
+import datetime
+
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
 
@@ -31,12 +33,16 @@ def _render_message_to_string(title, message):
 def generate_new_user(request):
     user = User()
     user.name = get_rand_name()
-    if not User.objects.all():
-        user.sid = "s1"
-    else:
-        user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
-    user.candidateStatus = "None"
-    user.save()
+    for u in User.objects.all():
+        if u.name == user.name:
+            user = u
+    if not user.sid:
+        if not User.objects.all():
+            user.sid = "s1"
+        else:
+            user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
+            user.candidateStatus = "None"
+        user.save()
     request.session['user_sid'] = user.sid
     return user
 
@@ -361,6 +367,21 @@ def make_mod(request):
     user.save()
     return HttpResponse(_render_message_to_string("Temporary", "You are now a moderator"))
 
+def remove_comment(request, comment_id):
+    comment = Comment.objects.all().get(id=comment_id)
+    if comment.user == get_current_user(request):
+        if len(comment.get_replies()) > 0:
+            comment.user = User.objects.all()[0] # TODO Deleted comment user
+            comment.text = "Comment deleted by user"
+            comment.createdAt = datetime.datetime.now()
+            comment.lastModified = datetime.datetime.now()
+            comment.save()
+            return HttpResponse("Comment cleared")
+        else:
+            comment.delete()
+            return HttpResponse("Comment removed")
+    else:
+        return HttpResponseForbidden("Users may only remove their own comments")
 
 class MultipleFieldLookupMixin(object):
     """
