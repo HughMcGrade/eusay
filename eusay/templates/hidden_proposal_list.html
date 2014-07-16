@@ -2,6 +2,9 @@
 
 {% block content %}
 
+<h1>Hidden Proposals</h1>
+
+{% if hiddens %}
 <table class="table table-striped">
 <thead>
   <th>Proposal</th>
@@ -28,5 +31,8 @@
   {% endfor %}
 </tbody>
 </table>
+{% else %}
+No hidden proposals
+{% endif %}
 
 {% endblock %}
