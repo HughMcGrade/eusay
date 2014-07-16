@@ -20,17 +20,23 @@
 
   <a id="replies_{{ comment.id }}_count" class="accordion-toggle" href="#replies_{{ comment.id }}_collapsible" data-toggle="collapse">
     View {{ comment.get_replies|length}} Repl{{ comment.get_replies|pluralize:"y,ies"}}
-  </a>
+  </a> |
 
+  {% comment %}
   {% if not comment.replyTo %} |
   {% else %}
-  | <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  | <a href="/hide_comment/{{ comment.id }}">Hide</a>
+  {% else %}
+  | <a href="/report_comment/{{ comment.id }}">Report</a>
   {% endif %}
+  {% endcomment %}
 
   {% elif comment.replyTo %}
 
   {% if user.isModerator %}
-  <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  <a href="/hide_comment/{{ comment.id }}">Hide</a>
+  {% else %}
+  <a href="/report_comment/{{ comment.id }}">Report</a>
   {% endif %}
 
   {% endif %}
@@ -40,9 +46,11 @@
   <a id="reply_to_{{ comment.id }}_count" class="accordion-toggle" href="#reply_to_{{ comment.id }}_collapsible" data-toggle="collapse">Reply</a>
   
   {% if user.isModerator %}
-  | <a href="/hide_comment/{{ comment.id }}">Hide Comment</a>
+  | <a href="/hide_comment/{{ comment.id }}">Hide</a>
+  {% else %}
+  | <a href="/report_comment/{{ comment.id }}">Report</a>
   {% endif %}
-  
+
   {% endif %}
   
 
