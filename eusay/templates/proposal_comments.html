@@ -5,9 +5,10 @@
     	
   <div class="col-xs-9">
     <p class="authorInfo">
-        {% if comment.user.hasProfile%}<a href="/user/{{ comment.user.name }}">{{comment.user.name }}</a>
+        {% if comment.user.hasProfile%}
+            <a href="{% url 'user' comment.user.slug %}">{{comment.user.name }}</a>
         {% else %}
-        {{ comment.user.name }}
+            {{ comment.user.name }}
         {% endif %}
         , {{comment.createdAt }}</p>
     <!--<p id="comment_{{ comment.id }}_text">-->{{ comment.text | replace_bad_words | urlize | my_markdown }}<!--</p>-->

@@ -55,6 +55,8 @@ INSTALLED_APPS = (
     'endless_pagination',
     'rest_framework',
     'haystack',
+    'debug_toolbar',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,8 +84,15 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'eusay',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
+        'client_encoding': 'UTF8',
+        'default_transaction_isolation': 'read committed',
+        'timezone': 'Europe/London',
     }
 }
 
@@ -108,7 +117,7 @@ job to rebuild the index every few hours or something.
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 

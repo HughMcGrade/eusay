@@ -55,6 +55,7 @@ body {
 .proposalName {
 	padding: 15px;
 	font-size: 1.5em;
+	word-wrap: break-word;
 }
 .proposalName a {
 	color: #ed174e;

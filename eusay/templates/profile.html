@@ -15,7 +15,7 @@
             </tr>
             {% for proposal in profile.proposed.all %}
             <tr>
-                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
                 <td>{{ proposal.tags.all | join:", " }}</td>
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>
@@ -38,8 +38,8 @@
             </tr>
             {% for comment in profile.comments.all %}
             <tr>
-                <td><a href="/proposal/{{ comment.proposal.id }}">{{ comment.proposal.title }}</a></td>
-                <td><a href="/proposal/{{ comment.proposal.id }}/#comment_{{ comment.id }}">{{ comment.text }}</a></td>
+                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">{{ comment.proposal.title }}</a></td>
+                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}/#comment_{{ comment.id }}">{{ comment.text }}</a></td>
                 <td>{{ comment.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
@@ -61,7 +61,7 @@
             </tr>
             {% for proposal in profile.get_proposals_voted_for %}
             <tr>
-                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
                 <td>{{ proposal.tags.all | join:", " }}</td>
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>
@@ -82,7 +82,7 @@
             </tr>
             {% for proposal in profile.get_proposals_voted_against %}
             <tr>
-                <td><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}</a></td>
+                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
                 <td>{{ proposal.tags.all | join:", " }}</td>
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>

@@ -4,22 +4,23 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 
-from django import forms
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect,\
+    HttpResponseForbidden, HttpResponsePermanentRedirect
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.contrib.sessions.backends.db import SessionStore
+from django.core.urlresolvers import reverse
 
 from rest_framework import generics
-from eusay.serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
-    CommentListSerializer
 from haystack.query import SearchQuerySet
 
-from eusay.forms import ProposalForm, CommentForm, HideProposalActionForm, \
+from .forms import ProposalForm, CommentForm, HideProposalActionForm, \
     HideCommentActionForm, UserForm
-from eusay.models import User, CommentVote, Proposal, ProposalVote, Vote, \
+from .models import User, CommentVote, Proposal, ProposalVote, Vote, \
     Comment, HideCommentAction, HideProposalAction, Tag
+from .utils import better_slugify
+from .serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
+    CommentListSerializer
+
 
 import random
 import datetime
@@ -41,7 +42,7 @@ def generate_new_user(request):
             user.sid = "s1"
         else:
             user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
-            user.candidateStatus = "None"
+        user.slug = better_slugify(user.name)
         user.save()
     request.session['user_sid'] = user.sid
     return user
@@ -86,9 +87,9 @@ def about(request):
     user = get_current_user(request)
     return render(request, "about.html", {'user': user})
 
-def profile(request, username):
+def profile(request, slug):
     current_user = get_current_user(request)
-    profile = User.objects.get(name=username)
+    profile = User.objects.get(slug=slug)
     if current_user == profile:
         # own profile
         if request.method == "POST":
@@ -98,7 +99,8 @@ def profile(request, username):
                             current_user=current_user)
             if form.is_valid():
                 form.save()
-                return redirect("/user/%s" % request.POST.get("name"))
+                return redirect(reverse("user",
+                                        kwargs={"slug": better_slugify(form.cleaned_data["name"], domain="User")}))
             else:
                 errors = form.errors
                 return render(request,
@@ -123,7 +125,7 @@ def profile(request, username):
         return render(request,
                       "no_profile.html",
                       {"user": current_user,
-                       "username": username})
+                       "profile": profile})
 
 def submit(request):
     user = get_current_user(request)
@@ -133,7 +135,10 @@ def submit(request):
             proposal = form.save(commit=False)
             proposal.proposer = user
             proposal.save()
-            return HttpResponseRedirect('/proposal/'+str(proposal.id)) # Redirect after POST
+            return HttpResponseRedirect(
+                reverse("proposal",
+                        kwargs={"proposalId": proposal.id,
+                                "slug": proposal.slug})) # Redirect after POST
         else:
             return HttpResponse(form.errors)
     else:
@@ -160,7 +165,7 @@ def tag(request, tagId):
     return render(request, template, context)
 
 
-def proposal(request, proposalId):
+def proposal(request, proposalId, slug):
     user = get_current_user(request)
     proposal = Proposal.objects.get(id=proposalId)
     '''
@@ -174,6 +179,10 @@ def proposal(request, proposalId):
     #if request.is_ajax():
     #    return render(request, "proposal_comments.html", {"proposal" : proposal, "comments" : comments, "user": user })
 
+    # redirect requests with the wrong slug to the correct page
+    if not slug == proposal.slug:
+        return HttpResponsePermanentRedirect(proposal.get_absolute_url())
+
     if request.method == 'POST': # If the form has been submitted...
         form = CommentForm(request.POST) # A form bound to the POST data
         comment = form.save(commit=False)
@@ -185,8 +194,7 @@ def proposal(request, proposalId):
             comment.user = user
             comment.proposal = proposal
             comment.save()
-            #return HttpResponseRedirect('/thanks/') # Redirect after POST
-    
+
     hide = None
     if proposal.is_hidden():
         hide = HideProposalAction.objects.all().get(proposal=proposal)

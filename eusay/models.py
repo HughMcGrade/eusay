@@ -4,7 +4,10 @@ Created on 18 Feb 2014
 @author: Hugh
 '''
 from django.db import models
+from django.core.urlresolvers import reverse
 import datetime
+
+from .utils import better_slugify
 
 class Comment (models.Model):
     id = models.AutoField(primary_key=True)
@@ -62,6 +65,7 @@ class Proposal (models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     text = models.TextField()
+    slug = models.SlugField(default="slug")
     proposer = models.ForeignKey("User", related_name="proposed")
     createdAt = models.DateTimeField(auto_now_add=True, null=True)
     lastModified = models.DateTimeField(auto_now=True)
@@ -69,6 +73,14 @@ class Proposal (models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.slug = better_slugify(self.title)
+        super(Proposal, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("proposal", kwargs={"proposalId": self.id,
+                                           "slug": self.slug})
 
     def _get_votes_count(self, isUp):
         try:
@@ -142,6 +154,7 @@ class User (models.Model):
     )
     sid = models.CharField("student ID", max_length=20, primary_key=True)
     name = models.CharField(max_length=50, unique=True, null=False)
+    slug = models.SlugField(default="slug")
     createdAt = models.DateTimeField("date created",
                                      default=datetime.datetime.now,
                                      editable=False)
@@ -152,6 +165,13 @@ class User (models.Model):
     title = models.CharField(max_length=100)
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
+
+    def save(self, *args, **kwargs):
+        self.slug = better_slugify(self.name, domain="User")
+        super(User, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("user", kwargs={"slug": self.slug})
 
     def get_proposals_voted_for(self):
         """
@@ -166,11 +186,6 @@ class User (models.Model):
         """
         user_votes = ProposalVote.objects.filter(user=self).filter(isVoteUp=False)
         return Proposal.objects.filter(votes__in=user_votes)
-
-    def save(self, *args, **kwargs):
-        if not self.sid:
-            self.createdAt = datetime.datetime.now()
-        super(User, self).save()
 
     def __unicode__(self):
         return self.name + " (" + self.sid + ")"

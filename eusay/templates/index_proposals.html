@@ -7,7 +7,7 @@
 <div class="col-sm-4">
 <div class="proposalCard" id="proposal_{{ proposal.id }}">
 	<div class="proposalName">
-		<b><a href="/proposal/{{ proposal.id }}">{{ proposal.title }}<span></span></a></b>
+		<b><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}<span></span></a></b>
 	</div>
 	<div class="cardVotes">
 		<div class="votesUp">{{ proposal.get_votes_up_count }} for</div>
