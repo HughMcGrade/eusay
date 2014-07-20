@@ -140,9 +140,6 @@ def submit(request):
         form = ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form, 'user': user})
 
-def thanks(request):
-    return HttpResponse(render_to_string("thanks.html"))
-
 
 def tag(request, tagId):
     user = get_current_user(request)

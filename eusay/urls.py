@@ -20,7 +20,6 @@ urlpatterns = patterns('',
     url(r'^get_users/', views.get_users),  # TODO: remove this, since it's for debugging
     url(r'^$', views.index),
     url(r'^submit/', views.submit),
-    url(r'^thanks/', views.thanks),
     url(r'^proposal/(?P<proposalId>\d+)', views.proposal),
     url(r'^tag/(?P<tagId>\d+)', views.tag),
     url(r'^user/(?P<username>.+)', views.profile),
