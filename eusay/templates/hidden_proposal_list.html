@@ -2,6 +2,9 @@
 
 {% block content %}
 
+<h1>Hidden Proposals</h1>
+
+{% if hiddens %}
 <table class="table table-striped">
 <thead>
   <th>Proposal</th>
@@ -22,11 +25,14 @@
       {{ h.moderator.name }}
     </td>
     <td>
-      {{ h.date }}
+      {{ h.createdAt }}
     </td>
   </tr>
   {% endfor %}
 </tbody>
 </table>
+{% else %}
+No hidden proposals
+{% endif %}
 
 {% endblock %}

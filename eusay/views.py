@@ -21,6 +21,7 @@ from .utils import better_slugify
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
     CommentListSerializer
 
+from django.contrib import messages
 
 import random
 import datetime
@@ -28,8 +29,10 @@ import datetime
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
 
-def _render_message_to_string(title, message):
-    return render_to_string("message.html", { "title" : title, "message" : message })
+# Do not use when using both AJAX and messages!
+def _render_message_to_string(request, title, message):
+    user = get_current_user(request)
+    return render_to_string("message.html", { "title" : title, "message" : message, "user" : user })
 
 def generate_new_user(request):
     user = User()
@@ -309,7 +312,7 @@ def get_comments(request, proposal_id, reply_to):
 def hide_comment(request, comment_id):
     user = get_current_user(request)
     if not user.isModerator:
-        return HttpResponseForbidden(_render_message_to_string("Error", "Only moderators may hide comments"))
+        return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may hide comments"))
     else:
         comment = Comment.objects.all().get(id = comment_id)
         if request.method == "POST":
@@ -319,17 +322,17 @@ def hide_comment(request, comment_id):
                 hide_action.moderator = user
                 hide_action.comment = comment
                 hide_action.save()
-                return HttpResponse(_render_message_to_string("Hidden", "The comment has been hidden and the hide action logged"))
+                return HttpResponse(_render_message_to_string(request, "Hidden", "The comment has been hidden and the hide action logged"))
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
-                return HttpResponse(_render_message_to_string("Error", "Invalid hide comment form"))
+                return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide comment form"))
         form = HideCommentActionForm()
         return render(request, "hide_comment_form.html", { "comment" : comment, "form" : form })
 
 def hide_proposal(request, proposal_id):
     user = get_current_user(request)
     if not user.isModerator:
-        return HttpResponseForbidden(_render_message_to_string("Error", "Only moderators may hide proposals"))
+        return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may hide proposals"))
     else:
         proposal = Proposal.objects.all().get(id = proposal_id)
         if request.method == "POST":
@@ -339,57 +342,132 @@ def hide_proposal(request, proposal_id):
                 hide_action.moderator = user
                 hide_action.proposal = proposal
                 hide_action.save()
-                return HttpResponse(_render_message_to_string("Hidden", "The proposal has been hidden and the hide action logged."))
+                return HttpResponse(_render_message_to_string(request, "Hidden", "The proposal has been hidden and the hide action logged."))
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
-                return HttpResponse(_render_message_to_string("Error", "Invalid hide proposal form"))
+                return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide proposal form"))
         form = HideProposalActionForm()
         return render(request, "hide_proposal_form.html", { "proposal" : proposal, "form" : form })
 
+def hide_from_report(request, report_id):
+    user = get_current_user(request)
+    if CommentReport.objects.all().filter(id=report_id):
+        # Comment report
+        report = CommentReport.objects.get(id=report_id)
+        hide_action = HideCommentAction()
+        hide_action.moderator = user
+        hide_action.reason = report.reason
+        hide_action.comment_id = report.comment_id
+        hide_action.save()
+        report.delete()
+        messages.add_message(request, messages.INFO, "Comment hidden")
+    elif ProposalReport.objects.all().filter(id=report_id):
+        # Proposal report
+        report = ProposalReport.objects.all().get(id=report_id)
+        hide_action = HideProposalAction()
+        hide_action.moderator = user
+        hide_action.reason = report.reason
+        hide_action.proposal = report.proposal
+        hide_action.save()
+        report.delete()
+        messages.add_message(request, messages.INFO, "Proposal hidden")
+    else:
+        # Report not found
+        raise Report.DoesNotExist()
+
+def ignore_report(request, report_id):
+    user = get_current_user(request)
+    if not user.isModerator:
+        return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may hide proposals"))
+    else:
+        try:
+            report = Report.objects.get(id=report_id)
+            report.delete()
+            messages.add_message(request, messages.INFO, "Report ignored")
+            return HttpResponse("Report ignored")
+        except Report.DoesNotExist:
+            return HttpResponseNotFound(_render_message_to_string(request, "Error", "Report not found"))
+
 def comment_hides(request):
+    user = get_current_user(request)
     hiddens = HideCommentAction.objects.all()
-    return render(request, "hidden_comment_list.html", { "hiddens" : hiddens })
+    return render(request, "hidden_comment_list.html", { "hiddens" : hiddens, "user": user })
 
 def proposal_hides(request):
+    user = get_current_user(request)
     hiddens = HideProposalAction.objects.all()
-    return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens })
+    return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens, "user" : user })
 
 def report_comment(request, comment_id):
     user = get_current_user(request)
     comment = Comment.objects.all().get(id = comment_id)
     if request.method == "POST":
-        form = ReportCommentForm(request.POST)
+        form = CommentReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             report.reporter = user
             report.comment = comment
             report.save()
-            return HttpResponse(_render_message_to_string("Reported", "Your report has been submitted to the moderators."))
+            return HttpResponse(_render_message_to_string(request, "Reported", "Your report has been submitted to the moderators."))
         else:
             # TODO Could improve handling of invalid form, though it is unlikely here
-            return HttpResponse(_render_message_to_string("Error", "Invalid report comment form"))
+            return HttpResponse(_render_message_to_string(request, "Error", "Invalid report comment form"))
     else:
         form = HideCommentActionForm()
-        return render(request, "report_comment_form.html", { "comment" : comment, "form" : form })
+        return render(request, "report_comment_form.html", { "comment" : comment, "form" : form, "user": user })
 
 def report_proposal(request, proposal_id):
     user = get_current_user(request)
     proposal = Proposal.objects.all().get(id = proposal_id)
     if request.method == "POST":
-        form = HideProposalActionForm(request.POST)
+        form = ProposalReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             report.reporter = user
             report.proposal = proposal
             report.save()
-            return HttpResponse(_render_message_to_string("Reported", "Your report has been submitted to the moderators."))
+            return HttpResponse(_render_message_to_string(request, "Reported", "Your report has been submitted to the moderators."))
         else:
             # TODO Could improve handling of invalid form, though it is unlikely here
-            return HttpResponse(_render_message_to_string("Error", "Invalid report proposal form"))
+            return HttpResponse(_render_message_to_string(request, "Error", "Invalid report proposal form"))
     else:
         form = ProposalReportForm()
-        return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form })
+        return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form, "user": user })
 
+def moderator_panel(request):
+    user = get_current_user(request)
+    if not user.isModerator:
+        messages.add_message(request, messages.ERROR, "Only moderators may access the moderator panel.")
+        if request.is_ajax():
+            return HttpResponseForbidden("")
+        else:
+            return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may access the moderator panel."))
+    
+    if request.method == "POST":
+        report = request.POST.get("report")
+        action = request.POST.get("action")
+        ajaxResponseType = HttpResponse
+        if action == "Hide":
+            try:
+                hide_from_report(request, report)
+            except Report.DoesNotExist:
+                messages.add_message(request, messages.ERROR, "Report not found")
+                ajaxResponseType = HttpResponseNotFound
+        elif action == "Ignore":
+            try:
+                ignore_report(request, report)
+            except Report.DoesNotExist:
+                messages.add_message(request, messages.ERROR, "Report not found")
+                ajaxResponseType = HttpResponseNotFound
+        else:
+            messages.add_message("Moderation action type not found")
+            ajaxResponseType = HttpResponseNotFound
+        if request.is_ajax():
+            return ajaxResponseType("")
+    
+    comment_reports = CommentReport.objects.all()
+    proposal_reports = ProposalReport.objects.all()
+    return render(request, "moderator_panel.html", { "comment_reports" : comment_reports, "proposal_reports" : proposal_reports, "user" : user })
 
 def search(request):
     user = get_current_user(request)
@@ -406,7 +484,7 @@ def make_mod(request):
     user = get_current_user(request)
     user.isModerator = True
     user.save()
-    return HttpResponse(_render_message_to_string("Temporary", "You are now a moderator"))
+    return HttpResponse(_render_message_to_string(request, "Temporary", "You are now a moderator"))
 
 def remove_comment(request, comment_id):
     comment = Comment.objects.all().get(id=comment_id)
@@ -423,6 +501,9 @@ def remove_comment(request, comment_id):
             return HttpResponse("Comment removed")
     else:
         return HttpResponseForbidden("Users may only remove their own comments")
+
+def get_messages(request):
+    return render(request, "get_messages.html")
 
 class MultipleFieldLookupMixin(object):
     """

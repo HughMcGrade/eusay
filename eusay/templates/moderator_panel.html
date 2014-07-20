@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block js %}
+
+<script src="{% static "js/jquery.form.js" %}"></script>
+
+<script>
+
+function reloadMessages() {
+    $.ajax({
+               type : "get",
+               url : "/get_messages/",
+               success : function (response) {
+                        $('#message_container').html(response);
+               },
+               error : function (response) {
+                        $('#message_container').html(response);
+               }
+    });
+}
+
+$(document).ready(function() {
+    $('.action_form').each(function (item) {
+        $(item).ajaxForm({ complete : function() { 
+            reloadMessages();
+        }});
+    });
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Comment Reports</h1>
+
+{% if comment_reports %}
+<table class="table table-striped">
+<thead>
+  <th>Comment</th>
+  <th>Proposal</th>
+  <th>Reason</th>
+  <th>Reporter</th>
+  <th>Action</th>
+</thead>
+<tbody>
+  {% for r in comment_reports %}
+  <tr id="report_{{ r.id }}">
+    <td>
+      {{ r.comment.text }}
+    </td>
+    <td>
+      <a href="/proposal/{{r.comment.proposal.id}}">{{ r.comment.proposal.title }}</a>
+    </td>
+    <td>
+      {{ r.reason }}
+    </td>
+    <td>
+      {{ r.reporter.name }}
+    </td>
+    <td>
+      <form method="POST" class="action_form">
+	{% csrf_token %}
+	<input type="hidden" name="report" value="{{ r.id }}" />
+	<input type="submit" class="btn btn-primary" name="action" value="Hide" />
+	<input type="submit" class="btn btn-default" name="action" value="Ignore" />
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+{% else %}
+  No open comment reports
+{% endif %}
+
+
+<h1>Proposal Reports</h1>
+
+{% if proposal_reports %}
+<table class="table table-striped">
+<thead>
+  <th>Proposal</th>
+  <th>Reason</th>
+  <th>Reporter</th>
+  <th>Action</th>
+</thead>
+<tbody>
+  {% for r in proposal_reports %}
+  <tr id="report_{{ r.id }}">
+    <td>
+      <a href="/proposal/{{r.proposal.id}}">{{ r.proposal.title }}</a>
+    </td>
+    <td>
+      {{ r.reason }}
+    </td>
+    <td>
+      {{ r.moderator.name }}
+    </td>
+    <td>
+      <form method="POST" class="action_form">
+	{% csrf_token %}
+	<input type="hidden" name="report" value="{{ r.id }}" />
+	<input type="submit" onClick="$(this).parents('tr').remove()" class="btn btn-primary" name="action" value="Hide" />
+	<input type="submit" class="btn btn-default" name="action" value="Ignore" />
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  No open proposal reports
+{% endif %}
+
+{% endblock %}

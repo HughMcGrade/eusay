@@ -45,9 +45,13 @@ $(document).ready(function() {
 		    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
 	    </script>
     </div>
-    {% if user.isModerator and not hide%}
+    {% if not hide %}
     <div>
+      {% if user.isModerator and not hide%}
       <a href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+      {% else %}
+      <a href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
+      {% endif %}
     </div>
     {% endif %}
     <div class="col-xs-8"></div>

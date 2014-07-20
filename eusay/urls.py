@@ -34,7 +34,9 @@ urlpatterns = patterns('',
     url(r'^proposal_hides', views.proposal_hides),
     url(r'^report_comment/(?P<comment_id>\d+)', views.report_comment),
     url(r'^report_proposal/(?P<proposal_id>\d+)', views.report_proposal),
-    url(r'^make_mod', views.make_mod), # TODO: remove this
+    url(r'^moderator_panel', views.moderator_panel),
+    url(r'^make_mod', views.make_mod),
     url(r'^search/', views.search),
     url(r'^remove_comment/(?P<comment_id>\d+)', views.remove_comment),
+    url(r'^get_messages/', views.get_messages),
 )

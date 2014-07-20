@@ -191,6 +191,7 @@ class User (models.Model):
         return self.name + " (" + self.sid + ")"
 
 class HideAction (models.Model):
+    id = models.AutoField(primary_key=True)
     moderator = models.ForeignKey(User)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
@@ -208,6 +209,7 @@ class HideProposalAction (HideAction):
     proposal = models.ForeignKey(Proposal, related_name="hideActions")
 
 class Report (models.Model):
+    id = models.AutoField(primary_key=True)
     reporter = models.ForeignKey(User)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)

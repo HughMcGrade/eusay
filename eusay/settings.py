@@ -55,8 +55,7 @@ INSTALLED_APPS = (
     'endless_pagination',
     'rest_framework',
     'haystack',
-    'debug_toolbar',
-    'south',
+    'eusay.templatetags',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,3 +129,16 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = 'static/'
+
+# For boostrap alerts
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
