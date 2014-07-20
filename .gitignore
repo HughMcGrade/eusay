@@ -4,7 +4,7 @@
 local_settings.py
 db.sqlite3
 eusay/settings.py
-venv
 .DS_Store
 .idea
+.settings
 eusay/whoosh_index
