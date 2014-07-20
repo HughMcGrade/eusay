@@ -5,18 +5,16 @@ Created on 18 Feb 2014
 '''
 
 from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseForbidden, HttpResponsePermanentRedirect
-from django.shortcuts import render, redirect
+    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 
 from rest_framework import generics
 from haystack.query import SearchQuerySet
 
-from .forms import ProposalForm, CommentForm, HideProposalActionForm, \
-    HideCommentActionForm, UserForm
-from .models import User, CommentVote, Proposal, ProposalVote, Vote, \
-    Comment, HideCommentAction, HideProposalAction, Tag
+from .forms import *
+from .models import *
 from .utils import better_slugify
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
     CommentListSerializer
@@ -132,6 +130,7 @@ def profile(request, slug):
 
 def submit(request):
     user = get_current_user(request)
+    tags = Tag.objects.all()
     if request.method == 'POST': # If the form has been submitted...
         form = ProposalForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
@@ -146,7 +145,9 @@ def submit(request):
             return HttpResponse(form.errors)
     else:
         form = ProposalForm() # An unbound form
-        return render(request, 'submit.html', {'form': form, 'user': user})
+        return render(request, 'submit.html', {'form': form,
+                                               'user': user,
+                                               "tags": tags})
 
 
 def tag(request, tagId):

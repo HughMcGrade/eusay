@@ -1,23 +1,24 @@
 from django import forms
 from eusay.models import Proposal, Comment, HideProposalAction, \
-    HideCommentAction, User, CommentReport, ProposalReport
+    HideCommentAction, User, CommentReport, ProposalReport, Tag
 
 
 class ProposalForm (forms.ModelForm):
+    class Meta:
+        model = Proposal
+        fields = ['title', 'text', 'tags']
+
     title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",
                                                           "id": "title",
                                                           "maxlength": "100",
-                                                          "placeholder": "The title of your policy - "
-                                                                         "be descriptive."}))
+                                                          "placeholder": "Please be descriptive."}))
     text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                         "maxlength": "6000",
                                                         "id": "text",
                                                         "onkeyup": "countChars(this)"}))
-
-
-    class Meta:
-        model = Proposal
-        fields = ['title', 'text']
+    tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(attrs={"id": "tag-list"}),
+        queryset=Tag.objects.all())
 
 
 class CommentForm (forms.ModelForm):

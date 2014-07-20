@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block js %}
 <script>
-// find similar proposals
 $(document).ready(function() {
+    // find similar proposals
     $("#title").change(function() {
         var query = $("#title").val();
         $.getJSON("/api/search?format=json&q=" + query, function(data) {
@@ -21,9 +22,40 @@ $(document).ready(function() {
             }
         });
     });
+
+    // live search tags
+    $('#tag-search').hideseek({
+	    highlight: true
+    });
+
+    // hide checkboxes
+    $('#tag-list input[type=checkbox]').hide();
+
+    // differentiate already checked checkboxes
+    $('#tag-list input').each(function() {
+        if (this.checked) {
+            $(this).parent().css({
+                "background-color": "blue"
+            });
+        }
+    });
+
+    // change tags' look when clicked
+    $('#tag-list input[type=checkbox]').change(function() {
+        if (this.checked) {
+            $(this).parent().css({
+                "background-color": "blue"
+            });
+        }
+        else {
+            $(this).parent().css({
+                "background-color": "#7AA8D5"
+            });
+        }
+     });
 });
 // count characters
-function countChars(val, divNum) {
+function countChars(val) {
     var len = val.value.length;
     var maxLen = 6000;
     if (len >= maxLen) {
@@ -32,7 +64,7 @@ function countChars(val, divNum) {
     } else {
         $("#charNum").text(len + "/" + maxLen);
     }
-};
+}
 </script>
 {% endblock %}
 
@@ -66,6 +98,17 @@ function countChars(val, divNum) {
   </div>
 </div>
 </div>
-  <button type="submit" class="btn btn-default">Submit</button>
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <div id="tags">
+            <label for="tag-search">Tags</label>
+            <input class="form-control" id="tag-search" type="text" autocomplete="off" data-list="#tag-list" placeholder="Start typing here" name="tag-search"></input>
+            {{ form.tags }}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <button type="submit" class="btn btn-default">Submit</button>
+</div>
 </form>
 {% endblock %}

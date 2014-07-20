@@ -174,17 +174,8 @@ hr {
 .textbox blockquote {
     font-size: 14px;
 }
-.tag {
-    background-color: #7AA8D5;
-    margin-left: 3px;
-    padding: 1px 3px;
-    color: #ECECEC;
-    display: inline-block;
-}
-.tag:hover {
-    background-color: #6A92BE;
-    color: #C5C5C5;
-}
+
+/* Submission form  */
 #similar {
     display: none;
 }
@@ -197,4 +188,38 @@ hr {
 .charNum {
     color: grey;
     font-size: 0.9em;
+}
+
+/* Tags */
+.tag {
+    background-color: #7AA8D5;
+    margin: 3px;
+    padding: 1px 3px;
+    color: #ECECEC;
+    display: inline-block;
+}
+.tag:hover {
+    background-color: #6A92BE;
+    color: #C5C5C5;
+}
+#tag-list label {
+    /* tags in submit page */
+    background-color: #7AA8D5;
+    margin: 3px;
+    padding: 1px 3px;
+    color: #ECECEC;
+    display: inline-block;
+    font-weight: normal;
+}
+#tag-list label:hover {
+    background-color: #6A92BE;
+    color: #C5C5C5;
+}
+#tag-list li {
+    /* make the tag list look less like a list */
+    list-style: none;
+    float: left;
+}
+#tag-list {
+    padding-left: 0;
 }

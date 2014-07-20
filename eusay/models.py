@@ -55,7 +55,7 @@ class Vote (models.Model):
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)  # optional - but I think this might be a nice field to have
+    description = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.name

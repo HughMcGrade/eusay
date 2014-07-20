@@ -55,12 +55,13 @@ INSTALLED_APPS = (
     'endless_pagination',
     'rest_framework',
     'haystack',
-<<<<<<< HEAD
+<<<<<<< Updated upstream
+    'eusay.templatetags',
     'debug_toolbar',
     'south',
 =======
-    'eusay.templatetags',
->>>>>>> c5dc0169de30fd84f45deb49012d19fe7e8242f0
+    'debug_toolbar',
+>>>>>>> Stashed changes
 )
 
 MIDDLEWARE_CLASSES = (
