@@ -35,7 +35,7 @@ $(document).ready(function() {
 <div class="row">
     <div class="col-xs-12">
         {% if proposal.tags.all %}
-        <p>Tags: {% for tag in proposal.tags.all %}<a class="tag" href="/tag/{{ tag.id }}">{{ tag.name }}</a>{% endfor %}</p>
+        <p>Tags: {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
         {% endif %}
     </div>
 </div>

@@ -8,3 +8,4 @@ eusay/settings.py
 .idea
 .settings
 eusay/whoosh_index
+eusay/migrations

@@ -150,9 +150,14 @@ def submit(request):
                                                "tags": tags})
 
 
-def tag(request, tagId):
+def tag(request, tagId, slug):
     user = get_current_user(request)
     tag = Tag.objects.get(id=tagId)
+
+    # redirect requests with the wrong slug to the correct page
+    if not slug == tag.slug:
+        return HttpResponsePermanentRedirect(tag.get_absolute_url())
+
     template = "tag.html" # main HTML
     proposals_template = "index_proposals.html" # just the proposals
     proposals = Proposal.get_visible_proposals(tag=tag)
