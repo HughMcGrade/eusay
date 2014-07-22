@@ -3,7 +3,9 @@
 {% endblock %}
 {% block content %}
 {% if errors %}
-        <div class="alert alert-danger" role="alert"><strong>Error!</strong>{{ errors }}</div>
+        {% for field,error in errors.items %}
+        <div class="alert alert-danger" role="alert"><strong>Error! </strong>{{ error.as_text }}</div>
+        {% endfor %}
 {% endif %}
 <h2>{{ profile.name }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
 <div class="row">
@@ -17,7 +19,6 @@
 </form>
 </div>
 </div>
-
 <p>Join date: {{ profile.createdAt|date:"F j, Y" }}<br />
 Status: {{ profile.userStatus }}{% if profile.title %}: {{ profile.title }}{% endif %}</p>
 <div class="row">

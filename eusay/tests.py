@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from eusay.models import *
+from .forms import UserForm
 from eusay.views import generate_new_user
 from django.contrib.sessions.backends.db import SessionStore
 
@@ -37,7 +38,7 @@ class HideTest (TestCase):
         self.assertNotIn(proposal, response.context['proposals'])
 
         # Test page shows hidden message
-        response = self.client.get('/proposal/' + str(proposal.id))
+        response = self.client.get('/proposal/' + str(proposal.id) + '/' + proposal.slug)
         self.assertEqual(response.status_code, 200)
         self.assertIn('hide', response.context)
         self.assertTrue(response.context['hide'])
@@ -206,7 +207,7 @@ class CommentTest (TestCase):
         response = self.client.get('/get_comments/1/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('comments', response.context)
-        self.assertEqual(response.context['comments'][0].text, 'Scotland should be more #yolo!!!!')
+        self.assertIn('Scotland should be more #yolo!!!!', [c.text for c in response.context['comments']])
         response = self.client.get('/get_comments/1/1/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('comments', response.context)
@@ -214,7 +215,7 @@ class CommentTest (TestCase):
     
     def testAddComment(self):
         comment = { 'text' : 'New comment' }
-        self.client.post('/proposal/1/', comment)
+        r = self.client.post('/proposal/1/eusa-should-support-scottish-independence', comment)
         response = self.client.get('/get_comments/1/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('comments', response.context)
@@ -226,13 +227,13 @@ class ProposalTest (TestCase):
     maxDiff = None
     
     def test_proposal(self):
-        response = self.client.get('/proposal/1/')
+        response = self.client.get('/proposal/1/eusa-should-support-scottish-independence')
         self.assertEqual(response.status_code, 200)
         self.assertIn('proposal', response.context)
         proposal = response.context['proposal']
         self.assertEqual(proposal.title, 'EUSA should support Scottish independence')
         self.assertEqual(proposal.text, ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquet molestie ornare. Nam auctor eget ligula ac facilisis. In hac habitasse platea dictumst. Aliquam porta, enim nec ultrices sagittis, ipsum ipsum semper tortor, sit amet dignissim felis lorem vel nibh. Aenean pellentesque magna ante, et lacinia lectus gravida sit amet. Mauris vel odio nec elit suscipit tristique non vitae lectus. Ut aliquet hendrerit purus a eleifend. ')
-        comment = proposal.comments.all()[0]
+        comment = proposal.comments.get(id=1)
         self.assertEqual(comment.text, 'Scotland should be more #yolo!!!!')
         # TODO Test for tag once set up in fixtures
 
@@ -247,7 +248,7 @@ class TagTest (TestCase):
         self.proposal.tags.add(self.tag)
 
     def test_tags(self):
-        response = self.client.get('/proposal/' + str(self.proposal.id))
+        response = self.client.get('/proposal/' + str(self.proposal.id) + '/' + self.proposal.slug)
         self.assertEqual(response.status_code, 200)
         self.assertIn('proposal', response.context)
         self.assertIn(self.tag, response.context['proposal'].tags.all())
@@ -256,3 +257,18 @@ class TagTest (TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('proposals', response.context)
         self.assertIn(self.proposal, response.context['proposals'])
+
+
+class ValidatorsTest(TestCase):
+    def setUp(self):
+        User.objects.get_or_create(sid="s0000000", name="Tao Oat")
+
+    def test_unique_user_slug(self):
+        # Both "Tao Oat" and "Tao! Oat!" should slugify to "tao-oat", so the
+        # following form should not be valid.
+        form_data = {
+            "name": "Tao! Oat!"
+        }
+        form = UserForm(data=form_data,
+                        current_user=User(sid="s1111111", name="Whatever"))
+        self.assertFalse(form.is_valid())

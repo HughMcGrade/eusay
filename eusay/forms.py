@@ -1,6 +1,7 @@
 from django import forms
 from eusay.models import Proposal, Comment, HideProposalAction, \
     HideCommentAction, User, CommentReport, ProposalReport, Tag
+from .utils import better_slugify
 
 
 class ProposalForm (forms.ModelForm):
@@ -104,4 +105,7 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError("Username cannot be blank.")
         if User.objects.exclude(sid=self.instance.sid).filter(name=cleaned_name).exists():
             raise forms.ValidationError("Username %s already exists." % cleaned_name)
+        slug = better_slugify(cleaned_name)
+        if User.objects.filter(slug=slug).exists():
+            raise forms.ValidationError("User slug already exists.")
         return cleaned_name
