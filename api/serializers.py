@@ -9,8 +9,9 @@ class CommentDetailSerializer(serializers.ModelSerializer):
 
 
 class CommentListSerializer(serializers.ModelSerializer):
-    # The reason there are two comment serializers is so that when retrieving a list of
-    # comments for a proposal, you don't need to see the "proposal" field on each of them
+    # The reason there are two comment serializers is so that when retrieving
+    # a list of comments for a proposal, you don't need to see the "proposal"
+    # field on each of them
     class Meta:
         model = Comment
         fields = ("id", "user", "text", "createdAt", "lastModified", "replyTo")
@@ -24,8 +25,8 @@ class ProposalDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposal
         lookup_field = 'id'
-        fields = ("id", "title", "votesUp", "votesDown", "actionDescription", "backgroundDescription",
-                  "beliefsDescription", "proposer", "createdAt", "lastModified", "comments")
+        fields = ("id", "title", "votesUp", "votesDown", "text", "proposer",
+                  "createdAt", "lastModified", "comments")
 
 
 class ProposalListSerializer(serializers.ModelSerializer):
