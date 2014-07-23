@@ -1,3 +1,5 @@
 {{ object.title }}
 {{ object.text }}
+{% comment %}
 {% for tag in object.tags.all %}{{ tag.name }} {% endfor %}
+{% endcomment %}

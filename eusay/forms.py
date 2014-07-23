@@ -3,10 +3,9 @@ import re
 from django import forms
 from django.conf import settings
 
-from eusay.models import Proposal, Comment, HideProposalAction, \
+from .models import Proposal, Comment, HideProposalAction, \
     HideCommentAction, User, CommentReport, ProposalReport, Tag
 from .utils import better_slugify
-
 
 
 class ProposalForm (forms.ModelForm):
@@ -24,7 +23,8 @@ class ProposalForm (forms.ModelForm):
                                                         "onkeyup": "countChars(this)"}))
     tags = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={"id": "tag-list"}),
-        queryset=Tag.objects.all())
+        queryset=Tag.objects.all(),
+        required=False)
 
 
 class CommentForm (forms.ModelForm):

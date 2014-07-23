@@ -128,12 +128,13 @@ def profile(request, slug):
 def submit(request):
     user = get_current_user(request)
     tags = Tag.objects.all()
-    if request.method == 'POST': # If the form has been submitted...
-        form = ProposalForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    if request.method == 'POST':  # If the form has been submitted...
+        form = ProposalForm(request.POST)  # A form bound to the POST data
+        if form.is_valid():  # All validation rules pass
             proposal = form.save(commit=False)
             proposal.proposer = user
             proposal.save()
+            form.save_m2m()  # save tags
             return HttpResponseRedirect(
                 reverse("proposal",
                         kwargs={"proposalId": proposal.id,
