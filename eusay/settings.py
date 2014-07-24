@@ -113,7 +113,6 @@ if we have performance issues, we can use BaseSignalProcessor and manually run a
 job to rebuild the index every few hours or something.
 """
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

@@ -51,6 +51,8 @@ class Vote (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey("User")
 
+    class Meta:
+        abstract = True
 
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
@@ -108,7 +110,7 @@ class Proposal (models.Model):
         return (utc_now - utc_event).total_seconds() / 3600.0
     
     def _weight_instance(self, hour_age, gravity=1.8):
-        return 1 / pow((hour_age+2), gravity)  
+        return 1 / pow((hour_age+2), gravity)
     
     def _proximity_coefficient(self):
         return 1

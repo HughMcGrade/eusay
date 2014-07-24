@@ -18,3 +18,14 @@ def better_slugify(text, **kwargs):
 
             remove_last_word(slug)
             return slug
+
+def add_proposals(amount):
+    """
+    Add a bunch of (very!) generic proposals
+    """
+    if not amount:
+        raise Exception
+
+    for i in range(1, amount+1):
+        user = User.objects.create(sid="s" + str(i), name=str(i))
+        Proposal.objects.create(title=str(i), text="Proposal by" + user.name, proposer=user)

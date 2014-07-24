@@ -30,7 +30,7 @@ def comment_user_vote(comment, user):
 def comment_replies(comment, request):
     user = get_current_user(request)
     form = CommentForm() # An unbound form
-    return render_to_string('proposal_comments.html', { 'request' : request, 'comments': comment.get_replies(), 'user' : user, 'form' : form })
+    return render_to_string('proposal_comments.txt', { 'request' : request, 'comments': comment.get_replies(), 'user' : user, 'form' : form })
 
 @register.filter
 @stringfilter
