@@ -5,6 +5,7 @@ from eusay.models import Tag, Proposal, User
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
+    prepopulated_fields = {'slug': ('name',), }
 
 
 class ProposalAdmin(admin.ModelAdmin):

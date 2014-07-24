@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from eusay import views as eusay_views
 from api import views as api_views
+from search import views as search_views
 from django.contrib import admin
 
 admin.autodiscover()
@@ -37,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^report_proposal/(?P<proposal_id>\d+)', eusay_views.report_proposal),
     url(r'^moderator_panel', eusay_views.moderator_panel),
     url(r'^make_mod', eusay_views.make_mod),
-    url(r'^search/', eusay_views.search),
+    url(r'^search/', search_views.search),
     url(r'^remove_comment/(?P<comment_id>\d+)', eusay_views.remove_comment),
     url(r'^get_messages/', eusay_views.get_messages),
 )

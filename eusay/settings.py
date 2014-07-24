@@ -50,6 +50,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eusay',
+    'api',
+    'search',
 
     # Added
     'endless_pagination',
@@ -57,7 +59,6 @@ INSTALLED_APPS = (
     'haystack',
     'eusay.templatetags',
     'debug_toolbar',
-    'south',
 )
 
 MIDDLEWARE_CLASSES = (

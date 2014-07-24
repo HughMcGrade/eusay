@@ -10,8 +10,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 
-from haystack.query import SearchQuerySet
-
 from .forms import *
 from .models import *
 from .utils import better_slugify
@@ -472,14 +470,6 @@ def moderator_panel(request):
     comment_reports = CommentReport.objects.all()
     proposal_reports = ProposalReport.objects.all()
     return render(request, "moderator_panel.html", { "comment_reports" : comment_reports, "proposal_reports" : proposal_reports, "user" : user })
-
-def search(request):
-    user = get_current_user(request)
-    if request.method == "GET":
-        if "q" in request.GET:
-            query = str(request.GET.get("q"))
-            results = SearchQuerySet().all().filter(content=query)
-    return render(request, "search/search.html", {"user": user, "results": results})
 
 
 # Temporary for debugging

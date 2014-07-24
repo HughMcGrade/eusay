@@ -7,5 +7,5 @@ eusay/settings.py
 .DS_Store
 .idea
 .settings
-eusay/whoosh_index
+*/whoosh_index
 eusay/migrations
