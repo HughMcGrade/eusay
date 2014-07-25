@@ -77,5 +77,6 @@ class SimilarProposals(SearchResults):
         proposal = Proposal.objects.get(id=proposal_id)
         queryset = Proposal.objects.none()  # empty queryset by default
         if proposal_id:
-            queryset = to_queryset(SearchQuerySet().more_like_this(proposal))
+            searchqueryset = SearchQuerySet().more_like_this(proposal)
+            queryset = to_queryset(searchqueryset)
         return queryset
