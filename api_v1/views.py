@@ -2,8 +2,9 @@ from rest_framework import generics
 from haystack.query import SearchQuerySet
 
 from eusay.models import Proposal, Comment
-from .serializers import ProposalListSerializer, ProposalDetailSerializer, CommentDetailSerializer,\
-    CommentListSerializer
+from eusay.utils import to_queryset
+from .serializers import ProposalListSerializer, ProposalDetailSerializer, \
+    CommentDetailSerializer, CommentListSerializer
 
 class ProposalList(generics.ListAPIView):
     """
@@ -47,23 +48,34 @@ class CommentDetail(generics.RetrieveAPIView):
     lookup_field = 'id'  # comment id
 
 class SearchResults(generics.ListAPIView):
+    """
+    View search results.
+    """
     serializer_class = ProposalListSerializer
     paginate_by = 5
     def get_queryset(self):
         """
-        Return search results.
+        Return a QuerySet of results.
         """
-        def to_queryset(searchqueryset):
-            """
-            This helper function converts a SearchQuerySet (from the search)
-            into a QuerySet.
-            We don't use a generator here because pagination requires that you can
-            take the len() of a list, a generators don't have a len().
-            """
-            return [item.object for item in searchqueryset]
-
         queryset = Proposal.objects.none()  # empty queryset by default
         query = self.request.QUERY_PARAMS.get('q')
         if query:
             queryset = to_queryset(SearchQuerySet().all().filter(content=query))
+        return queryset
+
+
+class SimilarProposals(SearchResults):
+    """
+    View proposals similar to the input, using Haystack's more_like_this.
+    """
+    lookup_field = 'id'  # proposal id
+    def get_queryset(self):
+        """
+        Return search results.
+        """
+        proposal_id = self.kwargs['id']
+        proposal = Proposal.objects.get(id=proposal_id)
+        queryset = Proposal.objects.none()  # empty queryset by default
+        if proposal_id:
+            queryset = to_queryset(SearchQuerySet().more_like_this(proposal))
         return queryset

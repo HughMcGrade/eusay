@@ -1,8 +1,10 @@
 from django.conf.urls import patterns, include, url
-from eusay import views as eusay_views
-from api import views as api_views
-from search import views as search_views
+import rest_framework
 from django.contrib import admin
+
+from eusay import views as eusay_views
+from api_v1 import views as api_v1_views
+from search import views as search_views
 
 admin.autodiscover()
 
@@ -11,12 +13,13 @@ urlpatterns = patterns('',
     # url(r'^$', 'eusay.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^api/proposals/$', api_views.ProposalList.as_view()),
-    url(r'^api/proposals/(?P<id>\d+)/$', api_views.ProposalDetail.as_view()),
-    url(r'^api/proposals/(?P<id>\d+)/comments/$', api_views.CommentList.as_view()),
-    url(r'^api/comments/(?P<id>\d+)/$', api_views.CommentDetail.as_view()),
-    url(r'^api/search', api_views.SearchResults.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/v1/proposals/$', api_v1_views.ProposalList.as_view()),
+    url(r'^api/v1/proposals/(?P<id>\d+)/$', api_v1_views.ProposalDetail.as_view()),
+    url(r'^api/v1/proposals/(?P<id>\d+)/comments/$', api_v1_views.CommentList.as_view()),
+    url(r'^api/v1/proposals/(?P<id>\d+)/similar/$', api_v1_views.SimilarProposals.as_view()),
+    url(r'^api/v1/comments/(?P<id>\d+)/$', api_v1_views.CommentDetail.as_view()),
+    url(r'^api/v1/search', api_v1_views.SearchResults.as_view()),
+    url(r'^api/v1/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^add_user/', eusay_views.add_user), # TODO: remove this, maybe?
     url(r'^get_users/', eusay_views.get_users),  # TODO: remove this, since it's for debugging

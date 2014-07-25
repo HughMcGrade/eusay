@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eusay',
-    'api',
+    'api_v1',
     'search',
 
     # Added

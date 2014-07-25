@@ -7,7 +7,7 @@ $(document).ready(function() {
     // find similar proposals
     $("#title").change(function() {
         var query = $("#title").val();
-        $.getJSON("/api/search?format=json&q=" + query, function(data) {
+        $.getJSON("/api/v1/search?format=json&q=" + query, function(data) {
             var output = "<ul>";
             for (var i in data.results) {
                 output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";

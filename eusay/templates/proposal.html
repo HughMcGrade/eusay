@@ -13,6 +13,19 @@ $(document).ready(function() {
     $('#comment_form').ajaxForm({ complete : function() { 
 			reloadComments(document.getElementById('comments_div'), '{{ proposal.id }}', null);
     }});
+
+// find similar proposals
+    $.getJSON("/api/v1/proposals/{{ proposal.id }}/similar/", function(data) {
+    var output = "<ul>";
+    for (var i in data.results) {
+        output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+    }
+    output += "</ul>";
+    if (data.count > 0) {
+        $("#similarList").html(output);
+        $("#similar").fadeIn();
+    }
+});
 });
 </script>
 
@@ -60,6 +73,14 @@ $(document).ready(function() {
     <div class="col-xs-12">
         <div class="textbox">
             <p>{{ proposal.text|my_markdown }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="similar">
+    <div class="col-xs-12">
+        <h3>Similar proposals:</h3>
+        <div id="similarList">
         </div>
     </div>
 </div>

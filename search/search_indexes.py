@@ -7,7 +7,8 @@ See http://django-haystack.readthedocs.org/en/latest/tutorial.html for details.
 
 
 class ProposalIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.NgramField(document=True, use_template=True)  # in templates/search/indexes/eusay/proposal_text.txt
+    # template in templates/search/indexes/eusay/proposal_text.txt:
+    text = indexes.NgramField(document=True, use_template=True)
     date = indexes.DateTimeField(model_attr='createdAt')
     comments = indexes.MultiValueField()
 

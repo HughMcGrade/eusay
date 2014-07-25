@@ -29,3 +29,12 @@ def add_proposals(amount):
     for i in range(1, amount+1):
         user = User.objects.create(sid="s" + str(i), name=str(i))
         Proposal.objects.create(title=str(i), text="Proposal by" + user.name, proposer=user)
+
+
+def to_queryset(searchqueryset):
+    """
+    This function converts a SearchQuerySet into a QuerySet.
+    We don't use a generator here because pagination in the API requires
+    that you can take the len() of a list, a generators don't have a len().
+    """
+    return [item.object for item in searchqueryset]
