@@ -15,7 +15,7 @@ $(document).ready(function() {
     }});
 
 // find similar proposals
-    $.getJSON("/api/v1/proposals/{{ proposal.id }}/similar/", function(data) {
+    $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
     var output = "<ul>";
     for (var i in data.results) {
         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
