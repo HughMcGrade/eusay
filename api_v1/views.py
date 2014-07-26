@@ -1,8 +1,12 @@
+import json
+
+from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 from rest_framework import generics
 from haystack.query import SearchQuerySet
 
 from eusay.models import Proposal, Comment
-from eusay.utils import to_queryset
+from eusay.utils import to_queryset, better_slugify
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, \
     CommentDetailSerializer, CommentListSerializer
 
@@ -60,7 +64,8 @@ class SearchResults(generics.ListAPIView):
         queryset = Proposal.objects.none()  # empty queryset by default
         query = self.request.QUERY_PARAMS.get('q')
         if query:
-            queryset = to_queryset(SearchQuerySet().all().filter(content=query))
+            searchqueryset = SearchQuerySet().all().filter(content=query)
+            queryset = to_queryset(searchqueryset)
         return queryset
 
 
@@ -80,3 +85,22 @@ class SimilarProposals(SearchResults):
             searchqueryset = SearchQuerySet().more_like_this(proposal)
             queryset = to_queryset(searchqueryset)
         return queryset
+
+
+def autocomplete(request):
+    """
+    View proposals containing the input string in the title.
+    (For autocomplete)
+    """
+    query = request.GET.get("term", "")
+    searchqueryset = SearchQuerySet().autocomplete(title_auto=query)
+    suggestions= []
+    for result in searchqueryset:
+        title = result.title
+        url = reverse("proposal",
+                      kwargs={"proposalId": result.pk, "slug": better_slugify(title)})
+        suggestions.append({"label": title, "link": url})
+    data = json.dumps({
+        "results": suggestions
+    })
+    return HttpResponse(data, content_type="application/json")

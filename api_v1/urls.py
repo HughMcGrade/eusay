@@ -31,6 +31,12 @@ urlpatterns = patterns("",
         r'^search',
         api_v1_views.SearchResults.as_view()
     ),
+    # In templates, use {% url "api_v1:autocomplete" proposal.id %}
+    url(
+        r'^autocomplete',
+        api_v1_views.autocomplete,
+        name="autocomplete"
+    ),
     url(
         r'^auth/',
         include('rest_framework.urls',
