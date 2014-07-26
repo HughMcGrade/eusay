@@ -22,6 +22,7 @@
 <script src="{% static "js/endless-pagination.js" %}"></script>
 <script src="{% static "js/jquery.hideseek.min.js" %}"></script>
 <script src="{% static "js/jquery-ui.min.js" %}"></script>
+<script src="{% static "js/bootstrap-debugger.js" %}"></script>
 
 <script>
 $(document).ready(function() {
@@ -108,6 +109,8 @@ $(document).ready(function() {
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+{% block progressbar %}
+{% endblock %}
 
 <div id="message_container">
     {% for message in messages %}

@@ -7,7 +7,7 @@
 }
 body {
     margin-bottom: 20px;
-	background-color: #fff;
+	background: #fff url("/static/img/cream_dust.png");
 }
 #logo {
 	font-size: 1.8em;
@@ -94,7 +94,7 @@ body {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	background-image: none;
+	background-image: none;x$
 	border: 1px solid #cccccc;
 	white-space: nowrap;
 	border-radius: 6px;
@@ -133,18 +133,12 @@ h2, h3 {
 .red {
     color: red;
 }
-.row1 {
-    background-color: rgb(240, 240, 240);
-}
 .tri {
     font-size: 1.3em;
 }
 .tri:hover {
     color: grey;
     text-decoration: none;
-}
-.col-xs-2 {
-    font-size: 1.5em;
 }
 .authorInfo {
     color: grey;
@@ -175,6 +169,63 @@ hr {
     font-size: 14px;
 }
 
+/* Proposal */
+.navbar {
+    margin-bottom: 0; /* overrides bootstrap default of 20px */
+}
+.proposal-progress-bar {
+    margin-bottom: 20px;
+    height: 5px;
+    border-radius: 0;
+    overflow: visible;
+}
+.proposal-page {
+    background: #fff;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	padding-bottom: 20px;
+}
+.proposal-page:before, .proposal-page:after {
+    /* Fancy shadow effects */
+	position: absolute;
+	width: 40%;
+	height: 10px;
+	content: ' ';
+	left: 12px;
+	bottom: 12px;
+	background: transparent;
+	-webkit-transform: skew(-5deg) rotate(-5deg);
+	-moz-transform: skew(-5deg) rotate(-5deg);
+	-ms-transform: skew(-5deg) rotate(-5deg);
+	-o-transform: skew(-5deg) rotate(-5deg);
+	transform: skew(-5deg) rotate(-5deg);
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	z-index: -1;
+}
+.proposal-page:after {
+    /* Fancy shadow effects */
+	left: auto;
+	right: 12px;
+	-webkit-transform: skew(5deg) rotate(5deg);
+	-moz-transform: skew(5deg) rotate(5deg);
+	-ms-transform: skew(5deg) rotate(5deg);
+	-o-transform: skew(5deg) rotate(5deg);
+	transform: skew(5deg) rotate(5deg);
+}
+.proposal-text {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.proposal-vote-buttons {
+    margin-top: 20px;
+}
+.proposal-tags {
+    margin-top: 10px;
+    font-size: 0.9em;
+}
 /* Submission form  */
 #similar {
     display: none;

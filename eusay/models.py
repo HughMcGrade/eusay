@@ -103,6 +103,21 @@ class Proposal (models.Model):
     
     def get_votes_down_count(self):
         return self._get_votes_count(False)
+
+    def get_votes_up_percentage(self):
+        votes_up = self.get_votes_up_count()
+        votes_total = votes_up + self.get_votes_down_count()
+        if votes_total == 0:
+            return 0;
+        else:
+            return (votes_up/votes_total) * 100
+
+    def get_votes_down_percentage(self):
+        votes_up_percentage = self.get_votes_up_percentage()
+        if votes_up_percentage == 0:
+            return 0
+        else:
+            return 100 - votes_up_percentage
     
     def _hours_since(self, date):
         utc_now = datetime.datetime.utcnow()#(datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(timestamp))

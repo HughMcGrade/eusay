@@ -14,68 +14,116 @@ $(document).ready(function() {
 			reloadComments(document.getElementById('comments_div'), '{{ proposal.id }}', null);
     }});
 
-// find similar proposals
+    // find similar proposals
     $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
-    var output = "<ul>";
-    for (var i in data.results) {
-        output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
-    }
-    output += "</ul>";
-    if (data.count > 0) {
-        $("#similarList").html(output);
-        $("#similar").fadeIn();
-    }
+        var output = "<ul>";
+        for (var i in data.results) {
+            output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+        }
+        output += "</ul>";
+        if (data.count > 0) {
+            $("#similarList").html(output);
+            $("#similar").fadeIn();
+        }
+    });
+
+    // init tooltips
+    $('.progress-bar').tooltip({
+        placement: "bottom"
+    })
 });
-});
+/*
+// voting
+function vote(id, direction) {
+    $.post("/vote-proposal/" + direction + "/" + id, {HTTP_X_REQUESTED:'XMLHttpRequest'}, function(data) {
+        if (data.success == true) {
+
+        } else {
+            alert('ERROR: ' + data.error_message);
+        }
+    }, "json");
+}
+*/
 </script>
 
 {% endblock %}
 
+{% block progressbar %}
+<div class="progress proposal-progress-bar">
+  <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
+  </div>
+  <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
 
-{% if hide %}
+<!--{% if hide %}
 <h1>This proposal has been hidden: {{ hide.reason }}</h1>
 <br />
 <a id="unhide_link" class="accordion-toggle" href="#hide_accordion" data-toggle="collapse">View Proposal</a>
 <div id="hide_accordion" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
-{% endif %}
+{% endif %}-->
 
 <div class="row">
-    <div class="column-xs-12">
-    <h2>{{ proposal.title }}</h2>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        {% if proposal.tags.all %}
-        <p>Tags: {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
-        {% endif %}
-    </div>
-</div>
-<div class="row">
-    <div id="proposal_vote_div_{{ proposal.id }}">
-	    <script language="Javascript">
-		    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
-	    </script>
-    </div>
-    {% if not hide %}
-    <div>
-      {% if user.isModerator and not hide%}
-      <a href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
-      {% else %}
-      <a href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
-      {% endif %}
-    </div>
-    {% endif %}
-    <div class="col-xs-8"></div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="textbox">
-            <p>{{ proposal.text|my_markdown }}</p>
+    <div class="proposal-page col-xs-12 col-md-8 col-md-offset-2">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>{{ proposal.title }}</h2>
+            </div>
         </div>
-    </div>
-</div>
+        <hr />
+        <div class="row proposal-text">
+            <div class="col-xs-10 col-xs-offset-1">
+                <p>{{ proposal.text|my_markdown }}</p>
+            </div>
+        </div>
+        <hr />
+
+        <div class="row proposal-vote-buttons">
+            <div class="col-md-3 col-md-offset-2 col-xs-6">
+                <button type="button" class="btn btn-lg btn-block btn-success">Agree</button>
+            </div>
+            <div class="col-md-3 col-md-offset-2 col-xs-6">
+                <button type="button" class="btn btn-lg btn-block btn-danger">Disagree</button>
+            </div>
+        </div>
+
+        {% if proposal.tags.all %}
+            <div class="row proposal-tags">
+                <div class="col-xs-12">
+                    <p>Tags:<br />
+                    {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-xs-3">
+                {% if not hide %}
+                    <div>
+                        {% if user.isModerator and not hide%}
+                        <a href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+                        {% else %}
+                        <a href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <p>Note: to be replaced with new buttons</p>
+            <div id="proposal_vote_div_{{ proposal.id }}">
+                <script language="Javascript">
+                    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
+                </script>
+            </div>
+        </div>
+
+    </div> <!-- /.proposal-page -->
+</div> <!-- /.row -->
 
 <div class="row" id="similar">
     <div class="col-xs-12">
@@ -102,10 +150,10 @@ $(document).ready(function() {
   </div>
 </div>
 
-{% if hide %}
+<!--{% if hide %}
 
 </div>
 
-{% endif %}
+{% endif %}-->
 
 {% endblock %}
