@@ -205,7 +205,14 @@ def proposal(request, proposalId, slug):
         hide = HideProposalAction.objects.all().get(proposal=proposal)
 
     form = CommentForm() # An unbound form
-    return render(request, "proposal.html", {"form": form, "proposal": proposal, "comments" : comments, "user" : user, "comments_template" : "proposal_comments.html", "hide" : hide})
+    return render(request,
+                  "proposal.html",
+                  {"form": form,
+                   "proposal": proposal,
+                   "comments": comments,
+                   "user": user,
+                   #"comments_template": "proposal_comments.html",
+                   "hide": hide})
 
 def vote_proposal(request, vote_request_type, proposal_id):
     proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
@@ -329,7 +336,9 @@ def hide_comment(request, comment_id):
                 # TODO Could improve handling of invalid form, though it is unlikely here
                 return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide comment form"))
         form = HideCommentActionForm()
-        return render(request, "hide_comment_form.html", { "comment" : comment, "form" : form })
+        return render(request, "hide_comment_form.html", {"comment": comment,
+                                                          "form": form,
+                                                          "user": user})
 
 def hide_proposal(request, proposal_id):
     user = get_current_user(request)
@@ -349,7 +358,11 @@ def hide_proposal(request, proposal_id):
                 # TODO Could improve handling of invalid form, though it is unlikely here
                 return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide proposal form"))
         form = HideProposalActionForm()
-        return render(request, "hide_proposal_form.html", { "proposal" : proposal, "form" : form })
+        return render(request,
+                      "hide_proposal_form.html",
+                      {"proposal": proposal,
+                       "form": form,
+                       "user": user})
 
 def hide_from_report(request, report_id):
     user = get_current_user(request)

@@ -9,10 +9,16 @@
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 
 <script>
+function initForms() {
+    $('.proposal-comment-form').ajaxForm(
+        {success: function() {
+            reloadComments($(".comments"), '{{ proposal.id }}', null);
+            initForms();
+        }
+    });
+};
 $(document).ready(function() {
-    $('#comment_form').ajaxForm({ complete : function() { 
-			reloadComments(document.getElementById('comments_div'), '{{ proposal.id }}', null);
-    }});
+    initForms();
 
     // find similar proposals
     $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
@@ -30,7 +36,16 @@ $(document).ready(function() {
     // init tooltips
     $('.progress-bar').tooltip({
         placement: "bottom"
-    })
+    });
+    $('.comment-user-status').tooltip({
+        placement: "top"
+    });
+    $(".comment-user-name-link").tooltip();
+
+    // hide comment reply forms
+    $(".comment-reply-form").hide({
+        duration: 0
+    });
 });
 /*
 // voting
@@ -44,6 +59,16 @@ function vote(id, direction) {
     }, "json");
 }
 */
+function showReplyForm(id) {
+    $("#comment-reply-form-box-" + id).slideToggle("fast", function() {
+        $("#comment-reply-form-" + id +  "> textarea").focus()
+    });
+};
+function viewHiddenProposal() {
+    $("#view-hidden-proposal-button").slideUp(function() {
+        $(".proposal-hidden").slideDown()
+    });
+}
 </script>
 
 {% endblock %}
@@ -66,8 +91,23 @@ function vote(id, direction) {
 <div id="hide_accordion" class="accordion-body collapse" style="height: auto; margin-left: 40px;">
 {% endif %}-->
 
+{% if hide %}
+    <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="panel panel-danger">
+                <div class="panel-heading">Careful now</div>
+                <div class="panel-body">
+                    <p>This proposal has been hidden. You can still view it, but it may not abide by EUSA safe space policy!</p>
+                    <p><b>Reason:</b> {{ hide.reason }}</p>
+                    <button type="button" class="btn btn-danger" id="view-hidden-proposal-button" onclick="viewHiddenProposal()">View anyway</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 <div class="row">
-    <div class="proposal-page col-xs-12 col-md-8 col-md-offset-2">
+    <div class="proposal-page col-xs-12 col-md-8 col-md-offset-2 {% if hide %}proposal-hidden{% endif %}">
         <div class="row">
             <div class="col-xs-12">
                 <h2>{{ proposal.title }}</h2>
@@ -76,7 +116,7 @@ function vote(id, direction) {
         <hr />
         <div class="row proposal-text">
             <div class="col-xs-10 col-xs-offset-1">
-                <p>{{ proposal.text|my_markdown }}</p>
+                <p>{{ proposal.text | my_markdown }}</p>
             </div>
         </div>
         <hr />
@@ -103,7 +143,7 @@ function vote(id, direction) {
             <div class="col-xs-3">
                 {% if not hide %}
                     <div>
-                        {% if user.isModerator and not hide%}
+                        {% if user.isModerator and not hide %}
                         <a href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
                         {% else %}
                         <a href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
@@ -113,26 +153,31 @@ function vote(id, direction) {
             </div>
         </div>
 
-        <div class="row">
+<!--        <div class="row">
             <p>Note: to be replaced with new buttons</p>
             <div id="proposal_vote_div_{{ proposal.id }}">
                 <script language="Javascript">
                     setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
                 </script>
             </div>
-        </div>
+        </div>-->
 
     </div> <!-- /.proposal-page -->
 </div> <!-- /.row -->
 
-<div class="row" id="similar">
+<div class="comments{% if hide %} proposal-hidden{% endif %}">
+{% include "proposal_comments.html" %}
+</div>
+
+<!--<div class="row" id="similar">
     <div class="col-xs-12">
         <h3>Similar proposals:</h3>
         <div id="similarList">
         </div>
     </div>
-</div>
+</div>-->
 
+{% comment %}
 <div class="row">
   <div id="full_comment_div" class="comments">
     <p id="reply_to_div"></p>
@@ -149,6 +194,7 @@ function vote(id, direction) {
     </div>
   </div>
 </div>
+{% endcomment %}
 
 <!--{% if hide %}
 

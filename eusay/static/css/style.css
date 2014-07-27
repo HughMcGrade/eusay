@@ -122,11 +122,6 @@ h2, h3 {
 .red {
     color: red;
 }
-.col-xs-1 {
-    margin: 5px 5px 5px 0px;
-    padding-left: 10px;
-}
-
 .green {
     color: green;
 }
@@ -173,6 +168,12 @@ hr {
 .navbar {
     margin-bottom: 0; /* overrides bootstrap default of 20px */
 }
+.mainContainer {
+    margin-top: 20px; /* so we put it back in .mainContainer */
+}
+.proposal-hidden {
+    display: none;
+}
 .proposal-progress-bar {
     margin-bottom: 20px;
     height: 5px;
@@ -185,6 +186,7 @@ hr {
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	padding-bottom: 20px;
+	margin-bottom: 15px;
 }
 .proposal-page:before, .proposal-page:after {
     /* Fancy shadow effects */
@@ -225,6 +227,38 @@ hr {
 .proposal-tags {
     margin-top: 10px;
     font-size: 0.9em;
+}
+
+/* Comments */
+.comment {
+    padding: 15px;
+    margin-top: 15px;
+    background: #fff;
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+}
+.comment-meta {
+    color: grey;
+    font-size: 0.9em;
+}
+.comment-user-name-link {
+    color: #2F6CB1;
+}
+.comment-user-title {
+    color: grey;
+    font-size: 0.9em;
+}
+.comment-user-status {
+    color: #F4CC11;
+}
+.comment-votes {
+    float: right;
+    color: grey;
+    font-size: 0.9em;
+}
+.comment-reply-link {
+    cursor: pointer;
 }
 /* Submission form  */
 #similar {
