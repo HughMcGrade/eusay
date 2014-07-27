@@ -30,8 +30,7 @@ class ProposalForm (forms.ModelForm):
 class CommentForm (forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                         "rows": "3",
-                                                        "maxlength": "499",
-                                                        "placeholder": "Add a comment"}))
+                                                        "maxlength": "500"}))
 
     class Meta:
         model = Comment
@@ -110,6 +109,7 @@ class UserForm(forms.ModelForm):
         if cleaned_name == "":
             raise forms.ValidationError("Username cannot be blank.")
         # don't allow usernames that are already taken
+        # TODO: i think this is made redundant by the next check for unique slugs, but make sure before removing it
         if User.objects.exclude(sid=self.instance.sid).filter(name=cleaned_name).exists():
             raise forms.ValidationError("Username %s already exists." % cleaned_name)
         # don't allow usernames where the slug already exists
