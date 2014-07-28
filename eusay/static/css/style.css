@@ -16,14 +16,13 @@ body {
 .navbar {
 	border-radius: 0px !important;
 }
-#closeX {
-	float: right;
-	margin-top: -30px;
-	margin-right: -30px;
+
+/* Front page */
+.index-main-button {
+    margin-bottom: 5px;
 }
-#closeX:hover {
-	color: #ed174e;
-	cursor: pointer;
+.index-see-more-link {
+    font-size: 0.6em;
 }
 .proposalCard {
 	height: 300px;
@@ -112,10 +111,6 @@ body {
     background-color: rgb(240, 240, 240);
     padding: 8px;
 }
-h2, h3 {
-    margin-left: 0px;
-    padding-left: 8px;
-}
 .green {
     color: green;
 }
@@ -124,10 +119,6 @@ h2, h3 {
 }
 .green {
     color: green;
-}
-.red {
-    color: red;
-}
 .tri {
     font-size: 1.3em;
 }
@@ -140,10 +131,6 @@ h2, h3 {
     font-size: 0.8em;
     margin-bottom: 0.2em;
     margin-top: 1em;
-}
-hr {
-    margin: 0px;
-    padding: 0px;
 }
 .commentVotes {
     font-size: 1em;
@@ -167,9 +154,6 @@ hr {
 /* Proposal */
 .navbar {
     margin-bottom: 0; /* overrides bootstrap default of 20px */
-}
-.mainContainer {
-    margin-top: 20px; /* so we put it back in .mainContainer */
 }
 .proposal-hidden {
     display: none;

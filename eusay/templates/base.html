@@ -110,19 +110,20 @@ $(document).ready(function() {
 {% block progressbar %}
 {% endblock %}
 
-<div id="message_container">
-    {% for message in messages %}
-    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-    </div>
-    {% endfor %}
-</div>
-
+{% block jumbotron %}
+{% endblock %}
 
 <div class="container mainContainer endless_container">
-{% block content %}
-{% endblock %}
+    <div id="message_container">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% block content %}
+    {% endblock %}
 </div>
 </body>
 </html>

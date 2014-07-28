@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 
 {% block js %}
-{{ block.super }}
-<script>
-function yolo() {
-	$(".jumbotron").slideUp();
-};
-</script>
 <script>
 $(document).ready(function() {
     $.endlessPaginate();
@@ -14,17 +8,28 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 
+{% block jumbotron %}
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+                    <h1>eu<span class="pink">say</span></h1>
+                    <p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
+                    Your votes and comments will help guide the student council's decision.</p>
+                    <a href='{% url "submit" %}' class="btn btn-primary btn-lg index-main-button" role="button">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Submit a proposal
+                    </a>
+                    <a href="#" class="btn btn-primary btn-lg index-main-button" role="button">
+                        <span class="glyphicon glyphicon-list"></span>&nbsp;&nbsp;Browse proposals
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-<div class ="col-xs-10 col-xs-offset-1">
-<div class="jumbotron">
-<div id="closeX" onclick="yolo()">X</div>
-<h1>eu<span class="pink">say</span></h1>
-<p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
-Your votes and comments will help guide the student council's decision.</p>
-<p><a href="/about" class="btn btn-primary" role="button">Learn more</a></p>
-</div> <!-- /jumbotron -->
-</div> <!-- /col -->
-</div> <!-- /row -->
+<h2>Popular proposals <a class="index-see-more-link" href="#">See more</a></h2>
+<hr />
 {% include proposals_template %}
 {% endblock %}
