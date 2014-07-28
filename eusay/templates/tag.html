@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
+{% block title %}
+ | {{ tag.name }}
+{% endblock %}
+
 {% block js %}
-{{ block.super }}
 <script>
 $(document).ready(function() {
     $.endlessPaginate();
@@ -10,7 +13,6 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block content %}
-
 <div class="page-header">
   <h2>Proposals tagged {{ tag.name }}</h2>
   <p>{{ tag.description }}</p>

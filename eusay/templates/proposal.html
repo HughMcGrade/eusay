@@ -3,11 +3,17 @@
 {% load static %}
 {% load filters %}
 
-{% block js %}
+{% block title %}
+{% if not hide %}
+ | {{ proposal.title }}
+{% else %}
+ | Hidden proposal
+{% endif %}
+{% endblock %}
 
+{% block js %}
 <script src="{% static "js/jquery.form.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
-
 <script>
 function initForms() {
     $('.proposal-comment-form').ajaxForm(
