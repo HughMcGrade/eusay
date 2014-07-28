@@ -42,9 +42,9 @@
                                 <span class="comment-user-title">&nbsp;&nbsp;{{ comment.user.title }}</span>
                             {% endif %}
                         </p>
-                        <p>
-                            {{ comment.text | replace_bad_words | urlize | my_markdown }}
-                        </p>
+
+                        {{ comment.text | replace_bad_words | urlize | my_markdown }}
+
                         <span class="comment-meta">
                             {{ comment.createdAt|timesince_human }}
                             {% if not hide %}
@@ -83,9 +83,9 @@
                                         <span class="comment-user-title">&nbsp;&nbsp;{{ reply.user.title }}</span>
                                     {% endif %}
                                 </p>
-                                <p>
-                                    {{ reply.text | replace_bad_words | urlize | my_markdown }}
-                                </p>
+
+                                {{ reply.text | replace_bad_words | urlize | my_markdown }}
+
                                 <span class="comment-meta">
                                     {{ reply.createdAt|timesince_human }}
                                     &nbsp;&nbsp;|&nbsp;&nbsp;
