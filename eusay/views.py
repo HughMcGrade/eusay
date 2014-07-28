@@ -138,7 +138,11 @@ def submit(request):
                         kwargs={"proposalId": proposal.id,
                                 "slug": proposal.slug})) # Redirect after POST
         else:
-            return HttpResponse(form.errors)
+            errors = form.errors
+            return render(request, "submit.html", {"form": form,
+                                                   "user": user,
+                                                   "tags": tags,
+                                                   "errors": errors})
     else:
         form = ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form,

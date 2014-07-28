@@ -73,6 +73,12 @@ function countChars(val) {
 {% endblock %}
 
 {% block content %}
+{% if errors %}
+    {% for field,error in errors.items %}
+        <div class="alert alert-danger"><b>Error in {{ field }} field:</b> {{ error.as_text }}</div>
+    {% endfor %}
+{% endif %}
+
 <form method="post" action="">
   {% csrf_token %}
 

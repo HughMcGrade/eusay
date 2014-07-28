@@ -1,11 +1,8 @@
-import re
-
 from django import forms
-from django.conf import settings
 
 from .models import Proposal, Comment, HideProposalAction, \
     HideCommentAction, User, CommentReport, ProposalReport, Tag
-from .utils import better_slugify
+from .utils import better_slugify, contains_swear_words
 
 
 class ProposalForm (forms.ModelForm):
@@ -25,6 +22,20 @@ class ProposalForm (forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={"id": "tag-list"}),
         queryset=Tag.objects.all(),
         required=False)
+
+    def clean_title(self):
+        cleaned_title = self.cleaned_data["title"]
+        # don't allow swear words
+        if contains_swear_words(cleaned_title):
+            raise forms.ValidationError("Proposals cannot contain swear words.")
+        return cleaned_title
+
+    def clean_text(self):
+        cleaned_text = self.cleaned_data["text"]
+        # don't allow swear words
+        if contains_swear_words(cleaned_text):
+            raise forms.ValidationError("Proposals cannot contain swear words.")
+        return cleaned_text
 
 
 class CommentForm (forms.ModelForm):
@@ -113,9 +124,7 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError("User slug already exists.")
 
         # don't allow swear words
-        words = re.sub("[^\w]", " ", self.cleaned_data["name"]).split()
-        bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
-        if bad_words:
+        if contains_swear_words(cleaned_name):
             raise forms.ValidationError("Username cannot contain swear words.")
 
         return cleaned_name

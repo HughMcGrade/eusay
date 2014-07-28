@@ -1,4 +1,7 @@
+import re
+
 from django.template.defaultfilters import slugify
+from django.conf import settings
 
 
 def better_slugify(text, **kwargs):
@@ -42,3 +45,11 @@ def to_queryset(searchqueryset):
     that you can take the len() of a list, a generators don't have a len().
     """
     return [item.object for item in searchqueryset]
+
+
+def contains_swear_words(text):
+    words = re.sub("[^\w]", " ", text).split()
+    bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
+    if bad_words:
+        return True
+    return False

@@ -153,9 +153,9 @@ body {
 .navbar {
     margin-bottom: 0; /* overrides bootstrap default of 20px */
 }
-/* .mainContainer {
-    margin-top: 20px;
-} */
+.mainContainer {
+    margin-top: 20px; /* so we replace it here */
+}
 .proposal-hidden {
     display: none;
 }
