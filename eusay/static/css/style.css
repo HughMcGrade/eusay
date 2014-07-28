@@ -153,6 +153,9 @@ body {
 .navbar {
     margin-bottom: 0; /* overrides bootstrap default of 20px */
 }
+/* .mainContainer {
+    margin-top: 20px;
+} */
 .proposal-hidden {
     display: none;
 }
