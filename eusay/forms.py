@@ -81,9 +81,10 @@ class ProposalReportForm (forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    # Name = CharField
-    # hasProfile = BooleanField
-    
+    class Meta:
+        model = User
+        fields = ["name", "hasProfile"]
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("current_user")
         super(UserForm, self).__init__(*args, **kwargs)
@@ -99,10 +100,6 @@ class UserForm(forms.ModelForm):
                                     initial=False,
                                     widget=forms.CheckboxInput(attrs=has_profile_attrs))
 
-    class Meta:
-        model = User
-        fields = ["name", "hasProfile"]
-
     def clean_name(self):
         cleaned_name = self.cleaned_data["name"]
 
@@ -112,7 +109,7 @@ class UserForm(forms.ModelForm):
 
         # don't allow usernames where the slug already exists
         slug = better_slugify(cleaned_name)
-        if User.objects.filter(slug=slug).exists():
+        if User.objects.exclude(sid=self.instance.sid).filter(slug=slug).exists():
             raise forms.ValidationError("User slug already exists.")
 
         # don't allow swear words
