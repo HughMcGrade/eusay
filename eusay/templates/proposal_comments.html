@@ -27,7 +27,7 @@
                     <div class="col-xs-12 comment">
                         <p>
                             {% if comment.user.userStatus != "User" %}
-                                <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="This user is a {{ comment.user.userStatus }}."></span>
+                                <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
                             {% endif %}
 
                             <b>
