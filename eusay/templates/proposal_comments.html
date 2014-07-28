@@ -12,6 +12,7 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <label>Add comment</label>
+                            {% include "markdown_formatting_help.html" %}
                             {{ form.text }}
                         </div>
                             <button type="post" class="btn btn-default">Submit</button>
@@ -115,6 +116,7 @@
                             <form role="form" method="post" class="proposal-comment-form">
                                 <div class="form-group" id="comment-reply-form-{{ comment.id }}">
                                     <label>Add comment</label>
+                                    {% include "markdown_formatting_help.html" %}
                                     {{ form.text }}
                                     {% csrf_token %}
                                     <input type="hidden" name="reply_to" value="{{ comment.id }}" />

@@ -18,6 +18,7 @@
 <script src="{% static "js/endless-pagination.js" %}"></script>
 <script>
 $(document).ready(function() {
+    // init autocomplete search
     $("#search-field").autocomplete({
         source: function(request, response) {
             $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
@@ -32,7 +33,17 @@ $(document).ready(function() {
             window.location.href = ui.item.link;
         }
     });
+
+    // hide formatting help
+    $(".submit-formatting-help").hide(0);
 });
+
+// show formatting help
+function showFormattingHelp(div) {
+    $(div).next().slideToggle(function() {
+        console.log("haha")
+    })
+}
 </script>
 {% block js %}
 {% endblock %}

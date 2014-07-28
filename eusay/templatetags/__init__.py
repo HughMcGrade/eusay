@@ -11,4 +11,5 @@ for line in lines:
     settings.PROFANITIES_LIST += current_word
 text_file.close()
 
-bleach.ALLOWED_TAGS.append("p")
+bleach.ALLOWED_TAGS += ["p", "h1", "h2", "em", "strong","br", "ul", "ol",
+                        "li"]

@@ -95,10 +95,12 @@ function countChars(val) {
 
   <div class="form-group">
     <label for="text">Proposal Body</label>
+    {% include "markdown_formatting_help.html" %}
     {{ form.text }}
     <div id="charNum" class="charNum">0/6000</div>
   </div>
   </div>
+
   <div class="col-xs-12 col-md-4">
     <div class="alert alert-warning">
       <h4>How to write a proposal</h4>

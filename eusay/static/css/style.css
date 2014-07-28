@@ -5,6 +5,15 @@
 .footer a, .footer {
     color: grey;
 }
+.format-help-link:hover {
+    cursor: pointer;
+}
+.comment h1, .proposal-text h1 {
+    font-size: 1.3em;
+}
+.comment h2, .proposal-text h2 {
+    font-size: 1.1em;
+}
 #title {
 	font-family: Helvetica, Arial, sans-serif;
 	color: #9d9fa2;
