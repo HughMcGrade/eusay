@@ -7,7 +7,7 @@ import api_v1.views as api_v1_views
 urlpatterns = patterns("",
     url(
         r'^proposals/$',
-        api_v1_views.ProposalList.as_view(),
+        api_v1_views.ProposalList.as_view(), name="proposals",
     ),
     url(
         r'^proposals/(?P<id>\d+)/$',

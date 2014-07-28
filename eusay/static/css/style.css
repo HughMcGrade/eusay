@@ -1,3 +1,10 @@
+/* Base */
+.footer {
+    margin: 40px auto 20px auto;
+}
+.footer a, .footer {
+    color: grey;
+}
 #title {
 	font-family: Helvetica, Arial, sans-serif;
 	color: #9d9fa2;
@@ -6,7 +13,6 @@
 	color: #ed174e !important;
 }
 body {
-    margin-bottom: 20px;
 	background: #fff url("/static/img/cream_dust.png");
 }
 #logo {

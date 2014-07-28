@@ -56,7 +56,6 @@ $(document).ready(function() {
 </head>
 
 <body>
-
 <nav class="navbar navbar-inverse" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -73,20 +72,12 @@ $(document).ready(function() {
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="eusay-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="/submit">Submit</a></li>
-        <li><a href="/about">About</a></li>
+        <li><a href="{% url 'submit' %}">Submit</a></li>
+        <li><a>Browse proposals</a></li>
+        <li><a>Browse tags</a></li>
 	{% if user.isModerator %}
 	<li><a href="/moderator_panel">Moderator Panel</a></li>
 	{% endif %}
-      </ul>
-      <ul class="nav navbar-nav">
-	<li class="dropdown">
-	  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Moderation<b class="caret"></b></a>
-	<ul class="dropdown-menu">
-          <li><a href="/proposal_hides">Hidden Proposals</a></li>
-          <li><a href="/comment_hides">Hidden Comments</a></li>
-        </ul>
-	</li>
       </ul>
       <form class="navbar-form navbar-right" role="search" action="/search" method="get">
         <div class="form-group">
@@ -114,16 +105,29 @@ $(document).ready(function() {
 {% endblock %}
 
 <div class="container mainContainer endless_container">
-<div id="message_container">
-    {% for message in messages %}
-    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <div id="message_container">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+
     {% block content %}
     {% endblock %}
-</div>
+
+    <div class="row footer">
+        <div class="col-xs-12 text-center">
+            <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'hidden-proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'hidden-comments' %}">Hidden comments</a>
+        </div>
+    </div>
+
+</div> <!-- ./mainContainer -->
 </body>
 </html>

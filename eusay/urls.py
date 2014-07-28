@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # Proposals
-    url(r'^$', eusay_views.index),  # Front page
+    url(r'^$', eusay_views.index, name="frontpage"),  # Front page
     url(r'^submit/', eusay_views.submit, name="submit"),
     url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)',
         eusay_views.proposal,
@@ -27,8 +27,9 @@ urlpatterns = patterns('',
     url(r'^user/(?P<slug>[\w-]+)', eusay_views.profile, name="user"),
 
     # Moderation
-    url(r'^comment_hides', eusay_views.comment_hides),
-    url(r'^proposal_hides', eusay_views.proposal_hides),
+    url(r'^comment_hides', eusay_views.comment_hides, name="hidden-comments"),
+    url(r'^proposal_hides', eusay_views.proposal_hides,
+        name="hidden-proposals"),
     url(r'^moderator_panel', eusay_views.moderator_panel),
     url(r'^search/', search_views.search),
 
@@ -47,6 +48,6 @@ urlpatterns = patterns('',
     url(r'^remove_comment/(?P<comment_id>\d+)', eusay_views.remove_comment),
 
     # Other
-    url(r'^about/', eusay_views.about),
+    url(r'^about/', eusay_views.about, name="about"),
 
 )
