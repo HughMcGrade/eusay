@@ -50,11 +50,12 @@ def replace_bad_words(value):
 
 @register.filter(is_safe=True)
 @stringfilter
-def my_markdown(value):
+def my_markdown(text):
     extensions = ["nl2br", ]
-    return mark_safe(bleach.clean(markdown.markdown(value,
-                                                    extensions=extensions),
-                                                    strip_comments=False))
+    html = markdown.markdown(text, extensions=extensions)
+    linkified = bleach.linkify(html)
+    cleaned_text = bleach.clean(linkified, strip_comments=False)
+    return mark_safe(cleaned_text)
 
 
 @register.filter(name="timesince_human")

@@ -44,7 +44,7 @@
                             {% endif %}
                         </p>
 
-                        {{ comment.text | replace_bad_words | urlize | my_markdown }}
+                        {{ comment.text | replace_bad_words | my_markdown }}
 
                         <span class="comment-meta">
                             {{ comment.createdAt|timesince_human }}
@@ -85,7 +85,7 @@
                                     {% endif %}
                                 </p>
 
-                                {{ reply.text | replace_bad_words | urlize | my_markdown }}
+                                {{ reply.text | replace_bad_words | my_markdown }}
 
                                 <span class="comment-meta">
                                     {{ reply.createdAt|timesince_human }}
