@@ -2,10 +2,8 @@
 {% block js %}
 {% endblock %}
 {% block content %}
-{% if errors %}
-        {% for field,error in errors.items %}
-        <div class="alert alert-danger" role="alert"><strong>Error! </strong>{{ error.as_text }}</div>
-        {% endfor %}
+{% if error_msg %}
+    <div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
 {% endif %}
 <h2>{{ profile.name }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
 <div class="row">

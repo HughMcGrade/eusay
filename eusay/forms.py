@@ -105,20 +105,20 @@ class UserForm(forms.ModelForm):
 
     def clean_name(self):
         cleaned_name = self.cleaned_data["name"]
+
         # don't allow blank usernames
         if cleaned_name == "":
             raise forms.ValidationError("Username cannot be blank.")
-        # don't allow usernames that are already taken
-        # TODO: i think this is made redundant by the next check for unique slugs, but make sure before removing it
-        if User.objects.exclude(sid=self.instance.sid).filter(name=cleaned_name).exists():
-            raise forms.ValidationError("Username %s already exists." % cleaned_name)
+
         # don't allow usernames where the slug already exists
         slug = better_slugify(cleaned_name)
         if User.objects.filter(slug=slug).exists():
             raise forms.ValidationError("User slug already exists.")
+
         # don't allow swear words
         words = re.sub("[^\w]", " ", self.cleaned_data["name"]).split()
         bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
         if bad_words:
             raise forms.ValidationError("Username cannot contain swear words.")
+
         return cleaned_name
