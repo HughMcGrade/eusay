@@ -25,6 +25,15 @@ function reloadMessages() {
     });
 }
 
+// Not used
+function removeRow() {
+     table = $(this).parents('tr').parents('tbody');
+     $(this).parents('tr').remove();
+     if (!table.html()) {
+          $(table).text("None!");
+     }
+}
+
 $(document).ready(function() {
     $('.action_form').each(function (item) {
         $(item).ajaxForm({ complete : function() { 
@@ -54,10 +63,10 @@ $(document).ready(function() {
   {% for r in comment_reports %}
   <tr id="report_{{ r.id }}">
     <td>
-      {{ r.comment.text }}
+      {{ r.content.text }}
     </td>
     <td>
-      <a href="/proposal/{{r.comment.proposal.id}}">{{ r.comment.proposal.title }}</a>
+      <a href="/proposal/{{r.content.proposal.id}}">{{ r.content.proposal.title }}</a>
     </td>
     <td>
       {{ r.reason }}
@@ -96,19 +105,19 @@ $(document).ready(function() {
   {% for r in proposal_reports %}
   <tr id="report_{{ r.id }}">
     <td>
-      <a href="/proposal/{{r.proposal.id}}">{{ r.proposal.title }}</a>
+      <a href="/proposal/{{r.content.id}}">{{ r.content.title }}</a>
     </td>
     <td>
       {{ r.reason }}
     </td>
     <td>
-      {{ r.moderator.name }}
+      {{ r.reporter.name }}
     </td>
     <td>
       <form method="POST" class="action_form">
 	{% csrf_token %}
 	<input type="hidden" name="report" value="{{ r.id }}" />
-	<input type="submit" onClick="$(this).parents('tr').remove()" class="btn btn-primary" name="action" value="Hide" />
+	<input type="submit" class="btn btn-primary" name="action" value="Hide" />
 	<input type="submit" class="btn btn-default" name="action" value="Ignore" />
       </form>
     </td>

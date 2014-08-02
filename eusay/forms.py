@@ -1,7 +1,6 @@
 from django import forms
 
-from .models import Proposal, Comment, HideProposalAction, \
-    HideCommentAction, User, CommentReport, ProposalReport, Tag
+from .models import Proposal, Comment, HideAction, User, Report, Tag
 from .utils import better_slugify, contains_swear_words
 
 
@@ -47,47 +46,24 @@ class CommentForm (forms.ModelForm):
         model = Comment
         fields = ['text']
 
-
-class HideCommentActionForm (forms.ModelForm):
+class HideActionForm (forms.ModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
                                                           "rows":"3",
                                                           "maxlength":"1999",
-                                                          "placeholder":"Why should this comment be hidden?"}))
+                                                          "placeholder":"Why should this content be hidden?"}))
 
     class Meta:
-        model = HideCommentAction
+        model = HideAction
         fields = ['reason']
 
-
-class HideProposalActionForm (forms.ModelForm):
+class ReportForm (forms.ModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
                                                           "rows":"3",
                                                           "maxlength":"1999",
-                                                          "placeholder":"Why should this proposal be hidden?"}))
+                                                          "placeholder":"Why should this content be hidden?"}))
 
     class Meta:
-        model = HideProposalAction
-        fields = ['reason']
-
-class CommentReportForm (forms.ModelForm):
-    reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
-                                                          "rows":"3",
-                                                          "maxlength":"1999",
-                                                          "placeholder":"Why should this comment be hidden?"}))
-
-    class Meta:
-        model = CommentReport
-        fields = ['reason']
-
-
-class ProposalReportForm (forms.ModelForm):
-    reason = forms.CharField(widget=forms.Textarea(attrs={"class":"form-control",
-                                                          "rows":"3",
-                                                          "maxlength":"1999",
-                                                          "placeholder":"Why should this proposal be hidden?"}))
-
-    class Meta:
-        model = ProposalReport
+        model = Report
         fields = ['reason']
 
 

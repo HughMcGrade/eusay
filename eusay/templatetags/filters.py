@@ -1,5 +1,5 @@
 from django import template
-from eusay.models import CommentVote
+from eusay.models import Vote
 from django.template.loader import render_to_string
 from django.template.defaultfilters import stringfilter, pluralize
 from django.utils.safestring import mark_safe
@@ -16,7 +16,7 @@ register = template.Library()
 @register.filter
 def comment_user_vote(comment, user):
     try:
-        vote = CommentVote.objects.all().filter(comment = comment).get(user = user)
+        vote = Vote.get_votes(comment).get(user = user)
     except Exception:
         vote = None
     if not vote:
