@@ -104,7 +104,7 @@ class Proposal (Content):
     def get_absolute_url(self):
         return reverse("proposal", kwargs={"proposalId": self.id,
                                            "slug": self.slug})
-    def get_vote_up_percentage(self):
+    def get_votes_up_percentage(self):
         votes_up = self.get_votes_up_count()
         votes_total = votes_up + self.get_votes_down_count()
         if votes_total == 0:

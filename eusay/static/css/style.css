@@ -8,6 +8,42 @@
 .format-help-link:hover {
     cursor: pointer;
 }
+.pink {
+	color: #ed174e !important;
+}
+body {
+	background: #fff url("/static/img/cream_dust.png");
+}
+.navbar {
+    margin-bottom: 0;
+}
+.mainContainer {
+    margin-top: 20px;
+}
+.jumbotron {
+    margin-bottom: 0;
+}
+#logo {
+	font-size: 1.8em;
+	font-family: Helvetica, Arial, sans-serif;
+}
+.navbar {
+	border-radius: 0px !important;
+}
+.green {
+    color: green;
+}
+.red {
+    color: red;
+}
+.tri {
+    font-size: 1.3em;
+}
+.tri:hover {
+    color: grey;
+    text-decoration: none;
+}
+/* Make markdown h1s, h2s, blockquotes look good in proposals and comments */
 .comment h1, .proposal-text h1 {
     font-size: 1.3em;
 }
@@ -17,92 +53,59 @@
 .comment blockquote, .proposal-text blockquote {
     font-size: 1em;
 }
-#title {
-	font-family: Helvetica, Arial, sans-serif;
-	color: #9d9fa2;
+
+/* Fancy shadow effects */
+.page-shadow {
+	position: relative;
+	background-color: #fff;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 }
-.pink {
-	color: #ed174e !important;
+.page-shadow:before, .page-shadow:after {
+	position: absolute;
+	width: 40%;
+	height: 10px;
+	content: ' ';
+	left: 12px;
+	bottom: 12px;
+	background: transparent;
+	-webkit-transform: skew(-5deg) rotate(-5deg);
+	-moz-transform: skew(-5deg) rotate(-5deg);
+	-ms-transform: skew(-5deg) rotate(-5deg);
+	-o-transform: skew(-5deg) rotate(-5deg);
+	transform: skew(-5deg) rotate(-5deg);
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+	z-index: -1;
 }
-body {
-	background: #fff url("/static/img/cream_dust.png");
-}
-#logo {
-	font-size: 1.8em;
-	font-family: Helvetica, Arial, sans-serif;
-}
-.navbar {
-	border-radius: 0px !important;
+.page-shadow:after {
+	left: auto;
+	right: 12px;
+	-webkit-transform: skew(5deg) rotate(5deg);
+	-moz-transform: skew(5deg) rotate(5deg);
+	-ms-transform: skew(5deg) rotate(5deg);
+	-o-transform: skew(5deg) rotate(5deg);
+	transform: skew(5deg) rotate(5deg);
 }
 
-/* Front page */
+
+/* Proposals pages (index) */
 .index-main-button {
     margin-bottom: 5px;
 }
 .index-see-more-link {
     font-size: 0.6em;
 }
-.proposalCard {
-	height: 300px;
-	max-width: 230px;
-	margin: 0 auto 25px auto;
-	border-radius: 6px;
-	border: 1px solid #ed174e;
-	position: relative;
+.index-proposal {
+    min-height: 250px;
+    margin-bottom: 20px;
+    padding: 15px;
 }
-.proposalCard:hover * {
-	color: #fff;
-}
-.proposalCard:hover {
-	background-color: #ed174e;
-	cursor: pointer;
-}
-.proposalCard span {
-	position:absolute;
-	width:100%;
-	height:100%;
-	top:0;
-	left: 0;
-	/* edit: added z-index */
-	z-index: 1;
-	/* edit: fixes overlap error in IE7/8,
-	make sure you have an empty gif
-	background-image: url('empty.gif'); */
-}
-.proposalName {
-	padding: 15px;
-	font-size: 1.5em;
-	word-wrap: break-word;
-}
-.proposalName a {
-	color: #ed174e;
-}
-.proposalName:hover a {
-	color: #fff;
-	text-decoration: none;
-}
-.cardVotes {
-	color: #414141;
-	padding: 15px;
-	height: 70px;
-	border-top: 1px solid #ed174e;
-}
-.cardTags {
-    color: #414141;
-	padding: 0px 15px;
-}
-.proposalCard:hover .votes {
-	border-top: 1px solid #fff;
-}
-.proposalCard:hover .submissionTime {
-	color: #9D002E;
-}
-.submissionTime {
-	color: #8A8A8A;
-	padding: 5px 15px;
-	position: absolute;
-	bottom: 0;
-	right: 0;
+.index-proposal-title {
+    min-height: 62px;
+    margin-bottom: 7px;
 }
 .endless_more, .endless_loading {
 	display: block;
@@ -125,33 +128,7 @@ body {
 	color: #333333;
 	text-decoration: none;
 }
-.textbox {
-    background-color: rgb(240, 240, 240);
-    padding: 8px;
-}
-.green {
-    color: green;
-}
-.red {
-    color: red;
-}
-.tri {
-    font-size: 1.3em;
-}
-.tri:hover {
-    color: grey;
-    text-decoration: none;
-}
-.authorInfo {
-    color: grey;
-    font-size: 0.8em;
-    margin-bottom: 0.2em;
-    margin-top: 1em;
-}
-.commentVotes {
-    font-size: 1em;
-    text-align: center;
-}
+
 .voteUp {
     float: left;
     margin-top: 20px;
@@ -160,20 +137,9 @@ body {
     float: right;
     margin-top: 20px;
 }
-.textbox img, .comment img {
-    max-width: 50%;
-}
-.textbox blockquote {
-    font-size: 14px;
-}
+
 
 /* Proposal */
-.navbar {
-    margin-bottom: 0; /* overrides bootstrap default of 20px */
-}
-.mainContainer {
-    margin-top: 20px; /* so we replace it here */
-}
 .proposal-hidden {
     display: none;
 }
@@ -184,41 +150,8 @@ body {
     overflow: visible;
 }
 .proposal-page {
-    background: #fff;
-	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
-	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
-	padding-bottom: 20px;
 	margin-bottom: 15px;
-}
-.proposal-page:before, .proposal-page:after {
-    /* Fancy shadow effects */
-	position: absolute;
-	width: 40%;
-	height: 10px;
-	content: ' ';
-	left: 12px;
-	bottom: 12px;
-	background: transparent;
-	-webkit-transform: skew(-5deg) rotate(-5deg);
-	-moz-transform: skew(-5deg) rotate(-5deg);
-	-ms-transform: skew(-5deg) rotate(-5deg);
-	-o-transform: skew(-5deg) rotate(-5deg);
-	transform: skew(-5deg) rotate(-5deg);
-	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-	-moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-	z-index: -1;
-}
-.proposal-page:after {
-    /* Fancy shadow effects */
-	left: auto;
-	right: 12px;
-	-webkit-transform: skew(5deg) rotate(5deg);
-	-moz-transform: skew(5deg) rotate(5deg);
-	-ms-transform: skew(5deg) rotate(5deg);
-	-o-transform: skew(5deg) rotate(5deg);
-	transform: skew(5deg) rotate(5deg);
+	padding: 15px;
 }
 .proposal-text {
     margin-top: 20px;
@@ -233,6 +166,9 @@ body {
 }
 
 /* Comments */
+.comments {
+    padding: 15px;
+}
 .comment {
     padding: 15px;
     margin-top: 15px;
@@ -242,6 +178,7 @@ body {
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 }
 .comment-meta {
+    display: inline;
     color: grey;
     font-size: 0.9em;
 }
