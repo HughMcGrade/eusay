@@ -29,7 +29,7 @@ class ProposalDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposal
         lookup_field = 'id'
-        fields = ("id", "title", "votesUp", "votesDown", "text", "proposer",
+        fields = ("id", "title", "votesUp", "votesDown", "text", "user",
                   "createdAt", "lastModified", "comments")
 
 
@@ -44,5 +44,5 @@ class ProposalListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposal
         lookup_field = 'id'
-        fields = ("id", "title", "votesUp", "votesDown", "proposer",
+        fields = ("id", "title", "votesUp", "votesDown", "user",
                   "createdAt", "lastModified")

@@ -130,7 +130,7 @@ def submit(request):
         form = ProposalForm(request.POST)  # A form bound to the POST data
         if form.is_valid():  # All validation rules pass
             proposal = form.save(commit=False)
-            proposal.proposer = user
+            proposal.user = user
             proposal.save()
             form.save_m2m()  # save tags
             return HttpResponseRedirect(
@@ -206,7 +206,7 @@ def proposal(request, proposalId, slug):
 
     hide = None
     if proposal.is_hidden():
-        hide = HideProposalAction.objects.all().get(proposal=proposal)
+        hide = HideAction.objects.all().get(proposal=proposal)
 
     form = CommentForm() # An unbound form
     return render(request,
@@ -223,10 +223,10 @@ def vote_proposal(request, vote_request_type, proposal_id):
     
     user = get_current_user(request)
     
-    # Check if they have already voted
-    if ProposalVote.objects.all().filter(proposal=proposal).filter(user=user).count() == 1:
-        # Has already voted
-        previous_vote = ProposalVote.objects.all().filter(proposal=proposal).get(user=user)
+    # Check already voted
+    try:
+        previous_vote = Vote.objects.all().get(user=user, content=proposal)
+        # Already voted
         if vote_request_type == "get":
             if previous_vote.isVoteUp:
                 user_vote = 1
@@ -243,11 +243,13 @@ def vote_proposal(request, vote_request_type, proposal_id):
             # Cancel previous vote
             previous_vote.delete()
             return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
+    except Vote.DoesNotExist:
+        pass
     
     if vote_request_type == "get":
         return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
     
-    new_vote = ProposalVote()
+    new_vote = Vote()
     
     if vote_request_type == "up":
         new_vote.isVoteUp = True
@@ -257,7 +259,7 @@ def vote_proposal(request, vote_request_type, proposal_id):
         user_vote = -1
     
     new_vote.user = user
-    new_vote.proposal = proposal
+    new_vote.content = proposal
     new_vote.save()
     
     return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
@@ -265,12 +267,12 @@ def vote_proposal(request, vote_request_type, proposal_id):
 def vote_comment(request, vote_request_type, comment_id):
     comment = Comment.objects.all().get(id = comment_id)
     user = get_current_user(request)
-    # Check if they have already voted
-    if CommentVote.objects.all().filter(comment = comment).filter(user = user).count() == 1:
-        # Has already voted
-        previous_vote = CommentVote.objects.all().filter(comment = comment).get(user = user)
+    
+    # Check already voted
+    try:
+        previous_vote = Vote.objects.all().get(user=user, content=comment)
+        # Already voted
         if vote_request_type == "get":
-            # Get previous vote
             if previous_vote.isVoteUp:
                 user_vote = 1
             else:
@@ -286,12 +288,14 @@ def vote_comment(request, vote_request_type, comment_id):
             # Cancel previous vote
             previous_vote.delete()
             return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
+    except Vote.DoesNotExist:
+        pass
     
     if vote_request_type == "get":
         # Get hasn't voted
         return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0, "user" : user })
     
-    new_vote = CommentVote()
+    new_vote = Vote()
     if vote_request_type == "up":
         # Set up vote
         new_vote.isVoteUp = True
@@ -302,7 +306,7 @@ def vote_comment(request, vote_request_type, comment_id):
         user_vote = -1
     
     new_vote.user = user
-    new_vote.comment = comment
+    new_vote.content = comment
     new_vote.save()
     
     return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
@@ -329,7 +333,7 @@ def hide_comment(request, comment_id):
     else:
         comment = Comment.objects.all().get(id = comment_id)
         if request.method == "POST":
-            form = HideCommentActionForm(request.POST)
+            form = HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
@@ -339,7 +343,7 @@ def hide_comment(request, comment_id):
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
                 return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide comment form"))
-        form = HideCommentActionForm()
+        form = HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
                                                           "form": form,
                                                           "user": user})
@@ -351,7 +355,7 @@ def hide_proposal(request, proposal_id):
     else:
         proposal = Proposal.objects.all().get(id = proposal_id)
         if request.method == "POST":
-            form = HideProposalActionForm(request.POST)
+            form = HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
@@ -361,46 +365,29 @@ def hide_proposal(request, proposal_id):
             else:
                 # TODO Could improve handling of invalid form, though it is unlikely here
                 return HttpResponse(_render_message_to_string(request, "Error", "Invalid hide proposal form"))
-        form = HideProposalActionForm()
+        form = HideActionForm()
         return render(request,
                       "hide_proposal_form.html",
                       {"proposal": proposal,
                        "form": form,
                        "user": user})
 
-def hide_from_report(request, report_id):
+def hide_from_report(request, report):
     user = get_current_user(request)
-    if CommentReport.objects.all().filter(id=report_id):
-        # Comment report
-        report = CommentReport.objects.get(id=report_id)
-        hide_action = HideCommentAction()
-        hide_action.moderator = user
-        hide_action.reason = report.reason
-        hide_action.comment_id = report.comment_id
-        hide_action.save()
-        report.delete()
-        messages.add_message(request, messages.INFO, "Comment hidden")
-    elif ProposalReport.objects.all().filter(id=report_id):
-        # Proposal report
-        report = ProposalReport.objects.all().get(id=report_id)
-        hide_action = HideProposalAction()
-        hide_action.moderator = user
-        hide_action.reason = report.reason
-        hide_action.proposal = report.proposal
-        hide_action.save()
-        report.delete()
-        messages.add_message(request, messages.INFO, "Proposal hidden")
-    else:
-        # Report not found
-        raise Report.DoesNotExist()
+    hide_action = HideAction()
+    hide_action.moderator = user
+    hide_action.reason = report.reason
+    hide_action.content = report.content
+    hide_action.save()
+    report.delete()
+    messages.add_message(request, messsages.INFO, "Content hidden")
 
-def ignore_report(request, report_id):
+def ignore_report(request, report):
     user = get_current_user(request)
     if not user.isModerator:
         return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may hide proposals"))
     else:
         try:
-            report = Report.objects.get(id=report_id)
             report.delete()
             messages.add_message(request, messages.INFO, "Report ignored")
             return HttpResponse("Report ignored")
@@ -409,48 +396,48 @@ def ignore_report(request, report_id):
 
 def comment_hides(request):
     user = get_current_user(request)
-    hiddens = HideCommentAction.objects.all()
+    hiddens = HideAction.objects.all().filter(content_type=Comment.contentType)
     return render(request, "hidden_comment_list.html", { "hiddens" : hiddens, "user": user })
 
 def proposal_hides(request):
     user = get_current_user(request)
-    hiddens = HideProposalAction.objects.all()
+    hiddens = HideAction.objects.all().filter(content_type=Proposal.contentType)
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens, "user" : user })
 
 def report_comment(request, comment_id):
     user = get_current_user(request)
     comment = Comment.objects.all().get(id = comment_id)
     if request.method == "POST":
-        form = CommentReportForm(request.POST)
+        form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             report.reporter = user
-            report.comment = comment
+            report.content = comment
             report.save()
             return HttpResponse(_render_message_to_string(request, "Reported", "Your report has been submitted to the moderators."))
         else:
             # TODO Could improve handling of invalid form, though it is unlikely here
             return HttpResponse(_render_message_to_string(request, "Error", "Invalid report comment form"))
     else:
-        form = HideCommentActionForm()
+        form = ReportForm()
         return render(request, "report_comment_form.html", { "comment" : comment, "form" : form, "user": user })
 
 def report_proposal(request, proposal_id):
     user = get_current_user(request)
     proposal = Proposal.objects.all().get(id = proposal_id)
     if request.method == "POST":
-        form = ProposalReportForm(request.POST)
+        form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             report.reporter = user
-            report.proposal = proposal
+            report.content = proposal
             report.save()
             return HttpResponse(_render_message_to_string(request, "Reported", "Your report has been submitted to the moderators."))
         else:
             # TODO Could improve handling of invalid form, though it is unlikely here
             return HttpResponse(_render_message_to_string(request, "Error", "Invalid report proposal form"))
     else:
-        form = ProposalReportForm()
+        form = ReportForm()
         return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form, "user": user })
 
 def moderator_panel(request):
@@ -484,8 +471,8 @@ def moderator_panel(request):
         if request.is_ajax():
             return ajaxResponseType("")
     
-    comment_reports = CommentReport.objects.all()
-    proposal_reports = ProposalReport.objects.all()
+    comment_reports = Report.objects.filter(content_type=Comment.contentType)
+    proposal_reports = Report.objects.filter(content_type=Proposal.contentType)
     return render(request, "moderator_panel.html", { "comment_reports" : comment_reports, "proposal_reports" : proposal_reports, "user" : user })
 
 

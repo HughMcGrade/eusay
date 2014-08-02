@@ -21,10 +21,10 @@
   {% for h in hiddens %}
   <tr>
     <td>
-      {{ h.comment.text }}
+      {{ h.content.text }}
     </td>
     <td>
-      <a href="/proposal/{{h.comment.proposal.id}}">{{ h.comment.proposal.title }}</a>
+      <a href="/proposal/{{h.content.proposal.id}}">{{ h.content.proposal.title }}</a>
     </td>
     <td>
       {{ h.reason }}

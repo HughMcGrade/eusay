@@ -6,21 +6,22 @@ Created on 18 Feb 2014
 from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
+from django.contrib.contenttypes.generic import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+
 
 from .utils import better_slugify
 
-class Comment (models.Model):
+
+class Content (models.Model):
     id = models.AutoField(primary_key=True)
-    text = models.CharField(max_length=500) # TODO: is this a good length? implement client-side character count
     createdAt = models.DateTimeField(auto_now_add=True)
     lastModified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey("User", related_name="comments")
-    proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
-    replyTo = models.ForeignKey("self", null=True)
-    
+    user = models.ForeignKey("User")
+
     def _get_votes_count(self, isUp):
         try:
-            return len(CommentVote.objects.all().filter(comment=self).filter(isVoteUp=isUp))
+            return len(Vote.get_votes(self).filter(isVoteUp=isUp))
         except Exception:
             return 0
 
@@ -30,29 +31,45 @@ class Comment (models.Model):
     def get_votes_down_count(self):
         return self._get_votes_count(False)
 
+    def is_hidden(self):
+        content_type = ContentType.objects.get_for_model(self)
+        return HideAction.get_hide_actions(object_id=self.id, content_type=content_type).exists()
+        #return HideAction.objects.all().filter(content=self).exists()
+
+    class Meta:
+        abstract = True
+
+class Comment (Content):
+    text = models.CharField(max_length=500) # TODO: is this a good length? implement client-side character count
+    proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
+    replyTo = models.ForeignKey("self", null=True)
+    contentType = ContentType.objects.get(app_label="eusay", model="comment")
+    
     def get_replies(self):
         return Comment.objects.filter(replyTo = self)
 
     def get_score(self):
         return self.get_votes_up_count() - self.get_votes_down_count()
 
-    def is_hidden(self):
-        return HideCommentAction.objects.all().filter(comment=self).exists()
-
     def __unicode__(self):
         return "%s" % self.text
 
     def get_visible_comments(self, proposal, reply_to=None):
-        return [c for c in Comment.objects.all().filter(proposal = proposal).filter(replyTo = reply_to) if not c.is_hidden()]
+        return [c for c in Comment.objects.all().filter(content = proposal).filter(replyTo = reply_to) if not c.is_hidden()]
 
 class Vote (models.Model):
-    id = models.AutoField(primary_key=True)
     isVoteUp = models.BooleanField()
     createdAt = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey("User")
 
-    class Meta:
-        abstract = True
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content = GenericForeignKey()
+
+    @staticmethod
+    def get_votes(content):
+        content_type = ContentType.objects.get_for_model(content)
+        return Vote.objects.filter(content_type=content_type, object_id=content.id)
 
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
@@ -70,16 +87,12 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class Proposal (models.Model):
-    id = models.AutoField(primary_key=True)
+class Proposal (Content):
     title = models.CharField(max_length=100)
     text = models.TextField()
     slug = models.SlugField(default="slug")
-    proposer = models.ForeignKey("User", related_name="proposed")
-    createdAt = models.DateTimeField(auto_now_add=True, null=True)
-    lastModified = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(Tag, related_name="proposals")
+    contentType = ContentType.objects.get(app_label="eusay", model="proposal")
 
     def __unicode__(self):
         return self.title
@@ -91,20 +104,7 @@ class Proposal (models.Model):
     def get_absolute_url(self):
         return reverse("proposal", kwargs={"proposalId": self.id,
                                            "slug": self.slug})
-
-    def _get_votes_count(self, isUp):
-        try:
-            return len(ProposalVote.objects.all().filter(proposal=self).filter(isVoteUp = isUp))
-        except Exception:
-            return 0
-    
-    def get_votes_up_count(self):
-        return self._get_votes_count(True)
-    
-    def get_votes_down_count(self):
-        return self._get_votes_count(False)
-
-    def get_votes_up_percentage(self):
+    def get_vote_up_percentage(self):
         votes_up = self.get_votes_up_count()
         votes_total = votes_up + self.get_votes_down_count()
         if votes_total == 0:
@@ -139,7 +139,7 @@ class Proposal (models.Model):
         for comment in comments:
             score += self._weight_instance(hour_age = self._hours_since(comment.createdAt)) * 4
         
-        votes = ProposalVote.objects.all().filter(proposal=self)
+        votes = Vote.get_votes(self)
         for vote in votes:
             hour_age = self._hours_since(vote.createdAt)
             if vote.isVoteUp:
@@ -148,9 +148,6 @@ class Proposal (models.Model):
                 score += self._weight_instance(hour_age) * 1
         
         return score * self._proximity_coefficient() + self.get_votes_up_count() - self.get_votes_down_count()
-
-    def is_hidden(self):
-        return HideProposalAction.objects.all().filter(proposal=self).exists()
 
     def get_visible_comments(self, reply_to=None):
         return [c for c in self.comments.filter(replyTo = reply_to) if not c.is_hidden()]
@@ -161,12 +158,6 @@ class Proposal (models.Model):
             return sorted([p for p in tag.proposals.all() if not p.is_hidden()], key = lambda p: p.get_score())
         else:
             return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
-
-class ProposalVote (Vote):
-    proposal = models.ForeignKey(Proposal, related_name="votes")
-    
-class CommentVote (Vote):
-    comment = models.ForeignKey(Comment, related_name="votes")
     
 class User (models.Model):
     # The first element in each tuple is the actual value to be stored,
@@ -191,6 +182,12 @@ class User (models.Model):
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
 
+    def proposed(self):
+        return Proposal.objects.all().filter(user=self)
+
+    def comments(self):
+        return Comment.objects.all().filter(user=self)
+
     def save(self, *args, **kwargs):
         self.slug = better_slugify(self.name, domain="User")
         super(User, self).save(*args, **kwargs)
@@ -200,17 +197,19 @@ class User (models.Model):
 
     def get_proposals_voted_for(self):
         """
-        Returns a QuerySet of proposals that the user has voted for.
+        Returns a list (formerly QuerySet) of proposals that the user has voted for.
         """
-        user_votes = ProposalVote.objects.filter(user=self).filter(isVoteUp=True)
-        return Proposal.objects.filter(votes__in=user_votes)
+        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=True)
+        return [vote.content for vote in user_votes]
 
     def get_proposals_voted_against(self):
         """
-        Returns a QuerySet of proposals that the user has voted against.
+        Returns a list (formerly QuerySet) of proposals that the user has voted against.
         """
-        user_votes = ProposalVote.objects.filter(user=self).filter(isVoteUp=False)
-        return Proposal.objects.filter(votes__in=user_votes)
+        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=False)
+        return [vote.content for vote in user_votes]
+        #user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=False)
+        #return Proposal.objects.filter(votes__in=user_votes)
 
     def __unicode__(self):
         return self.name + " (" + self.sid + ")"
@@ -221,17 +220,20 @@ class HideAction (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content = GenericForeignKey()
+
     def save(self, *args, **kwargs):
         if not self.moderator.isModerator:
             raise Exception("Only moderators may perform hide actions!")
         else:
             super(HideAction, self).save()
 
-class HideCommentAction (HideAction):
-    comment = models.ForeignKey(Comment, related_name="hideActions")
+    @staticmethod
+    def get_hide_actions(object_id, content_type):
+        return HideAction.objects.filter(content_type=content_type, object_id=object_id)
 
-class HideProposalAction (HideAction):
-    proposal = models.ForeignKey(Proposal, related_name="hideActions")
 
 class Report (models.Model):
     id = models.AutoField(primary_key=True)
@@ -239,8 +241,12 @@ class Report (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 
-class CommentReport (Report):
-    comment = models.ForeignKey(Comment, related_name="reports")
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content = GenericForeignKey()
 
-class ProposalReport (Report):
-    proposal = models.ForeignKey(Proposal, related_name="reports")
+    @staticmethod
+    def get_reports(content):
+        content_type = ContentType.objects.get_for_model(content)
+        return Report.objects.filter(content_type=content_type, object_id=content.id)
+

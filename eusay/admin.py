@@ -14,8 +14,8 @@ class ProposalAdmin(admin.ModelAdmin):
                        "text",
                        "createdAt",
                        "lastModified",
-                       "proposer")
-    list_display = ("title", "proposer",)
+                       "user")
+    list_display = ("title", "user",)
 
     # overriding this function means that proposals cannot be
     # added from the admin panel
