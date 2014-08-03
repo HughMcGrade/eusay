@@ -139,27 +139,33 @@ class Proposal (Content):
     def _proximity_coefficient(self):
         return 1
     
-    def get_score(self):
+    def get_rank(self):
         
-        score = 0
+        rank = 0
         
         # Take sum of weighted value for each comment
         comments = Comment.objects.all().filter(proposal=self)
         for comment in comments:
-            score += self._weight_instance(hour_age = self._hours_since(comment.createdAt)) * 4
+            rank += self._weight_instance(hour_age=
+                                          self._hours_since(
+                                              comment.createdAt)) * 4
         
         votes = Vote.get_votes(self)
         for vote in votes:
             hour_age = self._hours_since(vote.createdAt)
             if vote.isVoteUp:
-                score += self._weight_instance(hour_age) * 2
+                rank += self._weight_instance(hour_age) * 2
             else:
-                score += self._weight_instance(hour_age) * 1
+                rank += self._weight_instance(hour_age) * 1
         
-        return score * self._proximity_coefficient() + self.get_votes_up_count() - self.get_votes_down_count()
+        return rank * \
+            self._proximity_coefficient() + \
+            self.get_votes_up_count() - \
+            self.get_votes_down_count()
 
     def get_visible_comments(self, reply_to=None):
-        return [c for c in self.comments.filter(replyTo = reply_to) if not c.is_hidden()]
+        return [c for c in self.comments.filter(replyTo=reply_to)
+                if not c.is_hidden()]
 
     @staticmethod
     def get_visible_proposals(tag=None):

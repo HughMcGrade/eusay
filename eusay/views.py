@@ -78,7 +78,7 @@ def index(request):
     if request.is_ajax():
         template = proposals_template
     return render(request, template, context)
-    
+
 def about(request):
     user = get_current_user(request)
     return render(request, "about.html", {'user': user})

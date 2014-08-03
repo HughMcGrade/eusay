@@ -15,7 +15,7 @@ def update_proposal_ranks():
     """
     count = 0
     for proposal in Proposal.objects.all():
-        proposal.rank = proposal.get_score()
+        proposal.rank = proposal.get_rank()
         proposal.save()
         count += 1
     logger.info('Updated ranks of %s proposals.' % str(count))
