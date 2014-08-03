@@ -396,12 +396,12 @@ def ignore_report(request, report):
 
 def comment_hides(request):
     user = get_current_user(request)
-    hiddens = HideAction.objects.all().filter(content_type=Comment.contentType)
+    hiddens = HideAction.objects.all().filter(content_type=Comment.contentType())
     return render(request, "hidden_comment_list.html", { "hiddens" : hiddens, "user": user })
 
 def proposal_hides(request):
     user = get_current_user(request)
-    hiddens = HideAction.objects.all().filter(content_type=Proposal.contentType)
+    hiddens = HideAction.objects.all().filter(content_type=Proposal.contentType())
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens, "user" : user })
 
 def report_comment(request, comment_id):
@@ -471,8 +471,8 @@ def moderator_panel(request):
         if request.is_ajax():
             return ajaxResponseType("")
     
-    comment_reports = Report.objects.filter(content_type=Comment.contentType)
-    proposal_reports = Report.objects.filter(content_type=Proposal.contentType)
+    comment_reports = Report.objects.filter(content_type=Comment.contentType())
+    proposal_reports = Report.objects.filter(content_type=Proposal.contentType())
     return render(request, "moderator_panel.html", { "comment_reports" : comment_reports, "proposal_reports" : proposal_reports, "user" : user })
 
 

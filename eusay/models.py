@@ -43,8 +43,11 @@ class Comment (Content):
     text = models.CharField(max_length=500) # TODO: is this a good length? implement client-side character count
     proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
-    contentType = ContentType.objects.get(app_label="eusay", model="comment")
+    ##contentType = ContentType.objects.get(app_label="eusay", model="comment")
     
+    def contentType():
+        return ContentType.objects.get(app_label="eusay", model="proposal")
+
     def get_replies(self):
         return Comment.objects.filter(replyTo = self)
 
@@ -92,7 +95,10 @@ class Proposal (Content):
     text = models.TextField()
     slug = models.SlugField(default="slug")
     tags = models.ManyToManyField(Tag, related_name="proposals")
-    contentType = ContentType.objects.get(app_label="eusay", model="proposal")
+    #contentType = ContentType.objects.get(app_label="eusay", model="proposal")
+
+    def contentType():
+        return ContentType.objects.get(app_label="eusay", model="proposal")
 
     def __unicode__(self):
         return self.title
@@ -199,14 +205,14 @@ class User (models.Model):
         """
         Returns a list (formerly QuerySet) of proposals that the user has voted for.
         """
-        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=True)
+        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType()).filter(isVoteUp=True)
         return [vote.content for vote in user_votes]
 
     def get_proposals_voted_against(self):
         """
         Returns a list (formerly QuerySet) of proposals that the user has voted against.
         """
-        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=False)
+        user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType()).filter(isVoteUp=False)
         return [vote.content for vote in user_votes]
         #user_votes = Vote.objects.filter(user=self).filter(content_type=Proposal.contentType).filter(isVoteUp=False)
         #return Proposal.objects.filter(votes__in=user_votes)
