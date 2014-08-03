@@ -46,7 +46,7 @@
 
                         {{ comment.text | replace_bad_words | my_markdown }}
 
-                        <span class="comment-meta">
+                        <div class="comment-meta">
                             {{ comment.createdAt|timesince_human }}
                             {% if not hide %}
                                 &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -58,7 +58,7 @@
                             {% else %}
                                 <a href="/report_comment/{{ comment.id }}">report</a>
                             {% endif %}
-                        </span>
+                        </div>
                         <div class="comment-votes">
                             <span class="comment-votes-up green">
                                 <span class="glyphicon glyphicon-thumbs-up"></span> 11&nbsp;&nbsp;&nbsp;&nbsp;
@@ -87,7 +87,7 @@
 
                                 {{ reply.text | replace_bad_words | my_markdown }}
 
-                                <span class="comment-meta">
+                                <div class="comment-meta">
                                     {{ reply.createdAt|timesince_human }}
                                     &nbsp;&nbsp;|&nbsp;&nbsp;
                                     {% if user.isModerator %}
@@ -95,7 +95,7 @@
                                     {% else %}
                                         <a href="/report_comment/{{ comment.id }}">report</a>
                                     {% endif %}
-                                </span>
+                                </div>
 
                                 <div class="comment-votes">
                                     <span class="comment-votes-up green">

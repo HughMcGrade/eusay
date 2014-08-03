@@ -9,12 +9,12 @@
 <title>eusay{% block title %}{% endblock %}</title>
 
 <!-- JavaScript-->
-<script src="{% static "js/jquery-1.11.0.min.js" %}" async></script>
-<script src="{% static "js/bootstrap.min.js" %}" async></script>
-<script src="{% static "js/voting.js" %}" async></script>
-<script src="{% static "js/jquery.hideseek.min.js" %}" async></script>
-<script src="{% static "js/jquery-ui.min.js" %}" async></script>
-<script src="{% static "js/bootstrap-debugger.js" %}" async></script>
+<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
+<script src="{% static "js/voting.js" %}"></script>
+<script src="{% static "js/jquery.hideseek.min.js" %}"></script>
+<script src="{% static "js/jquery-ui.min.js" %}"></script>
+<script src="{% static "js/bootstrap-debugger.js" %}"></script>
 <script src="{% static "js/endless-pagination.js" %}"></script>
 <script>
 $(document).ready(function() {
@@ -36,6 +36,10 @@ $(document).ready(function() {
 
     // hide formatting help
     $(".submit-formatting-help").hide(0);
+
+    // init tooltips
+    $('*[data-toggle="tooltip"]').tooltip();
+
 });
 
 // show formatting help

@@ -39,15 +39,6 @@ $(document).ready(function() {
         }
     });
 
-    // init tooltips
-    $('.progress-bar').tooltip({
-        placement: "bottom"
-    });
-    $('.comment-user-status').tooltip({
-        placement: "top"
-    });
-    $(".comment-user-name-link").tooltip();
-
     // hide comment reply forms
     $(".comment-reply-form").hide({
         duration: 0
@@ -80,12 +71,6 @@ function viewHiddenProposal() {
 {% endblock %}
 
 {% block progressbar %}
-<div class="progress proposal-progress-bar">
-  <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
-  </div>
-  <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
-  </div>
-</div>
 {% endblock %}
 
 {% block content %}
@@ -105,65 +90,71 @@ function viewHiddenProposal() {
 {% endif %}
 
 <div class="row">
-    <div class="proposal-page col-xs-12 col-md-8 col-md-offset-2 {% if hide %}proposal-hidden{% endif %}">
-        <div class="row">
-            <div class="col-xs-12">
-                <h2 class="text-center">{{ proposal.title }}</h2>
-            </div>
-        </div>
-        <hr />
-        <div class="row proposal-text">
-            <div class="col-xs-10 col-xs-offset-1">
-                {{ proposal.text | my_markdown }}
-            </div>
-        </div>
-        <hr />
-
-        <div class="row proposal-vote-buttons">
-            <div class="col-md-3 col-md-offset-2 col-xs-6">
-                <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
-            </div>
-            <div class="col-md-3 col-md-offset-2 col-xs-6">
-                <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
-            </div>
-        </div>
-
-        {% if proposal.tags.all %}
-            <div class="row proposal-tags">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
+            <div class="row">
                 <div class="col-xs-12">
-                    <p>Tags:<br />
-                    {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
+                    <h2 class="text-center">{{ proposal.title }}</h2>
                 </div>
             </div>
-        {% endif %}
+            <div class="progress proposal-progress-bar">
+                <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
+                </div>
+                <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
+                </div>
+            </div>
+            <div class="row proposal-text">
+                <div class="col-xs-10 col-xs-offset-1">
+                    {{ proposal.text | my_markdown }}
+                </div>
+            </div>
+            <hr />
 
-        <div class="row">
-            <div class="col-xs-6">
-                <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
+            <div class="row proposal-vote-buttons">
+                <div class="col-md-3 col-md-offset-2 col-xs-6">
+                    <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+                </div>
+                <div class="col-md-3 col-md-offset-2 col-xs-6">
+                    <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
+                </div>
             </div>
-            <div class="col-xs-6">
-                {% if not hide %}
-                    <div>
-                        {% if user.isModerator and not hide %}
-                        <a type="button" class="btn btn-default btn-xs pull-right" href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
-                        {% else %}
-                        <a type="button" class="btn btn-default btn-xs pull-right" href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
-                        {% endif %}
+
+            {% if proposal.tags.all %}
+                <div class="row proposal-tags">
+                    <div class="col-xs-12">
+                        <p>Tags:<br />
+                        {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
                     </div>
-                {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
+                </div>
+                <div class="col-xs-6">
+                    {% if not hide %}
+                        <div>
+                            {% if user.isModerator and not hide %}
+                            <a type="button" class="btn btn-default btn-xs pull-right" href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+                            {% else %}
+                            <a type="button" class="btn btn-default btn-xs pull-right" href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
 <!--        <div class="row">
-            <p>Note: to be replaced with new buttons</p>
-            <div id="proposal_vote_div_{{ proposal.id }}">
-                <script language="Javascript">
-                    setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
-                </script>
-            </div>
-        </div>-->
-
-    </div> <!-- /.proposal-page -->
+                <p>Note: to be replaced with new buttons</p>
+                <div id="proposal_vote_div_{{ proposal.id }}">
+                    <script language="Javascript">
+                        setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
+                    </script>
+                </div>
+            </div>-->
+        </div> <!-- /.proposal-page -->
+    </div> <!-- /.col -->
 </div> <!-- /.row -->
 
 <div class="comments{% if hide %} proposal-hidden{% endif %}">
@@ -177,30 +168,5 @@ function viewHiddenProposal() {
         </div>
     </div>
 </div>-->
-
-{% comment %}
-<div class="row">
-  <div id="full_comment_div" class="comments">
-    <p id="reply_to_div"></p>
-    <form id="comment_form" method="post" action="">
-      {% csrf_token %}
-      <div class="form-group">
-	{{ form.text }}
-	<input id="reply_to" type="hidden" name="reply_to" value="" />
-      </div>
-      <button type="post" class="btn btn-default">Submit</button>
-    </form>
-    <div id="comments_div" class="comment">
-      {% include 'proposal_comments.html' %}
-    </div>
-  </div>
-</div>
-{% endcomment %}
-
-<!--{% if hide %}
-
-</div>
-
-{% endif %}-->
 
 {% endblock %}
