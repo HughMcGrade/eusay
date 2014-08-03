@@ -5,9 +5,9 @@ from django.conf import settings
 
 
 def better_slugify(text, **kwargs):
-            # The SlugField has a max length of 50 characters, so we make
-            # sure it doesn't exceed that.
-            slug = slugify(text)[:50]
+            # Most of our SlugFields have a max length of 100 characters, so
+            # we make sure it doesn't exceed that.
+            slug = slugify(text)[:100]
 
             def remove_last_word(value):
                 # If there's more than one word, make sure that the slug

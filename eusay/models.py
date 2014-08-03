@@ -77,7 +77,7 @@ class Vote (models.Model):
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(default="slug")
+    slug = models.SlugField(default="slug", max_length=100)
     description = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
@@ -93,7 +93,7 @@ class Tag(models.Model):
 class Proposal (Content):
     title = models.CharField(max_length=100)
     text = models.TextField()
-    slug = models.SlugField(default="slug")
+    slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     #contentType = ContentType.objects.get(app_label="eusay", model="proposal")
 
