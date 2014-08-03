@@ -164,9 +164,13 @@ class Proposal (Content):
     @staticmethod
     def get_visible_proposals(tag=None):
         if tag:
-            return sorted([p for p in tag.proposals.all() if not p.is_hidden()], key = lambda p: p.get_score())
+            return sorted([p for p in tag.proposals.all()
+                           if not p.is_hidden()],
+                          key=lambda p: p.rank)
         else:
-            return sorted([p for p in Proposal.objects.all() if not p.is_hidden()], key = lambda p: p.get_score())
+            return sorted([p for p in Proposal.objects.all()
+                           if not p.is_hidden()],
+                          key=lambda p: p.rank)
     
 class User (models.Model):
     # The first element in each tuple is the actual value to be stored,

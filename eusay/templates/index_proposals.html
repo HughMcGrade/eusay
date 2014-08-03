@@ -17,6 +17,9 @@
             </div>
         </div>
         <div>(Tags here?)</div>
+        {% if user.isModerator %}
+        <div>Rank: {{ proposal.rank }}</div>
+        {% endif %}
         <hr />
         <div class="row">
             <div class="col-sm-6 col-xs-12">
