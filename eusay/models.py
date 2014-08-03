@@ -40,7 +40,7 @@ class Content (models.Model):
         abstract = True
 
 class Comment (Content):
-    text = models.CharField(max_length=500) # TODO: is this a good length? implement client-side character count
+    text = models.CharField(max_length=1000)
     proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
     ##contentType = ContentType.objects.get(app_label="eusay", model="comment")

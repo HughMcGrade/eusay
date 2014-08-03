@@ -44,10 +44,19 @@ $(document).ready(function() {
 
 // show formatting help
 function showFormattingHelp(div) {
-    $(div).next().slideToggle(function() {
-        console.log("haha")
-    })
-}
+    $(div).next().slideToggle()
+};
+
+// count characters
+function countChars(val, maxLen) {
+    var len = val.value.length;
+    if (len >= maxLen) {
+        val.value = val.value.substring(0, maxLen);
+        $(val).next().text(len + "/" + maxLen);
+    } else {
+        $(val).next().text(len + "/" + maxLen);
+    }
+};
 </script>
 {% block js %}
 {% endblock %}

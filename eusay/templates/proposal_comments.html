@@ -14,8 +14,9 @@
                             <label>Add comment</label>
                             {% include "markdown_formatting_help.html" %}
                             {{ form.text }}
+                            <div class="charNum">0/1000</div>
                         </div>
-                            <button type="post" class="btn btn-default">Submit</button>
+                        <button type="post" class="btn btn-default">Submit</button>
                     </form>
                 </div>
             </div>
@@ -118,6 +119,7 @@
                                     <label>Add comment</label>
                                     {% include "markdown_formatting_help.html" %}
                                     {{ form.text }}
+                                    <div class="charNum">0/1000</div>
                                     {% csrf_token %}
                                     <input type="hidden" name="reply_to" value="{{ comment.id }}" />
                                 </div>

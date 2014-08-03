@@ -16,7 +16,7 @@ class ProposalForm (forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
                                                         "maxlength": "6000",
                                                         "id": "text",
-                                                        "onkeyup": "countChars(this)"}))
+                                                        "onkeyup": "countChars(this, 6000)"}))
     tags = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={"id": "tag-list"}),
         queryset=Tag.objects.all(),
@@ -38,9 +38,11 @@ class ProposalForm (forms.ModelForm):
 
 
 class CommentForm (forms.ModelForm):
-    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
-                                                        "rows": "3",
-                                                        "maxlength": "500"}))
+    text = forms.CharField(widget=forms.Textarea(
+        attrs={"class": "form-control",
+                "rows": "3",
+                "maxlength": "1000",
+                "onkeyup": "countChars(this, 1000)"}))
 
     class Meta:
         model = Comment
