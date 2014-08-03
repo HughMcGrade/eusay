@@ -9,3 +9,4 @@ eusay/settings.py
 .settings
 */whoosh_index
 eusay/migrations
+celerybeat-schedule.db

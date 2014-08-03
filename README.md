@@ -8,13 +8,15 @@ eusay is funded by the [Jisc Summer of Student Innovation](http://elevator.jisc.
 
 Requirements
 ------------
-eusay runs on Django on Python 3. The database is PostgreSQL.
+eusay runs on Django on Python 3. The database is PostgreSQL. It uses Redis to store its task queue.
+
 See requirements.txt for package requirements.
 
 Setup
 -----
-Navigate to the main eusay directory and run `python manage.py syncdb` to create the database.  
-Set up a local server with `python manage.py runserver`.
+Run `python manage.py syncdb` to create the database. Optionally, load demo tags with `python manage.py loaddata tags`. Start a local development server with `python manage.py runserver`.
+
+Start the task queue with `celery -A eusay worker -B`. This will eventually run as a daemon, WIP.
 
 
 To Do:

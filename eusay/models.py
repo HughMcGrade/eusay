@@ -95,6 +95,9 @@ class Proposal (Content):
     text = models.TextField()
     slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
+    # For the rank, we could also use DecimalField for greater accuracy,
+    # but slower performance.
+    rank = models.FloatField(default=0.0)
     #contentType = ContentType.objects.get(app_label="eusay", model="proposal")
 
     def contentType():
