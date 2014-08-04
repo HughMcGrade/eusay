@@ -133,6 +133,8 @@ def submit(request):
             proposal.user = user
             proposal.save()
             form.save_m2m()  # save tags
+            vote = Vote(user=user, content=proposal, isVoteUp=True)
+            vote.save()
             return HttpResponseRedirect(
                 reverse("proposal",
                         kwargs={"proposalId": proposal.id,

@@ -164,8 +164,8 @@ class Proposal (Content):
             self.get_votes_down_count()
 
     def get_visible_comments(self, reply_to=None):
-        return [c for c in self.comments.filter(replyTo=reply_to)
-                if not c.is_hidden()]
+        return sorted([c for c in self.comments.filter(replyTo=reply_to)
+                      if not c.is_hidden()], key=lambda c: c.createdAt)
 
     @staticmethod
     def get_visible_proposals(tag=None):
