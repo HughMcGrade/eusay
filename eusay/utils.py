@@ -31,11 +31,13 @@ def add_proposals(amount):
     if not amount:
         raise Exception
 
-    for i in range(1, amount+1):
+    start_num = max(User.objects.all().count(), Proposal.objects.all().count())
+
+    for i in range(start_num + 1, start_num + amount + 1):
         user = User.objects.create(sid="s" + str(i), name=str(i))
         Proposal.objects.create(title=str(i),
                                 text="Proposal by " + user.name,
-                                proposer=user)
+                                user=user)
 
 
 def to_queryset(searchqueryset):
