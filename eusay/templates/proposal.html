@@ -89,6 +89,37 @@ function viewHiddenProposal() {
     </div>
 {% endif %}
 
+{% if proposal.response %}
+    <div class="row">
+        <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <div class="page-shadow proposal-response">
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h4 class="text-center">
+                            <span class="glyphicon glyphicon-star comment-user-status"></span>
+                            {{ proposal.response.user.name }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        {{ proposal.response.text }}
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 <div class="row">
     <div class="col-xs-12 col-md-8 col-md-offset-2">
         <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
@@ -110,7 +141,20 @@ function viewHiddenProposal() {
             </div>
             <hr />
 
+            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
             <div class="row proposal-vote-buttons">
+                <div class="col-md-4 col-xs-12">
+                    <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <a href="{% url 'respond' proposal.id proposal.slug %}" role="button" class="btn btn-lg btn-block btn-default"><span class="glyphicon glyphicon-pencil"></span> Respond</a>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
+                </div>
+            </div>
+            {% else %}
+             <div class="row proposal-vote-buttons">
                 <div class="col-md-3 col-md-offset-2 col-xs-6">
                     <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
                 </div>
@@ -118,6 +162,7 @@ function viewHiddenProposal() {
                     <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
                 </div>
             </div>
+            {% endif %}
 
             {% if proposal.tags.all %}
                 <div class="row proposal-tags">

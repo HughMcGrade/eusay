@@ -6,7 +6,7 @@ Created on 18 Feb 2014
 
 from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 
@@ -442,6 +442,27 @@ def report_proposal(request, proposal_id):
         form = ReportForm()
         return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form, "user": user })
 
+
+def respond_to_proposal(request, proposalId, *args, **kwargs):
+    user = get_current_user(request)
+    proposal = Proposal.objects.get(id=proposalId)
+    if request.method == 'POST':
+        form = ResponseForm(request.POST)
+        if form.is_valid():
+            response = form.save(commit=False)
+            response.user = user
+            response.proposal = proposal
+            response.save()
+            return HttpResponseRedirect(reverse('proposal',
+                                                args=[str(proposal.id),
+                                                      proposal.slug]))
+    else:
+        form = ResponseForm()
+        return render(request,
+                      "respond_to_proposal_form.html",
+                      {"proposal": proposal, "form": form, "user": user})
+
+
 def moderator_panel(request):
     user = get_current_user(request)
     if not user.isModerator:
@@ -484,7 +505,16 @@ def make_mod(request):
     user = get_current_user(request)
     user.isModerator = True
     user.save()
-    return HttpResponse(_render_message_to_string(request, "Temporary", "You are now a moderator"))
+    messages.add_message(request, messages.INFO, "You are now a moderator")
+    return HttpResponseRedirect(reverse('frontpage'))
+
+
+def make_staff(request):
+    user = get_current_user(request)
+    user.userStatus = "Staff"
+    user.save()
+    messages.add_message(request, messages.INFO, "You are now EUSA Staff")
+    return HttpResponseRedirect(reverse('frontpage'))
 
 def remove_comment(request, comment_id):
     comment = Comment.objects.all().get(id=comment_id)

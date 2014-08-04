@@ -6,7 +6,7 @@ Created on 18 Feb 2014
 from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
-from django.contrib.contenttypes.generic import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -177,7 +177,16 @@ class Proposal (Content):
             return sorted([p for p in Proposal.objects.all()
                            if not p.is_hidden()],
                           key=lambda p: p.rank)
-    
+
+
+class Response(Content):
+    text = models.TextField()
+    proposal = models.OneToOneField(Proposal, related_name="response")
+
+    def __unicode__(self):
+        return "%s" % self.text
+
+
 class User (models.Model):
     # The first element in each tuple is the actual value to be stored,
     # and the second element is the human-readable name.

@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     # Proposals
     url(r'^$', eusay_views.index, name="frontpage"),  # Front page
     url(r'^submit/', eusay_views.submit, name="submit"),
-    url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)',
+    url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)/$',
         eusay_views.proposal,
         name="proposal"),
 
@@ -42,10 +42,14 @@ urlpatterns = patterns('',
     url(r'^report_comment/(?P<comment_id>\d+)', eusay_views.report_comment),
     url(r'^report_proposal/(?P<proposal_id>\d+)', eusay_views.report_proposal),
     url(r'^make_mod', eusay_views.make_mod),
+    url(r'^make_staff', eusay_views.make_staff),
     url(r'^get_messages/', eusay_views.get_messages),
     url(r'^hide_comment/(?P<comment_id>\d+)', eusay_views.hide_comment),
     url(r'^hide_proposal/(?P<proposal_id>\d+)', eusay_views.hide_proposal),
     url(r'^remove_comment/(?P<comment_id>\d+)', eusay_views.remove_comment),
+    url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)/respond/$',
+        eusay_views.respond_to_proposal,
+        name="respond"),
 
     # Other
     url(r'^about/', eusay_views.about, name="about"),

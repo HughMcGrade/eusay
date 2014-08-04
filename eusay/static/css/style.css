@@ -164,6 +164,11 @@ body {
     margin-top: 10px;
     font-size: 0.9em;
 }
+.proposal-response {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff url("/static/img/light_grey.png");
+}
 
 /* Comments */
 .comments {

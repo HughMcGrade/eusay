@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Proposal, Comment, HideAction, User, Report, Tag
+from .models import Proposal, Comment, HideAction, User, Report, Tag, Response
 from .utils import better_slugify, contains_swear_words
 
 
@@ -67,6 +67,18 @@ class ReportForm (forms.ModelForm):
     class Meta:
         model = Report
         fields = ['reason']
+
+
+class ResponseForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea(
+        attrs={"class": "form-control",
+               "rows": "3",
+               "placeholder": "Enter your official response to "
+                              "this proposal here."}))
+
+    class Meta:
+        model = Response
+        fields = ['text']
 
 
 class UserForm(forms.ModelForm):

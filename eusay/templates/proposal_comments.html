@@ -78,7 +78,7 @@
                                 <p>
                                     <span class="glyphicon glyphicon-share-alt"></span>
                                     {% if reply.user.userStatus != "User" %}
-                                        <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="This user is a {{ reply.user.userStatus }}."></span>
+                                        <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
                                     {% endif %}
                                     <b>{{ reply.user.name }}</b>
                                     {% if reply.user.title %}
