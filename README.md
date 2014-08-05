@@ -14,7 +14,7 @@ See requirements.txt for package requirements.
 
 Setup
 -----
-Run `python manage.py syncdb` to create the database. Optionally, load demo tags with `python manage.py loaddata tags`. Start a local development server with `python manage.py runserver --settings=eusay.settings.dev`.
+Run `python manage.py syncdb` to create the database. Optionally, load demo tags with `python manage.py loaddata tags`. Start a local development server with `python manage.py runserver`.
 
 Start the task queue with `celery -A eusay worker -B`. This will eventually run as a daemon, WIP.
 
