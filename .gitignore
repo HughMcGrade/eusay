@@ -3,10 +3,10 @@
 *.pyc
 local_settings.py
 db.sqlite3
-eusay/settings.py
 .DS_Store
 .idea
 .settings
 */whoosh_index
 eusay/migrations
 celerybeat-schedule.db
+secrets.json
