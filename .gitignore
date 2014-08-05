@@ -1,12 +1,11 @@
 *.log
 *.pot
 *.pyc
-local_settings.py
 db.sqlite3
 .DS_Store
 .idea
 .settings
-*/whoosh_index
-eusay/migrations
+/eusay/whoosh_index
+/eusay/migrations
 celerybeat-schedule.db
 secrets.json
