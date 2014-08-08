@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% load filters %}
+{% load static %}
+
+{% block js %}
+
+<script src="{% static "js/jquery.form.js" %}"></script>
+
+<script>
+jQuery(function($) {
+$(document).ready(function() {
+     $('#view_amendments').ajaxForm({
+           success : function(response) {
+               var html = $.parseHTML(response);
+               var changes = $(html).find('#changes');
+               $('#changes').html(changes);
+            }
+      });
+});
+});
+</script>
+
+{% endblock %}
+
+{% block title %}
+| Report comment
+{% endblock %}
+
+{% block content %}
+
+<h1>Amend Proposal</h1>
+
+<div class="row">
+  <div class="col-xs-12 col-md-8 alert alert-warning">
+    Amendments will be posted as a comment on the original proposal. This allows other users to vote on and discuss proposed changes.
+  </div>
+</div>
+
+<form id="view_amendments" method="post" action="">
+  {% csrf_token %}
+
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+      <div class="form-group">
+	<label for="title">Title</label>
+	{{ form.title }}
+      </div>
+
+      <div class="form-group">
+	<label for="text">Proposal Body</label>
+	{% include "markdown_formatting_help.html" %}
+	{{ form.text }}
+	<div class="charNum">0/6000</div>
+      </div>
+      
+      <button name="action" value="view" type="submit" class="btn btn-default">View Amendments</button>
+    </div>
+  </div>
+
+</form>
+  
+<hr />
+
+<form method="post" action="">
+  {% csrf_token %}
+
+  <div class="row" id="changes">
+    {% if diff %}
+    <div class="row proposal-text">
+      <div class="col-xs-10 col-md-8">
+        {{ diff | my_markdown }}
+      </div>
+    </div>
+    <input type="hidden" name="text" value="{{ diff }}" />
+    <button name="action" value="post" type="submit" class="btn btn-default">Post Proposed Amendments</button>
+    {% endif %}
+  </div>
+
+</form>
+
+{% endblock %}
