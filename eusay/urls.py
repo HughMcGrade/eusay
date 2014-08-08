@@ -50,8 +50,8 @@ urlpatterns = patterns('',
     url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)/respond/$',
         eusay_views.respond_to_proposal,
         name="respond"),
+    url(r'^amend_proposal/(?P<proposal_id>\d+)', eusay_views.amend_proposal),
 
     # Other
     url(r'^about/', eusay_views.about, name="about"),
-
 )

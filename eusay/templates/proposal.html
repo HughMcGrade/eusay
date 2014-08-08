@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% load static %}
 {% load filters %}
 
@@ -177,16 +176,19 @@ function viewHiddenProposal() {
                 <div class="col-xs-6">
                     <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-6 btn-toolbar">
                     {% if not hide %}
-                        <div>
+                        <div class="btn-group pull-right">
                             {% if user.isModerator and not hide %}
-                            <a type="button" class="btn btn-default btn-xs pull-right" href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+                            <a type="button" class="btn btn-default btn-xs" href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
                             {% else %}
-                            <a type="button" class="btn btn-default btn-xs pull-right" href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
+                            <a type="button" class="btn btn-default btn-xs" href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
                             {% endif %}
                         </div>
                     {% endif %}
+			<div class="btn-group pull-right">
+			  <a type="button" class="btn btn-default btn-xs" href="/amend_proposal/{{ proposal.id }}">Propose Amendment</a>
+			</div>
                 </div>
             </div>
 

@@ -118,3 +118,17 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError("Username cannot contain swear words.")
 
         return cleaned_name
+
+class AmendmentForm (forms.Form):
+    title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",
+                                                          "id": "title",
+                                                          "maxlength": "100",
+                                                          "placeholder": "Please be descriptive."}))
+    text = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control",
+                                                        "maxlength": "6000",
+                                                        "id": "text",
+                                                        "onkeyup": "countChars(this, 6000)"}))
+
+    def set_initial(self, proposal_title, proposal_text):
+        self.initial['title'] = proposal_title
+        self.initial['text'] = proposal_text

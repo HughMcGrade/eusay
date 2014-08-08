@@ -19,6 +19,8 @@ from django.contrib import messages
 import random
 import datetime
 
+from lxml.html.diff import htmldiff
+
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
 get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
 
@@ -534,6 +536,39 @@ def remove_comment(request, comment_id):
 
 def get_messages(request):
     return render(request, "get_messages.html")
+
+def amend_proposal(request, proposal_id):
+    proposal = Proposal.objects.get(id=proposal_id)
+    user = get_current_user(request)
+    if request.method == 'POST':
+        if request.POST['action'] == 'view':
+            amended_title = request.POST['title']
+            amended_text = request.POST['text']
+
+            diff = '**Proposed amendments**\n'
+            if amended_title != proposal.title:
+                title_diff = htmldiff(proposal.title, amended_title)
+                diff = diff + '*Title:* ' + title_diff + '\n'
+            if amended_text != proposal.text:
+                text_diff = htmldiff(proposal.text, amended_text)
+                diff = diff + '*Text:* ' + text_diff
+
+            form = AmendmentForm()
+            form.set_initial(amended_title, amended_text)
+            return render(request, "amend_proposal.html", { 'proposal' : proposal, 'user' : user, 'form': form, 'diff' : diff })
+        elif request.POST['action'] == 'post':
+            comment = Comment()
+            comment.proposal = proposal
+            comment.user = user
+            comment.text = request.POST['text']
+            comment.save()
+            return HttpResponseRedirect("/proposal/" + str(proposal_id) + '/' + proposal.slug)
+        else:
+            raise Exception('Unknown form action')
+    else:
+        form = AmendmentForm()
+        form.set_initial(proposal.title, proposal.text)
+        return render(request, "amend_proposal.html", { 'proposal' : proposal, 'user' : user, 'form' : form })
 
 '''
 class MultipleFieldLookupMixin(object):

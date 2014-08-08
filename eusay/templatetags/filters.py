@@ -54,7 +54,10 @@ def my_markdown(text):
     extensions = ["nl2br", ]
     html = markdown.markdown(text, extensions=extensions)
     linkified = bleach.linkify(html)
-    cleaned_text = bleach.clean(linkified, strip_comments=False)
+    allowed_tags = bleach.ALLOWED_TAGS
+    allowed_tags.append("ins")
+    allowed_tags.append("del")
+    cleaned_text = bleach.clean(linkified, strip_comments=False, tags=allowed_tags)
     return mark_safe(cleaned_text)
 
 
