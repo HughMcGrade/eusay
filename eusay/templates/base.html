@@ -9,7 +9,7 @@
 <title>eusay{% block title %}{% endblock %}</title>
 
 <!-- JavaScript-->
-<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
+<script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
 <script src="{% static "js/voting.js" %}"></script>
 <script src="{% static "js/jquery.hideseek.min.js" %}"></script>
@@ -17,6 +17,7 @@
 <script src="{% static "js/bootstrap-debugger.js" %}"></script>
 <script src="{% static "js/endless-pagination.js" %}"></script>
 <script>
+jQuery(function($) {
 $(document).ready(function() {
     // init autocomplete search
     $("#search-field").autocomplete({
@@ -40,6 +41,7 @@ $(document).ready(function() {
     // init tooltips
     $('*[data-toggle="tooltip"]').tooltip();
 
+});
 });
 
 // show formatting help
