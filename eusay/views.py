@@ -177,6 +177,27 @@ def tag(request, tagId, slug):
         template = proposals_template
     return render(request, template, context)
 
+def do_vote(user, content, vote_request):
+    try:
+        content_type = ContentType.objects.get_for_model(content)
+        vote = Vote.objects.all().get(user=user, object_id=content.id, content_type=content_type)
+        # Test for cancel vote
+        if (vote_request == "up" and vote.isVoteUp) or (vote_request == "down" and not vote.isVoteUp):
+            vote.delete()
+            return 0
+    except Vote.DoesNotExist:
+        vote = Vote(user=user, content=content)
+    
+    if vote_request == "up":
+        vote.isVoteUp = True
+        vote.save()
+        return 1
+    elif vote_request == "down":
+        vote.isVoteUp = False
+        vote.save()
+        return -1
+    else:
+        raise Exception("Unknown vote request " + str(vote_request))
 
 def proposal(request, proposalId, slug):
     user = get_current_user(request)
@@ -192,81 +213,69 @@ def proposal(request, proposalId, slug):
     #if request.is_ajax():
     #    return render(request, "proposal_comments.html", {"proposal" : proposal, "comments" : comments, "user": user })
 
+    response_headers = dict()
+
     # redirect requests with the wrong slug to the correct page
     if not slug == proposal.slug:
         return HttpResponsePermanentRedirect(proposal.get_absolute_url())
 
+    user_vote = None
     if request.method == 'POST': # If the form has been submitted...
-        form = CommentForm(request.POST) # A form bound to the POST data
-        comment = form.save(commit=False)
-        if 'reply_to' in request.POST and request.POST['reply_to']:
-            # Comment is a reply
-            comment.replyTo = Comment.objects.get(id = request.POST['reply_to'])
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data
-            comment.user = user
-            comment.proposal = proposal
-            comment.save()
+        if 'request' in request.POST:
+            if request.POST['request'] == 'proposal_vote':
+                vote_request = request.POST['vote']
+                user_vote = do_vote(user, proposal, vote_request)
+            elif request.POST['request'] == 'comment_vote':
+                vote_string = request.POST['vote']
+                # Parse vote
+                if vote_string[0:2] == 'up':
+                    comment_id = int(vote_string[2:])
+                    response_headers['Comment-Id'] = str(comment_id)
+                    comment = Comment.objects.all().get(id=comment_id)
+                    do_vote(user, comment, 'up')
+                elif vote_string[0:4] == 'down':
+                    comment_id = int(vote_string[4:])
+                    response_headers['Comment-Id'] = str(comment_id)
+                    comment = Comment.objects.all().get(id=comment_id)
+                    do_vote(user, comment, 'down')
+                else:
+                    raise Exception('Unknown vote string ' + vote_string)
+            else:
+                raise Exception('Unknown POST request ' + request.POST['request'])
+        else:
+            form = CommentForm(request.POST) # A form bound to the POST data
+            comment = form.save(commit=False)
+            if 'reply_to' in request.POST and request.POST['reply_to']:
+                # Comment is a reply
+                comment.replyTo = Comment.objects.get(id = request.POST['reply_to'])
+                response_headers['Comment-Id'] = request.POST['reply_to']
+            if form.is_valid(): # All validation rules pass
+                # Process the data in form.cleaned_data
+                comment.user = user
+                comment.proposal = proposal
+                comment.save()
 
     hide = None
     if proposal.is_hidden():
         hide = HideAction.objects.all().get(proposal=proposal)
 
+    if not user_vote:
+        user_vote = user.get_vote_on(proposal)
+
     form = CommentForm() # An unbound form
-    return render(request,
+    response = render(request,
                   "proposal.html",
                   {"form": form,
                    "proposal": proposal,
                    "comments": comments,
                    "user": user,
+                   "user_vote": user_vote,
                    #"comments_template": "proposal_comments.html",
                    "hide": hide})
+    for key in response_headers:
+        response[key] = response_headers[key]
 
-def vote_proposal(request, vote_request_type, proposal_id):
-    proposal = Proposal.objects.all().get(id=proposal_id)#get_object_or_404(Proposal, proposal_id)
-    
-    user = get_current_user(request)
-    
-    # Check already voted
-    try:
-        previous_vote = Vote.objects.all().get(user=user, content=proposal)
-        # Already voted
-        if vote_request_type == "get":
-            if previous_vote.isVoteUp:
-                user_vote = 1
-            else:
-                user_vote = -1
-            return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
-        elif previous_vote.isVoteUp and vote_request_type == "down":
-            # Toggle vote from up to down
-            previous_vote.delete()
-        elif not previous_vote.isVoteUp and vote_request_type == "up":
-            # Toggle vote from down to up
-            previous_vote.delete()
-        else:
-            # Cancel previous vote
-            previous_vote.delete()
-            return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
-    except Vote.DoesNotExist:
-        pass
-    
-    if vote_request_type == "get":
-        return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : 0, "user" : user })
-    
-    new_vote = Vote()
-    
-    if vote_request_type == "up":
-        new_vote.isVoteUp = True
-        user_vote = 1
-    else:
-        new_vote.isVoteUp = False
-        user_vote = -1
-    
-    new_vote.user = user
-    new_vote.content = proposal
-    new_vote.save()
-    
-    return render(request, "proposal_votes.html", { "proposal" : proposal, "user_vote" : user_vote, "user" : user })
+    return response
 
 def vote_comment(request, vote_request_type, comment_id):
     comment = Comment.objects.all().get(id = comment_id)

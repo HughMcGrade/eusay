@@ -25,7 +25,7 @@
         {% for comment in comments %}
             {% if not comment.replyTo %}
                 <!-- comment -->
-                <div class="row">
+                <div id="comment_{{ comment.id }}" class="row">
                     <div class="col-xs-12 comment">
                         <p>
                             {% if comment.user.userStatus != "User" %}
@@ -61,19 +61,24 @@
                             {% endif %}
                         </div>
                         <div class="comment-votes">
-                            <span class="comment-votes-up green">
-                                <span class="glyphicon glyphicon-thumbs-up"></span> 11&nbsp;&nbsp;&nbsp;&nbsp;
-                            </span>
-                            <span class="comment-votes-down">
-                                <span class="glyphicon glyphicon-thumbs-down"></span> 3
-                            </span>
+			  <form class="comment_vote_form" method="post">
+			    {% csrf_token %}
+			    <input type="hidden" name="request" value="comment_vote" />
+                            <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-md comment-votes-up green">
+                                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}&nbsp;&nbsp;&nbsp;&nbsp;
+                            </button>
+                            <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-md comment-votes-down">
+                                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.get_votes_down_count }}
+                            </button>
+			  </form>
                         </div>
                     </div>
                 </div>
                 {% if comment.get_replies %}
+		<div id="comment_replies_{{ comment.id }}">
                     {% for reply in comment.get_replies %}
                         <!-- comment reply -->
-                        <div class="row">
+                        <div id="comment_{{ reply.id }}" class="row">
                             <div class="col-xs-11 col-xs-offset-1 comment">
                                 <p>
                                     <span class="glyphicon glyphicon-share-alt"></span>
@@ -99,16 +104,21 @@
                                 </div>
 
                                 <div class="comment-votes">
-                                    <span class="comment-votes-up green">
-                                        <span class="glyphicon glyphicon-thumbs-up"></span> 11&nbsp;&nbsp;&nbsp;&nbsp;
-                                    </span>
-                                    <span class="comment-votes-down">
-                                        <span class="glyphicon glyphicon-thumbs-down"></span> 3
-                                    </span>
+                                  <form class="comment_vote_form" method="post">
+				    {% csrf_token %}
+				    <input type="hidden" name="request" value="comment_vote" />  
+				    <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-md comment-votes-up green">
+                                        <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </button>
+                                    <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-md comment-votes-down">
+                                        <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
+                                    </button>
+				  </form>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
+		</div>
                 {% endif %}
                 <!-- comment reply form -->
                 {% if not hide %}
