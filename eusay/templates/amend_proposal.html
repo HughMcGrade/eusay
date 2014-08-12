@@ -29,54 +29,58 @@ $(document).ready(function() {
 
 {% block content %}
 
-<h1>Amend Proposal</h1>
+<h1 class="text-center">Amend Proposal</h1>
+<br />
 
 <div class="row">
-  <div class="col-xs-12 col-md-8 alert alert-warning">
+  <div class="col-xs-12 col-md-8 col-md-offset-2 alert alert-warning">
     Amendments will be posted as a comment on the original proposal. This allows other users to vote on and discuss proposed changes.
   </div>
 </div>
 
-<form id="view_amendments" method="post" action="">
-  {% csrf_token %}
+<div class="row">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <form id="view_amendments" method="post" action="">
+          {% csrf_token %}
 
-  <div class="row">
-    <div class="col-xs-12 col-md-8">
-      <div class="form-group">
-	<label for="title">Title</label>
-	{{ form.title }}
-      </div>
 
-      <div class="form-group">
-	<label for="text">Proposal Body</label>
-	{% include "markdown_formatting_help.html" %}
-	{{ form.text }}
-	<div class="charNum">0/6000</div>
-      </div>
-      
-      <button name="action" value="view" type="submit" class="btn btn-default">Preview</button>
+          <div class="form-group">
+            <label for="title">Title</label>
+            {{ form.title }}
+          </div>
+
+          <div class="form-group">
+            <label for="text">Proposal Body</label>
+            {% include "markdown_formatting_help.html" %}
+            {{ form.text }}
+            <div class="charNum">0/6000</div>
+          </div>
+
+          <button name="action" value="view" type="submit" class="btn btn-default">Preview</button>
+
+        </form>
     </div>
-  </div>
+</div>
 
-</form>
-  
-<hr />
+<div class="row">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <form method="post" action="">
+        {% csrf_token %}
 
-<form method="post" action="">
-  {% csrf_token %}
+          <div id="changes">
+            {% if diff %}
+            <div class="row proposal-text">
+              <div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
+                {{ diff | my_markdown }}
+              </div>
+            </div>
+            <input type="hidden" name="text" value="{{ diff }}" />
+            <button name="action" value="post" type="submit" class="btn btn-default">Submit Proposed Amendments</button>
+            {% endif %}
+          </div>
 
-  <div class="row" id="changes">
-    {% if diff %}
-    <div class="row proposal-text">
-      <div class="col-xs-10 col-md-8">
-        {{ diff | my_markdown }}
-      </div>
+        </form>
     </div>
-    <input type="hidden" name="text" value="{{ diff }}" />
-    <button name="action" value="post" type="submit" class="btn btn-default">Submit Proposed Amendments</button>
-    {% endif %}
-  </div>
-
-</form>
+</div>
 
 {% endblock %}
