@@ -223,6 +223,17 @@ class User (models.Model):
     def get_absolute_url(self):
         return reverse("user", kwargs={"slug": self.slug})
 
+    def get_vote_on(self, content):
+        content_type = ContentType.objects.get_for_model(content)
+        try:
+            vote = Vote.objects.get(user=self, content_type=content_type, object_id=content.id)
+            if vote.isVoteUp:
+                return 1
+            else:
+                return -1
+        except Vote.DoesNotExist:
+            return 0
+
     def get_proposals_voted_for(self):
         """
         Returns a list (formerly QuerySet) of proposals that the user has voted for.

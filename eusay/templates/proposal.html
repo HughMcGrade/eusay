@@ -14,17 +14,53 @@
 <script src="{% static "js/jquery.form.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 <script>
+
+function hideReplyForms() {
+    // hide comment reply forms
+    $(".comment-reply-form").hide({
+        duration: 0
+    });
+}
+
 function initForms() {
     $('.proposal-comment-form').ajaxForm(
-        {success: function() {
-            reloadComments($(".comments"), '{{ proposal.id }}', null);
+        {success: function(response, statusText, xhr) {
+            //console.log(xhr.getAllResponseHeaders());
+            if (xhr.getResponseHeader('Comment-Id') != null) {
+	      var html = $.parseHTML(response);
+	      var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
+              var comment = $(html).find(selector);
+              $(selector).html(comment);
+	    }
+	    else {
+	      console.log('It was null');
+	      reloadComments($(".comments"), '{{ proposal.id }}', null);
+	    }
+            initForms();
+	    hideReplyForms();
+        }
+    });
+    $('#proposal_vote_form').ajaxForm(
+        {success: function(response) {
+            //reloadComments($(".comments"), '{{ proposal.id }}', null);
+            var html = $.parseHTML(response);
+            var votes = $(html).find('#proposal_vote_div');
+            $('#proposal_vote_div').html(votes);
+            console.log('Voted');
             initForms();
         }
     });
+    $('.comment_vote_form').ajaxForm(
+        {success: function(response, statusText, xhr) {
+            var html = $.parseHTML(response);
+            var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
+            var comment = $(html).find(selector);
+            $(selector).html(comment);
+            initForms();
+         }});
 };
 $(document).ready(function() {
     initForms();
-
     // find similar proposals
     $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
         var output = "<ul>";
@@ -38,10 +74,7 @@ $(document).ready(function() {
         }
     });
 
-    // hide comment reply forms
-    $(".comment-reply-form").hide({
-        duration: 0
-    });
+    hideReplyForms();
 });
 /*
 // voting
@@ -140,28 +173,32 @@ function viewHiddenProposal() {
             </div>
             <hr />
 
-            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
-            <div class="row proposal-vote-buttons">
+	    <form id="proposal_vote_form" method="post">
+	      <input type="hidden" name="request" value="proposal_vote" />
+	      {% csrf_token %}
+	      <div id="proposal_vote_div" class="row proposal-vote-buttons">
+		{% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
                 <div class="col-md-4 col-xs-12">
-                    <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+                  <button name="vote" value="up" type="submit" class="btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
                 </div>
                 <div class="col-md-4 col-xs-12">
-                    <a href="{% url 'respond' proposal.id proposal.slug %}" role="button" class="btn btn-lg btn-block btn-default"><span class="glyphicon glyphicon-pencil"></span> Respond</a>
+                  <a href="{% url 'respond' proposal.id proposal.slug %}" role="button" class="btn btn-lg btn-block btn-default"><span class="glyphicon glyphicon-pencil"></span> Respond</a>
                 </div>
                 <div class="col-md-4 col-xs-12">
-                    <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
+                  <button name="vote" value="down" type="submit" class="btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
                 </div>
-            </div>
-            {% else %}
-             <div class="row proposal-vote-buttons">
+
+		{% else %}
+
+		<div class="col-md-3 col-md-offset-2 col-xs-6">
+                  <button name="vote" value="up" type="submit" class="btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+                </div>
                 <div class="col-md-3 col-md-offset-2 col-xs-6">
-                    <button type="button" class="btn btn-lg btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+                  <button name="vote" value="down" type="submit" class="btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
                 </div>
-                <div class="col-md-3 col-md-offset-2 col-xs-6">
-                    <button type="button" class="btn btn-lg btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
-                </div>
-            </div>
-            {% endif %}
+		{% endif %}
+              </div>
+	     </form>
 
             {% if proposal.tags.all %}
                 <div class="row proposal-tags">
@@ -180,14 +217,14 @@ function viewHiddenProposal() {
                     {% if not hide %}
                         <div class="btn-group pull-right">
                             {% if user.isModerator and not hide %}
-                            <a type="button" class="btn btn-default btn-xs" href="/hide_proposal/{{ proposal.id }}">Hide Proposal</a>
+                            <a type="button" class="btn btn-default btn-xs" href="{% url 'hide_proposal' proposal_id=proposal.id %}">Hide Proposal</a>
                             {% else %}
-                            <a type="button" class="btn btn-default btn-xs" href="/report_proposal/{{ proposal.id }}">Report Proposal</a>
+                            <a type="button" class="btn btn-default btn-xs" href="{% url 'report_proposal' proposal_id=proposal.id %}">Report Proposal</a>
                             {% endif %}
                         </div>
                     {% endif %}
 			<div class="btn-group pull-right">
-			  <a type="button" class="btn btn-default btn-xs" href="/amend_proposal/{{ proposal.id }}">Propose Amendment</a>
+			  <a type="button" class="btn btn-default btn-xs" href="{% url 'amend_proposal' proposal_id=proposal.id %}">Propose Amendment</a>
 			</div>
                 </div>
             </div>
