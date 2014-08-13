@@ -5,7 +5,7 @@ db.sqlite3
 .DS_Store
 .idea
 .settings
-/settings/whoosh_index
+/eusay/settings/whoosh_index
 /eusay/migrations
 celerybeat-schedule.db
 secrets.json
