@@ -28,10 +28,8 @@ def comment_user_vote(comment, user):
     return render_to_string('comment_votes.html', { 'comment' : comment, 'user_vote' : user_vote })
 
 @register.filter
-def comment_replies(comment, request):
-    user = get_current_user(request)
-    form = CommentForm() # An unbound form
-    return render_to_string('proposal_comments.html', { 'request' : request, 'comments': comment.get_replies(), 'user' : user, 'form' : form })
+def comment_replies(comment):
+    return comment.get_replies(sort="chronological")
 
 @register.filter
 @stringfilter
@@ -85,3 +83,4 @@ def humanize_timesince(date):
         return u"%d minute%s ago" % (num_minutes, pluralize(num_minutes))
 
     return u"a few seconds ago"
+

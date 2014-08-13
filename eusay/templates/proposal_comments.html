@@ -64,19 +64,19 @@
 			  <form class="comment_vote_form" method="post">
 			    {% csrf_token %}
 			    <input type="hidden" name="request" value="comment_vote" />
-                            <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-md comment-votes-up green">
-                                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-up">
+                                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}
                             </button>
-                            <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-md comment-votes-down">
+                            <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-down">
                                 <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.get_votes_down_count }}
                             </button>
 			  </form>
                         </div>
                     </div>
                 </div>
-                {% if comment.get_replies %}
+                {% if comment|comment_replies %}
 		<div id="comment_replies_{{ comment.id }}">
-                    {% for reply in comment.get_replies %}
+                    {% for reply in comment|comment_replies %}
                         <!-- comment reply -->
                         <div id="comment_{{ reply.id }}" class="row">
                             <div class="col-xs-11 col-xs-offset-1 comment">
@@ -107,10 +107,10 @@
                                   <form class="comment_vote_form" method="post">
 				    {% csrf_token %}
 				    <input type="hidden" name="request" value="comment_vote" />  
-				    <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-md comment-votes-up green">
-                                        <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}&nbsp;&nbsp;&nbsp;&nbsp;
+				    <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
+                                        <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
                                     </button>
-                                    <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-md comment-votes-down">
+                                    <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
                                         <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
                                     </button>
 				  </form>

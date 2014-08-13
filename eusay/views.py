@@ -333,7 +333,7 @@ def get_comments(request, proposal_id, reply_to):
         comments = sorted(proposal.get_visible_comments(reply_to))
         comments.reverse()'''
     if reply_to:
-        comments = proposal.get_visible_comments(reply_to)
+        comments = proposal.get_visible_comments(reply_to=reply_to)
     else:
         comments = proposal.get_visible_comments()
 

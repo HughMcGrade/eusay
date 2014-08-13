@@ -48,8 +48,13 @@ class Comment (Content):
     def contentType():
         return ContentType.objects.get(app_label="eusay", model="proposal")
 
-    def get_replies(self):
-        return Comment.objects.filter(replyTo = self)
+    def get_replies(self, sort="popularity"):
+        if sort == "popularity":
+            return sorted([c for c in Comment.objects.filter(replyTo=self)],
+                          key=lambda c: c.get_score)
+        elif sort == "chronological":
+            return [c for c in
+                    Comment.objects.filter(replyTo=self).order_by("createdAt")]
 
     def get_score(self):
         return self.get_votes_up_count() - self.get_votes_down_count()
@@ -163,20 +168,30 @@ class Proposal (Content):
             self.get_votes_up_count() - \
             self.get_votes_down_count()
 
-    def get_visible_comments(self, reply_to=None):
-        return sorted([c for c in self.comments.filter(replyTo=reply_to)
-                      if not c.is_hidden()], key=lambda c: c.createdAt)
+    def get_visible_comments(self, reply_to=None, sort="popularity"):
+        if sort == "popularity":
+            return sorted([c for c in self.comments.filter(replyTo=reply_to)
+                           if not c.is_hidden()],
+                          key=lambda c: c.get_score(),
+                          reverse=True)
+        elif sort == "newest":
+            return sorted([c for c in self.comments.filter(replyTo=reply_to)
+                           if not c.is_hidden()],
+                          key=lambda c: c.createdAt)
+
 
     @staticmethod
-    def get_visible_proposals(tag=None):
+    def get_visible_proposals(tag=None, sort="popularity"):
+        proposals = Proposal.objects.all()
         if tag:
-            return sorted([p for p in tag.proposals.all()
-                           if not p.is_hidden()],
-                          key=lambda p: p.rank)
-        else:
-            return sorted([p for p in Proposal.objects.all()
-                           if not p.is_hidden()],
-                          key=lambda p: p.rank)
+            proposals = proposals.filter(tags=tag)
+
+        if sort == "popularity":
+            proposals = proposals.order_by("rank")
+        elif sort == "newest":
+            proposals = proposals.order_by("createdAt")
+
+        return [p for p in proposals if not p.is_hidden()]
 
 
 class Response(Content):
