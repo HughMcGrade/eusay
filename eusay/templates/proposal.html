@@ -27,17 +27,17 @@ function initForms() {
         {success: function(response, statusText, xhr) {
             //console.log(xhr.getAllResponseHeaders());
             if (xhr.getResponseHeader('Comment-Id') != null) {
-	      var html = $.parseHTML(response);
-	      var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
+              var html = $.parseHTML(response);
+              var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
               var comment = $(html).find(selector);
               $(selector).html(comment);
-	    }
-	    else {
-	      console.log('It was null');
-	      reloadComments($(".comments"), '{{ proposal.id }}', null);
-	    }
+            }
+            else {
+              console.log('It was null');
+              reloadComments($(".comments"), '{{ proposal.id }}', null);
+            }
             initForms();
-	    hideReplyForms();
+            hideReplyForms();
         }
     });
     $('#proposal_vote_form').ajaxForm(
