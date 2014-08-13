@@ -118,6 +118,7 @@ class Proposal (Content):
     def get_absolute_url(self):
         return reverse("proposal", kwargs={"proposalId": self.id,
                                            "slug": self.slug})
+
     def get_votes_up_percentage(self):
         votes_up = self.get_votes_up_count()
         votes_total = votes_up + self.get_votes_down_count()
@@ -128,10 +129,7 @@ class Proposal (Content):
 
     def get_votes_down_percentage(self):
         votes_up_percentage = self.get_votes_up_percentage()
-        if votes_up_percentage == 0:
-            return 0
-        else:
-            return 100 - votes_up_percentage
+        return 100 - votes_up_percentage
     
     def _hours_since(self, date):
         utc_now = datetime.datetime.utcnow()#(datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(timestamp))
