@@ -179,15 +179,15 @@ class Proposal (Content):
 
 
     @staticmethod
-    def get_visible_proposals(tag=None, sort="popularity"):
+    def get_visible_proposals(tag=None, sort="popular"):
         proposals = Proposal.objects.all()
         if tag:
             proposals = proposals.filter(tags=tag)
 
-        if sort == "popularity":
-            proposals = proposals.order_by("rank")
+        if sort == "popular":
+            proposals = proposals.order_by("-rank")
         elif sort == "newest":
-            proposals = proposals.order_by("createdAt")
+            proposals = proposals.order_by("-createdAt")
 
         return [p for p in proposals if not p.is_hidden()]
 

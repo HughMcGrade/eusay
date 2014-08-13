@@ -67,14 +67,22 @@ def get_users(request):
 def index(request):
     user = get_current_user(request)
     template = "index.html" # main HTML
-    proposals_template = "index_proposals.html" # just the proposals
-    proposals = Proposal.get_visible_proposals()
-    proposals.reverse()
+    proposals_template = "proposal_list.html" # just the proposals
+
+    # sort by popularity by default
+    proposals = Proposal.get_visible_proposals(sort="popular")
+    sort = "popular"
+
+    if request.GET.get("sort") == "newest":
+        proposals = Proposal.get_visible_proposals(sort="newest")
+        sort = "newest"
+
     context = {
         "proposals": proposals,
         "type" : "proposal",
         "user" :  user,
         "proposals_template": proposals_template,
+        "sort": sort,
     }
     # ajax requests only return the proposals, not the whole page
     if request.is_ajax():
@@ -163,14 +171,22 @@ def tag(request, tagId, slug):
         return HttpResponsePermanentRedirect(tag.get_absolute_url())
 
     template = "tag.html" # main HTML
-    proposals_template = "index_proposals.html" # just the proposals
-    proposals = Proposal.get_visible_proposals(tag=tag)
-    proposals.reverse()
+    proposals_template = "proposal_list.html" # just the proposals
+
+    # sort by popularity by default
+    proposals = Proposal.get_visible_proposals(tag=tag, sort="popular")
+    sort = "popular"
+
+    if request.GET.get("sort") == "newest":
+        proposals = Proposal.get_visible_proposals(tag=tag, sort="newest")
+        sort = "newest"
+
     context = {
         "proposals": proposals,
-        "user" :  user,
+        "user":  user,
         "proposals_template": proposals_template,
         "tag": tag,
+        "sort": sort,
     }
     # ajax requests only return the proposals, not the whole page
     if request.is_ajax():
