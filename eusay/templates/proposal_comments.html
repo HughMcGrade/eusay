@@ -74,53 +74,53 @@
                         </div>
                     </div>
                 </div>
-                {% if comment|comment_replies %}
 		<div id="comment_replies_{{ comment.id }}">
-                    {% for reply in comment|comment_replies %}
-                        <!-- comment reply -->
-                        <div id="comment_{{ reply.id }}" class="row">
-                            <div class="col-xs-11 col-xs-offset-1 comment">
-                                <p>
-                                    <span class="glyphicon glyphicon-share-alt"></span>
-                                    {% if reply.user.userStatus != "User" %}
-                                        <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
-                                    {% endif %}
-                                    <b>{{ reply.user.name }}</b>
-                                    {% if reply.user.title %}
-                                        <span class="comment-user-title">&nbsp;&nbsp;{{ reply.user.title }}</span>
-                                    {% endif %}
-                                </p>
+                  {% if comment|comment_replies %}
+		  {% for reply in comment|comment_replies %}
+                  <!-- comment reply -->
+                  <div id="comment_{{ reply.id }}" class="row">
+                    <div class="col-xs-11 col-xs-offset-1 comment">
+                      <p>
+                        <span class="glyphicon glyphicon-share-alt"></span>
+                        {% if reply.user.userStatus != "User" %}
+                        <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
+                        {% endif %}
+                        <b>{{ reply.user.name }}</b>
+                        {% if reply.user.title %}
+                        <span class="comment-user-title">&nbsp;&nbsp;{{ reply.user.title }}</span>
+                        {% endif %}
+                      </p>
 
-                                {{ reply.text | replace_bad_words | my_markdown }}
+                      {{ reply.text | replace_bad_words | my_markdown }}
 
-                                <div class="comment-meta">
-                                    {{ reply.createdAt|timesince_human }}
-                                    &nbsp;&nbsp;|&nbsp;&nbsp;
-                                    {% if user.isModerator %}
-                                        <a href="/hide_comment/{{ comment.id }}">hide comment</a>
-                                    {% else %}
-                                        <a href="/report_comment/{{ comment.id }}">report</a>
-                                    {% endif %}
-                                </div>
+                      <div class="comment-meta">
+                        {{ reply.createdAt|timesince_human }}
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        {% if user.isModerator %}
+                        <a href="/hide_comment/{{ comment.id }}">hide comment</a>
+                        {% else %}
+                        <a href="/report_comment/{{ comment.id }}">report</a>
+                        {% endif %}
+                      </div>
 
-                                <div class="comment-votes">
-                                  <form class="comment_vote_form" method="post">
-				    {% csrf_token %}
-				    <input type="hidden" name="request" value="comment_vote" />  
-				    <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                                        <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
-                                    </button>
-                                    <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                                        <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
-                                    </button>
-				  </form>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-		</div>
-                {% endif %}
-                <!-- comment reply form -->
+                      <div class="comment-votes">
+                        <form class="comment_vote_form" method="post">
+			  {% csrf_token %}
+			  <input type="hidden" name="request" value="comment_vote" />  
+			  <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
+                            <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
+                          </button>
+                          <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
+                            <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
+                          </button>
+			</form>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+		  {% endif %}
+                </div>
+		<!-- comment reply form -->
                 {% if not hide %}
                     <div class="row">
                         <div class="col-xs-11 col-xs-offset-1 comment comment-reply-form" id="comment-reply-form-box-{{ comment.id }}">
