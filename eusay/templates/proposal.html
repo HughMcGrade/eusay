@@ -25,7 +25,6 @@ function hideReplyForms() {
 function initForms() {
     $('.proposal-comment-form').ajaxForm(
         {success: function(response, statusText, xhr) {
-            //console.log(xhr.getAllResponseHeaders());
             if (xhr.getResponseHeader('Comment-Id') != null) {
               var html = $.parseHTML(response);
               var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
@@ -33,7 +32,6 @@ function initForms() {
               $(selector).html(comment);
             }
             else {
-              console.log('It was null');
               reloadComments($(".comments"), '{{ proposal.id }}', null);
             }
             initForms();
