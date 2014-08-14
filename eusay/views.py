@@ -366,7 +366,7 @@ def hide_comment(request, comment_id):
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
-                hide_action.comment = comment
+                hide_action.content = comment
                 hide_action.save()
                 return HttpResponse(_render_message_to_string(request, "Hidden", "The comment has been hidden and the hide action logged"))
             else:
@@ -388,7 +388,7 @@ def hide_proposal(request, proposal_id):
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = user
-                hide_action.proposal = proposal
+                hide_action.content = proposal
                 hide_action.save()
                 return HttpResponse(_render_message_to_string(request, "Hidden", "The proposal has been hidden and the hide action logged."))
             else:
