@@ -114,6 +114,8 @@ class Proposal (Content):
     def save(self, *args, **kwargs):
         self.slug = better_slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
+        vote = Vote(user=self.user, content=self, isVoteUp=True)
+        vote.save()
 
     def get_absolute_url(self):
         return reverse("proposal", kwargs={"proposalId": self.id,
