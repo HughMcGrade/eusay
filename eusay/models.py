@@ -241,6 +241,7 @@ class User(usermodels.User):
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
 
+    # Use UserManager to get the create_user method, etc.
     objects = usermodels.UserManager()
 
     def proposed(self):

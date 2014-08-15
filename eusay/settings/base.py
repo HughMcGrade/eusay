@@ -28,6 +28,8 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname((__file__)))))
 
+CUSTOM_USER_MODEL = 'eusay.User'
+
 # Required for django-endless-pagination plugin
 # http://django-endless-pagination.readthedocs.org
 TEMPLATE_CONTEXT_PROCESSORS += (
