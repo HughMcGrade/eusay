@@ -202,6 +202,9 @@ body {
     padding: 15px;
     background: #fff url("/static/img/light_grey.png");
 }
+.proposal-metainfo {
+    margin-top: 15px;
+}
 
 /* Comments */
 .comments {
