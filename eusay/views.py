@@ -251,6 +251,7 @@ def proposal(request, proposalId, slug):
                     raise Exception('Unknown vote string ' + vote_string)
             else:
                 raise Exception('Unknown POST request ' + request.POST['request'])
+            proposal = Proposal.objects.get(id=proposalId)
         else:
             form = CommentForm(request.POST) # A form bound to the POST data
             comment = form.save(commit=False)
