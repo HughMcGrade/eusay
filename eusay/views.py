@@ -458,6 +458,8 @@ def report_proposal(request, proposal_id):
 
 def respond_to_proposal(request, proposalId, *args, **kwargs):
     user = get_current_user(request)
+    if user.userStatus != "Staff" and user.userStatus != "Officeholder":
+        return HttpResponseForbidden(_render_message_to_string(request, "Error", "Regular users cannot respond to proposals."))  # TODO: better 403 page
     proposal = Proposal.objects.get(id=proposalId)
     if request.method == 'POST':
         form = ResponseForm(request.POST)

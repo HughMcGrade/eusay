@@ -210,6 +210,13 @@ class Response(Content):
     text = models.TextField()
     proposal = models.OneToOneField(Proposal, related_name="response")
 
+    def save(self, *args, **kwargs):
+        if self.user.userStatus == "Staff" or \
+           self.user.userStatus == "Officeholder":
+            super(self, Response).save(*args, **kwargs)
+        else:
+            raise Exception("Only staff and officerholders can respond to proposals!")
+
     def __unicode__(self):
         return "%s" % self.text
 
