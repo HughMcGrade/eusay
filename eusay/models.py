@@ -112,8 +112,6 @@ class Proposal (Content):
     text = models.TextField()
     slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
-    # For the rank, we could also use DecimalField for greater accuracy,
-    # but slower performance.
     rank = models.FloatField(default=0.0)
     #contentType = ContentType.objects.get(app_label="eusay", model="proposal")
 
@@ -124,10 +122,12 @@ class Proposal (Content):
         return self.title
 
     def save(self, *args, **kwargs):
+        is_initial = not self.pk
         self.slug = better_slugify(self.title)
         super(Proposal, self).save(*args, **kwargs)
-        vote = Vote(user=self.user, content=self, isVoteUp=True)
-        vote.save()
+        # when the proposal is first created, add a vote by the proposer
+        if is_initial:
+            Vote.objects.create(user=self.user, content=self, isVoteUp=True)
 
     def get_absolute_url(self):
         return reverse("proposal", kwargs={"proposalId": self.id,
