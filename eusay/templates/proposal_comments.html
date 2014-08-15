@@ -22,6 +22,7 @@
             </div>
         {% endif %}
 
+	<div id="proposal_comments">
         {% for comment in comments %}
             {% if not comment.replyTo %}
                 <!-- comment -->
@@ -140,5 +141,6 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
+	</div>
     </div>
 </div>

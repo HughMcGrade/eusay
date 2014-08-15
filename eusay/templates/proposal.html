@@ -24,15 +24,21 @@ function hideReplyForms() {
 
 function initForms() {
     $('.proposal-comment-form').ajaxForm(
-        {success: function(response, statusText, xhr) {
+        { clearForm : true,
+	  success: function(response, statusText, xhr) {
             if (xhr.getResponseHeader('Comment-Id') != null) {
-              var html = $.parseHTML(response);
+              // Reply posted
+	      var html = $.parseHTML(response);
               var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
               var comment = $(html).find(selector);
               $(selector).html(comment);
             }
             else {
-              reloadComments($(".comments"), '{{ proposal.id }}', null);
+	      var html = $.parseHTML(response);
+	      var selector = '#proposal_comments';
+	      var comments = $(html).find(selector);
+	      $(selector).html(comments);
+              //reloadComments($(".comments"), '{{ proposal.id }}', null);
             }
             initForms();
             hideReplyForms();

@@ -218,12 +218,7 @@ def do_vote(user, content, vote_request):
 def proposal(request, proposalId, slug):
     user = get_current_user(request)
     proposal = Proposal.objects.get(id=proposalId)
-    '''
-    # For sorted:
-    comments = sorted(proposal.get_visible_comments(), key=lambda c: c.get_score())
-    comments.reverse()
-    '''
-    comments = proposal.get_visible_comments()
+    
     # TODO duplication currently for graceful deprecation
     
     #if request.is_ajax():
@@ -279,6 +274,14 @@ def proposal(request, proposalId, slug):
         user_vote = user.get_vote_on(proposal)
 
     form = CommentForm() # An unbound form
+    
+    '''
+    # For sorted:
+    comments = sorted(proposal.get_visible_comments(), key=lambda c: c.get_score())
+    comments.reverse()
+    '''
+    comments = proposal.get_visible_comments()
+    
     response = render(request,
                   "proposal.html",
                   {"form": form,
@@ -339,21 +342,6 @@ def vote_comment(request, vote_request_type, comment_id):
     new_vote.save()
     
     return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote, "user" : user })
-
-def get_comments(request, proposal_id, reply_to):
-    proposal = Proposal.objects.all().get(id = proposal_id)
-    form = CommentForm() # An unbound form
-    
-    '''
-        # For sorted:
-        comments = sorted(proposal.get_visible_comments(reply_to))
-        comments.reverse()'''
-    if reply_to:
-        comments = proposal.get_visible_comments(reply_to=reply_to)
-    else:
-        comments = proposal.get_visible_comments()
-
-    return render(request, "proposal_comments.html", { "comments" : comments, "request" : request, "user" : get_current_user(request), 'form' : form })
 
 def hide_comment(request, comment_id):
     user = get_current_user(request)
