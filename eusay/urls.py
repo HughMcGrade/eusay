@@ -59,6 +59,12 @@ urlpatterns = patterns('',
     url(r'^amend_proposal/(?P<proposal_id>\d+)',
         eusay_views.amend_proposal,
         name="amend_proposal"),
+    url(r'^delete_proposal/(?P<proposal_id>\d+)',
+        eusay_views.delete_proposal,
+        name="delete_proposal"),
+    url(r'^delete_comment/(?P<comment_id>\d+)',
+        eusay_views.delete_comment,
+        name="delete_comment"),
 
     # Other
     url(r'^about/', eusay_views.about, name="about"),

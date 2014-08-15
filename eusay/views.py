@@ -396,7 +396,7 @@ def hide_from_report(request, report):
     hide_action.content = report.content
     hide_action.save()
     report.delete()
-    messages.add_message(request, messsages.INFO, "Content hidden")
+    messages.add_message(request, messages.INFO, "Content hidden")
 
 def ignore_report(request, report):
     user = get_current_user(request)
@@ -584,6 +584,42 @@ def amend_proposal(request, proposal_id):
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html", { 'proposal' : proposal, 'user' : user, 'form' : form })
 
+def delete_proposal(request, proposal_id):
+    user = get_current_user(request)
+    proposal = Proposal.objects.get(id=proposal_id)
+    if proposal.user != user:
+        messages.add_message(request, messages.ERROR, "You may only delete your own proposals. Please submit a report to request another user's proposal be hidden.")
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        if request.POST['action'] == 'delete':
+            proposal.text = "This proposal has been deleted by its proposer."
+            proposal.title = "Deleted proposal"
+            # TODO Dummy user
+            proposal.user = User.objects.all()[0]
+            proposal.tags.clear()
+            proposal.save()
+            messages.add_message(request, messages.INFO, "Proposal deleted")
+            return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": proposal.id, "slug": proposal.slug}))
+    else:
+        return render(request, 'delete_proposal.html', { 'proposal' : proposal, 'user' : user })
+
+def delete_comment(request, comment_id):
+    user = get_current_user(request)
+    comment = Comment.objects.get(id=comment_id)
+    if comment.user != user:
+        messages.add_message(request, messages.ERROR, "You may only delete your own comments. Please submit a report to request another user's comment be hidden.")
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        if request.POST['action'] == 'delete':
+            comment.text = "This comment has been deleted by its creator."
+            # TODO Dummy user
+            comment.user = User.objects.all()[0]
+            comment.save()
+            messages.add_message(request, messages.INFO, "Comment deleted")
+            return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": comment.proposal.id, "slug": comment.proposal.slug}))
+    else:
+        return render(request, 'delete_comment.html', { 'comment' : comment, 'user' : user })
+
 '''
 class MultipleFieldLookupMixin(object):
     """
@@ -598,3 +634,4 @@ class MultipleFieldLookupMixin(object):
             filter[field] = self.kwargs[field]
         return get_object_or_404(queryset, **filter)    # Lookup the object
 '''
+

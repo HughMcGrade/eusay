@@ -60,6 +60,10 @@
                             {% else %}
                                 <a href="/report_comment/{{ comment.id }}">report</a>
                             {% endif %}
+			    {% if comment.user == comment.user %}
+				&nbsp;&nbsp;|&nbsp;&nbsp;
+				<a href="/delete_comment/{{ comment.id }}">delete</a>
+			    {% endif %}
                         </div>
                         <div class="comment-votes">
 			  <form class="comment_vote_form" method="post">
@@ -102,6 +106,10 @@
                         {% else %}
                         <a href="/report_comment/{{ reply.id }}">report</a>
                         {% endif %}
+			{% if reply.user == comment.user %}
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<a href="/delete_comment/{{ reply.id }}">delete</a>
+			{% endif %}
                       </div>
 
                       <div class="comment-votes">

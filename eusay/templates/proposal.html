@@ -120,7 +120,7 @@ function viewHiddenProposal() {
                 <div class="panel-heading">Careful now</div>
                 <div class="panel-body">
                     <p>This proposal has been hidden. You can still view it, but it may not abide by EUSA safe space policy!</p>
-                    <p><b>Reason:</b> {{ hide.reason }}</p>
+                    <p><strong>Reason:</strong> {{ hide.reason }}</p>
                     <button type="button" class="btn btn-danger" id="view-hidden-proposal-button" onclick="viewHiddenProposal()">View anyway</button>
                 </div>
             </div>
@@ -218,6 +218,9 @@ function viewHiddenProposal() {
                             {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
                                 <a type="button" class="btn btn-default btn-xs" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
                             {% endif %}
+			    {% if proposal.user = user %}
+				<a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
+			    {% endif %}
                         </div>
                     {% endif %}
                 </div>
