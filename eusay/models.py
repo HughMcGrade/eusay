@@ -18,22 +18,28 @@ class Content (models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     lastModified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey("User")
+    upVotes = models.IntegerField(default=0)
+    downVotes = models.IntegerField(default=0)
+    isHidden = models.BooleanField(default=False)
 
-    def _get_votes_count(self, isUp):
+    def get_votes_count(self, isUp):
         try:
             return len(Vote.get_votes(self).filter(isVoteUp=isUp))
         except Exception:
             return 0
 
     def get_votes_up_count(self):
-        return self._get_votes_count(True)
+        #return self.get_votes_count(True)
+        return self.upVotes
         
     def get_votes_down_count(self):
-        return self._get_votes_count(False)
+        #return self.get_votes_count(False)
+        return self.downVotes
 
     def is_hidden(self):
-        content_type = ContentType.objects.get_for_model(self)
-        return HideAction.get_hide_actions(object_id=self.id, content_type=content_type).exists()
+        return self.isHidden
+        #content_type = ContentType.objects.get_for_model(self)
+        #return HideAction.get_hide_actions(object_id=self.id, content_type=content_type).exists()
         #return HideAction.objects.all().filter(content=self).exists()
 
     class Meta:
@@ -50,11 +56,11 @@ class Comment (Content):
 
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
-            return sorted([c for c in Comment.objects.filter(replyTo=self)],
+            return sorted([c for c in Comment.objects.filter(replyTo=self).select_related('user')],
                           key=lambda c: c.get_score)
         elif sort == "chronological":
             return [c for c in
-                    Comment.objects.filter(replyTo=self).order_by("createdAt")]
+                    Comment.objects.filter(replyTo=self).select_related('user').order_by("createdAt")]
 
     def get_score(self):
         return self.get_votes_up_count() - self.get_votes_down_count()
@@ -78,6 +84,12 @@ class Vote (models.Model):
     def get_votes(content):
         content_type = ContentType.objects.get_for_model(content)
         return Vote.objects.filter(content_type=content_type, object_id=content.id)
+
+    def save(self, *args, **kwargs):
+        super(Vote, self).save(*args, **kwargs)
+        self.content.upVotes = self.content.get_votes_count(True)
+        self.content.downVotes = self.content.get_votes_count(False)
+        self.content.save()
 
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
@@ -170,12 +182,12 @@ class Proposal (Content):
 
     def get_visible_comments(self, reply_to=None, sort="popularity"):
         if sort == "popularity":
-            return sorted([c for c in self.comments.filter(replyTo=reply_to)
+            return sorted([c for c in self.comments.filter(replyTo=reply_to).select_related('user')
                            if not c.is_hidden()],
                           key=lambda c: c.get_score(),
                           reverse=True)
         elif sort == "newest":
-            return sorted([c for c in self.comments.filter(replyTo=reply_to)
+            return sorted([c for c in self.comments.filter(replyTo=reply_to).select_related('user')
                            if not c.is_hidden()],
                           key=lambda c: c.createdAt)
 
@@ -283,6 +295,8 @@ class HideAction (models.Model):
             raise Exception("Only moderators may perform hide actions!")
         else:
             super(HideAction, self).save()
+            content.isHidden = True
+            content.save()
 
     @staticmethod
     def get_hide_actions(object_id, content_type):
