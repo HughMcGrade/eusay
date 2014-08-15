@@ -98,9 +98,9 @@
                         {{ reply.createdAt|timesince_human }}
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         {% if user.isModerator %}
-                        <a href="/hide_comment/{{ comment.id }}">hide comment</a>
+                        <a href="/hide_comment/{{ reply.id }}">hide comment</a>
                         {% else %}
-                        <a href="/report_comment/{{ comment.id }}">report</a>
+                        <a href="/report_comment/{{ reply.id }}">report</a>
                         {% endif %}
                       </div>
 
