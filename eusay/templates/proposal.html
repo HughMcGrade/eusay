@@ -30,13 +30,13 @@ function initForms() {
               // Reply posted
 	      var html = $.parseHTML(response);
               var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
-              var comment = $(html).find(selector);
+              var comment = $(html).find(selector).children();
               $(selector).html(comment);
             }
             else {
 	      var html = $.parseHTML(response);
 	      var selector = '#proposal_comments';
-	      var comments = $(html).find(selector);
+	      var comments = $(html).find(selector).children();
 	      $(selector).html(comments);
               //reloadComments($(".comments"), '{{ proposal.id }}', null);
             }
@@ -48,7 +48,7 @@ function initForms() {
         {success: function(response) {
             //reloadComments($(".comments"), '{{ proposal.id }}', null);
             var html = $.parseHTML(response);
-            var votes = $(html).find('#proposal_vote_div');
+            var votes = $(html).find('#proposal_vote_div').children();
             $('#proposal_vote_div').html(votes);
             console.log('Voted');
             initForms();
@@ -58,7 +58,7 @@ function initForms() {
         {success: function(response, statusText, xhr) {
             var html = $.parseHTML(response);
             var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
-            var comment = $(html).find(selector);
+            var comment = $(html).find(selector).children();
             $(selector).html(comment);
             initForms();
          }});
