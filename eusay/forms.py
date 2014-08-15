@@ -84,7 +84,7 @@ class ResponseForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["name", "hasProfile"]
+        fields = ["username", "hasProfile"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("current_user")
@@ -102,7 +102,8 @@ class UserForm(forms.ModelForm):
                                     widget=forms.CheckboxInput(attrs=has_profile_attrs))
 
     def clean_name(self):
-        cleaned_name = self.cleaned_data["name"]
+        # TODO: is this necessary when using django's user system?
+        cleaned_name = self.cleaned_data["username"]
 
         # don't allow blank usernames
         if cleaned_name == "":

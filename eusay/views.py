@@ -22,7 +22,7 @@ import datetime
 from lxml.html.diff import htmldiff
 
 rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
-get_rand_name = lambda: rand_names[round((random.random() * 100) % 50) - 1]
+get_rand_name = lambda: random.choice(rand_names)
 
 # Do not use when using both AJAX and messages!
 def _render_message_to_string(request, title, message):
@@ -31,16 +31,16 @@ def _render_message_to_string(request, title, message):
 
 def generate_new_user(request):
     user = User()
-    user.name = get_rand_name()
+    user.username = get_rand_name()
     for u in User.objects.all():
-        if u.name == user.name:
+        if u.username == user.username:
             user = u
     if not user.sid:
         if not User.objects.all():
             user.sid = "s1"
         else:
             user.sid = "s" + str(int(User.objects.all().last().sid[1:]) + 1)
-        user.slug = better_slugify(user.name)
+        user.slug = better_slugify(user.username)
         user.save()
     request.session['user_sid'] = user.sid
     return user
@@ -54,14 +54,14 @@ def get_current_user(request):
 
 def add_user(request):
     user = generate_new_user(request)
-    return HttpResponse(user.name)
+    return HttpResponse(user.username)
 
 # TODO: remove this, since it's for debugging
 def get_users(request):
     users = User.objects.all()
     s = "Current user is " + request.session.get('user_sid', 'None!') + "<br />"
     for user in users:
-        s = s + user.name + ", "
+        s = s + user.username + ", "
     return HttpResponse(s)
 
 def index(request):

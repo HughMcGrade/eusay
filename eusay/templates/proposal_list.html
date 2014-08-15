@@ -16,7 +16,6 @@
             <h4><a class="pink" href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></h4>
         </div>
         <div>(Tags here?)</div>
-        <div>Rank: {{ proposal.rank }}</div>
         {% if user.isModerator %}
         <div>Rank: {{ proposal.rank }}</div>
         {% endif %}

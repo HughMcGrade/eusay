@@ -24,8 +24,9 @@ class ProposalAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    readonly_fields = ("sid", "name", "createdAt")
-    list_display = ("sid", "name", "userStatus", "title")
+    readonly_fields = ("sid", )
+    list_display = ("sid", "username", "userStatus", "title")
+    prepopulated_fields = {'slug': ('username',), }
 
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proposal, ProposalAdmin)

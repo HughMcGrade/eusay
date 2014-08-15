@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 import datetime
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import models as usermodels
 
 
 from .utils import better_slugify
@@ -221,7 +222,7 @@ class Response(Content):
         return "%s" % self.text
 
 
-class User (models.Model):
+class User(usermodels.User):
     # The first element in each tuple is the actual value to be stored,
     # and the second element is the human-readable name.
     USER_STATUS_CHOICES = (
@@ -231,18 +232,16 @@ class User (models.Model):
         ("Officeholder", "EUSA Officeholder")
     )
     sid = models.CharField("student ID", max_length=20, primary_key=True)
-    name = models.CharField(max_length=50, unique=True, null=False)
     slug = models.SlugField(default="slug")
-    createdAt = models.DateTimeField("date created",
-                                     default=datetime.datetime.now,
-                                     editable=False)
     userStatus = models.CharField("user status",
                                   max_length=12,
                                   choices=USER_STATUS_CHOICES,
                                   default="User")
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True)
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
+
+    objects = usermodels.UserManager()
 
     def proposed(self):
         return Proposal.objects.all().filter(user=self)
@@ -251,7 +250,7 @@ class User (models.Model):
         return Comment.objects.all().filter(user=self)
 
     def save(self, *args, **kwargs):
-        self.slug = better_slugify(self.name, domain="User")
+        self.slug = better_slugify(self.username, domain="User")
         super(User, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -285,7 +284,7 @@ class User (models.Model):
         #return Proposal.objects.filter(votes__in=user_votes)
 
     def __unicode__(self):
-        return self.name + " (" + self.sid + ")"
+        return self.username + " (" + self.sid + ")"
 
 class HideAction (models.Model):
     id = models.AutoField(primary_key=True)
