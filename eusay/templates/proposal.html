@@ -50,8 +50,11 @@ function initForms() {
             var html = $.parseHTML(response);
             var votes = $(html).find('#proposal_vote_div').children();
             $('#proposal_vote_div').html(votes);
-            console.log('Voted');
             initForms();
+
+	    // Reload progress bar
+	    var progressBar = $(html).find('#proposal_progress_bar').children();
+	    $('#proposal_progress_bar').html(progressBar);
         }
     });
     $('.comment_vote_form').ajaxForm(
@@ -164,7 +167,7 @@ function viewHiddenProposal() {
                     <h2 class="text-center">{{ proposal.title }}</h2>
                 </div>
             </div>
-            <div class="progress proposal-progress-bar">
+            <div id="proposal_progress_bar" class="progress proposal-progress-bar">
                 <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
                 </div>
                 <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
