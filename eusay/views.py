@@ -532,22 +532,6 @@ def make_staff(request):
     messages.add_message(request, messages.INFO, "You are now EUSA Staff")
     return HttpResponseRedirect(reverse('frontpage'))
 
-def remove_comment(request, comment_id):
-    comment = Comment.objects.all().get(id=comment_id)
-    if comment.user == get_current_user(request):
-        if len(comment.get_replies()) > 0:
-            comment.user = User.objects.all()[0] # TODO Deleted comment user
-            comment.text = "Comment deleted by user"
-            comment.createdAt = datetime.datetime.now()
-            comment.lastModified = datetime.datetime.now()
-            comment.save()
-            return HttpResponse("Comment cleared")
-        else:
-            comment.delete()
-            return HttpResponse("Comment removed")
-    else:
-        return HttpResponseForbidden("Users may only remove their own comments")
-
 def get_messages(request):
     return render(request, "get_messages.html")
 
