@@ -214,7 +214,7 @@ class Response(Content):
     def save(self, *args, **kwargs):
         if self.user.userStatus == "Staff" or \
            self.user.userStatus == "Officeholder":
-            super(self, Response).save(*args, **kwargs)
+            super(Response, self).save(*args, **kwargs)
         else:
             raise Exception("Only staff and officerholders can respond to proposals!")
 
