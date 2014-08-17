@@ -426,8 +426,7 @@ def moderator_panel(request):
                 hide_action = HideAction()
                 hide_action.moderator = request.user
                 hide_action.reason = report.reason
-                hide_action.object_id = report.content.id
-                hide_action.content_type = ContentType.objects.get_for_model(report.content)
+                hide_action.content = report.content
                 hide_action.save()
                 report.delete()
                 messages.add_message(request, messages.INFO, "Content hidden")
@@ -437,7 +436,7 @@ def moderator_panel(request):
         elif action == "Ignore":
             try:
                 report.delete()
-                messages.add_message(request, message.INFO, "Report ignored")
+                messages.add_message(request, messages.INFO, "Report ignored")
             except Report.DoesNotExist:
                 messages.add_message(request, messages.ERROR, "Report not found")
                 ajaxResponseType = HttpResponseNotFound
