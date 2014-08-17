@@ -103,7 +103,7 @@ def profile(request, slug):
                             current_user=request.user)
             if form.is_valid():
                 form.save()
-                return redirect(reverse("user",
+                return HttpResponseRedirect(reverse("user",
                                         kwargs={"slug": better_slugify(form.cleaned_data["username"], domain="User")}))
             else:
                 error_msg = "That username is unavailable."
@@ -475,7 +475,7 @@ def get_messages(request):
     return render(request, "get_messages.html")
 
 def amend_proposal(request, proposal_id):
-    if not user.is_authenticated():
+    if not request.user.is_authenticated():
         return request_login(request)
     proposal = Proposal.objects.get(id=proposal_id)
     if request.method == 'POST':
@@ -501,7 +501,7 @@ def amend_proposal(request, proposal_id):
             comment.text = request.POST['text']
             comment.isAmendment = True
             comment.save()
-            return HttpResponseRedirect("/proposal/" + str(proposal_id) + '/' + proposal.slug)
+            return HttpResponseRedirect(reverse('proposal', args=[proposal_id, proposal.slug]))
         else:
             raise Exception('Unknown form action')
     else:
