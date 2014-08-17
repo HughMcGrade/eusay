@@ -93,7 +93,7 @@ class Vote (models.Model):
         self.content.downVotes = self.content.get_votes_count(False)
         self.content.save()
 
-class Tag(models.Model):
+class Tag (models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(default="slug", max_length=100)
@@ -223,7 +223,7 @@ class Response(Content):
         return "%s" % self.text
 
 
-class User(usermodels.AbstractUser):
+class User (usermodels.AbstractUser):
     # The first element in each tuple is the actual value to be stored,
     # and the second element is the human-readable name.
     USER_STATUS_CHOICES = (
@@ -303,8 +303,8 @@ class HideAction (models.Model):
             raise Exception("Only moderators may perform hide actions!")
         else:
             super(HideAction, self).save()
-            content.isHidden = True
-            content.save()
+            self.content.isHidden = True
+            self.content.save()
 
     @staticmethod
     def get_hide_actions(object_id, content_type):

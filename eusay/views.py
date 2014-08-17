@@ -176,6 +176,7 @@ def tag(request, tagId, slug):
         "tag": tag,
         "sort": sort,
     }
+    # TODO if we find the JS approach is okay, change this:
     # ajax requests only return the proposals, not the whole page
     if request.is_ajax():
         template = proposals_template
@@ -256,7 +257,7 @@ def proposal(request, proposalId, slug):
 
     hide = None
     if proposal.is_hidden():
-        hide = HideAction.objects.all().get(proposal=proposal)
+        hide = HideAction.objects.all().get(object_id=proposal.id, content_type=Proposal.contentType())
 
     if not user_vote:
         user_vote = request.user.get_vote_on(proposal)
