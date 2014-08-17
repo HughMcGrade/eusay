@@ -34,7 +34,7 @@ urlpatterns = patterns('',
     url(r'^comment_hides', eusay_views.comment_hides, name="hidden-comments"),
     url(r'^proposal_hides', eusay_views.proposal_hides,
         name="hidden-proposals"),
-    url(r'^moderator_panel', eusay_views.moderator_panel),
+                       url(r'^moderator_panel', eusay_views.moderator_panel, name="moderator_panel"),
     url(r'^search/', search_views.search),
 
     # Action URLs
