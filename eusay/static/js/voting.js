@@ -1,3 +1,7 @@
+/* -------
+ Unused code
+ ------ */
+
 /*
 // This could be used if the CSRF token is a problem
 function csrfSafeMethod(method) {
@@ -71,6 +75,11 @@ function reloadComments(commentDiv, proposal, replyTo) {
     performSetDivAjaxGetRequest(ajaxUrl, commentDiv);
 }
 
+/* -------
+ /Unused code
+ ------ */
+
+
 // Create a new user (for the current session user) and reload the page
 function createNewUser() {
 	$.ajax({
@@ -81,6 +90,7 @@ function createNewUser() {
 		},
 		error : function(response) {
 			location.reload(true);
+			console.log("Could not create new user")
 		}
 	});
 }

@@ -13,6 +13,10 @@ urlpatterns = patterns('',
     # Django admin
     url(r'^admin/', include(admin.site.urls)),
 
+    # Authentication
+    url(r'^logout/$', eusay_views.logout, name="logout"),
+    url(r'^login/$', eusay_views.login, name="login"),
+
     # Proposals
     url(r'^$', eusay_views.index, name="frontpage"),  # Front page
     url(r'^submit/', eusay_views.submit, name="submit"),

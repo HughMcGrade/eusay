@@ -8,7 +8,8 @@ from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate as django_authenticate, \
+    login as django_login, logout as django_logout
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
@@ -45,9 +46,9 @@ def generate_new_user(request):
         user = User.objects.create_user(username=username, password="", sid=sid)
         user.slug = better_slugify(user.username)
         user.save()
-    user = authenticate(username=user.username, password="")
+    user = django_authenticate(username=user.username, password="")
     if user is not None:
-        login(request, user)
+        django_login(request, user)
         return user
     else:
         raise Exception("User is None!")
@@ -572,3 +573,22 @@ def delete_comment(request, comment_id):
             return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": comment.proposal.id, "slug": comment.proposal.slug}))
     else:
         return render(request, 'delete_comment.html', {'comment': comment})
+
+
+def logout(request):
+    if request.user.is_authenticated():
+        # TODO: delete cosign cookie(s)
+        django_logout(request)
+        messages.add_message(request, messages.SUCCESS, "You have been logged out.")
+    else:
+        messages.add_message(request, messages.ERROR, "You can't log out if you aren't logged in first!")
+    return redirect(reverse("frontpage"))
+
+
+def login(request):
+    if request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, "You are already logged in.")
+    else:
+        generate_new_user(request)
+        messages.add_message(request, messages.SUCCESS, "You are now logged in.")
+    return redirect(reverse("frontpage"))

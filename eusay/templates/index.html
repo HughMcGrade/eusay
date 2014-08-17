@@ -9,23 +9,22 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block jumbotron %}
-    <div class="jumbotron">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
-                    <h1>eu<span class="pink">say</span></h1>
-                    <p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
-                    Your votes and comments will help guide the student council's decision.</p>
-                    <a href='{% url "submit" %}' class="btn btn-primary btn-lg index-main-button" role="button">
-                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Submit a proposal
-                    </a>
-                    <a href="#" class="btn btn-primary btn-lg index-main-button" role="button">
-                        <span class="glyphicon glyphicon-list"></span>&nbsp;&nbsp;Browse proposals
-                    </a>
+    {% if not user.is_authenticated %}
+        <div class="jumbotron">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+                        <h1>eu<span class="pink">say</span></h1>
+                        <p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
+                        Your votes and comments will help guide the student council's decision.</p>
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg index-main-button" role="button">
+                            Login with EASE
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
