@@ -31,9 +31,9 @@ urlpatterns = patterns('',
     url(r'^user/(?P<slug>[\w-]+)', eusay_views.profile, name="user"),
 
     # Moderation
-    url(r'^comment_hides', eusay_views.comment_hides, name="hidden-comments"),
+    url(r'^comment_hides', eusay_views.comment_hides, name="hidden_comments"),
     url(r'^proposal_hides', eusay_views.proposal_hides,
-        name="hidden-proposals"),
+        name="hidden_proposals"),
                        url(r'^moderator_panel', eusay_views.moderator_panel, name="moderator_panel"),
     url(r'^search/', search_views.search),
 

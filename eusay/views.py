@@ -399,11 +399,12 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
             return HttpResponseRedirect(reverse('proposal',
                                                 args=[str(proposal.id),
                                                       proposal.slug]))
-    else:
-        form = ResponseForm()
-        return render(request,
-                      "respond_to_proposal_form.html",
-                      {"proposal": proposal, "form": form})
+        else:
+            messages.add_message(request, messages.ERROR, "Invalid response form")
+    form = ResponseForm()
+    return render(request,
+                  "respond_to_proposal_form.html",
+                  {"proposal": proposal, "form": form})
 
 
 def moderator_panel(request):
@@ -514,7 +515,7 @@ def delete_proposal(request, proposal_id):
     proposal = Proposal.objects.get(id=proposal_id)
     if proposal.user != request.user:
         messages.add_message(request, messages.ERROR, "You may only delete your own proposals. Please submit a report to request another user's proposal be hidden.")
-        return HttpResponseForbidden()
+        return HttpResponseRedirect(reverse('frontpage'))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
             proposal.text = "This proposal has been deleted by its proposer."
@@ -534,7 +535,7 @@ def delete_comment(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
     if comment.user != request.user:
         messages.add_message(request, messages.ERROR, "You may only delete your own comments. Please submit a report to request another user's comment be hidden.")
-        return HttpResponseForbidden()
+        return HttpResponseRedirect(reverse('frontpage'))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
             comment.text = "This comment has been deleted by its creator."
