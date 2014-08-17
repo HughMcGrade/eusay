@@ -114,7 +114,9 @@ function countChars(val, maxLen) {
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Welcome, {{ user.username }}: {{ user.sid }} <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="{% url 'user' user.slug %}">Profile</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'user' user.slug %}">Profile</a></li>
+            {% endif %}
             <li><a href="#" onclick="createNewUser()">New User</a></li>
             <li><a href="/get_users">See all users</a></li>
             <li><a href="/make_mod">Make mod</a></li>
@@ -133,6 +135,7 @@ function countChars(val, maxLen) {
 {% endblock %}
 
 <div class="container mainContainer endless_container">
+    {% if messages %}
     <div id="message_container">
         {% for message in messages %}
         <div class="alert {{ message.tags }} alert-dismissible" role="alert">
@@ -141,6 +144,7 @@ function countChars(val, maxLen) {
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}

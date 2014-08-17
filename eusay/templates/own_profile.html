@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
 {% block title %}
- | {{ profile.name }}
+ | {{ profile.username }}
 {% endblock %}
 
 {% block content %}
 {% if error_msg %}
     <div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
 {% endif %}
-<h2>{{ profile.name }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
+<h2>{{ profile.username }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
 <div class="row">
 <div class="col-md-3 col-sm-4 col-xs-12">
 <form id="editUserForm" method="post" action="">
     {% csrf_token %}
     Username:
-    {{ form.name }}
+    {{ form.username }}
     <p>Public profile? {{ form.hasProfile }}</p>
     <button type="post" class="btn btn-default btn-sm">Save</button>
 </form>

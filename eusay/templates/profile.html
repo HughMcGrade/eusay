@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
- | {{ profile.name }}
+ | {{ profile.username }}
 {% endblock %}
 
 {% block content %}
-<h2>{{ profile.name }}</h2>
+<h2>{{ profile.username }}</h2>
 <p>Join date: {{ profile.date_joined|date:"F j, Y" }}</p>
 <p>Status: {{ profile.userStatus }}{% if profile.title %}: {{ profile.title }}{% endif %}</p>
 <div class="row">
@@ -25,7 +25,7 @@
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">{{ profile.name }} hasn't submitted any proposals yet.</td></tr>
+            <tr><td colspan="3">{{ profile.username }} hasn't submitted any proposals yet.</td></tr>
             {% endfor %}
         </table>
         </div>
@@ -48,7 +48,7 @@
                 <td>{{ comment.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">{{ profile.name }} hasn't made any comments yet.</td></tr>
+            <tr><td colspan="3">{{ profile.username }} hasn't made any comments yet.</td></tr>
             {% endfor %}
         </table>
         </div>
@@ -71,7 +71,7 @@
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">{{ profile.name }} hasn't voted for any proposals.</td></tr>
+            <tr><td colspan="3">{{ profile.username }} hasn't voted for any proposals.</td></tr>
             {% endfor %}
         </table>
         </div>
@@ -92,7 +92,7 @@
                 <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">{{ profile.name }} hasn't voted against any proposals.</td></tr>
+            <tr><td colspan="3">{{ profile.username }} hasn't voted against any proposals.</td></tr>
             {% endfor %}
         </table>
         </div>

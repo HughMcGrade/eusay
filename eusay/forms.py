@@ -1,6 +1,7 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
-from .models import Proposal, Comment, HideAction, User, Report, Tag, Response
+from .models import Proposal, Comment, HideAction, Report, Tag, Response
 from .utils import better_slugify, contains_swear_words
 
 
@@ -83,17 +84,18 @@ class ResponseForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ["username", "hasProfile"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("current_user")
         super(UserForm, self).__init__(*args, **kwargs)
-        self.fields["name"] = forms.CharField(required=False,
-                                              initial=user.name,
-                                              widget=forms.TextInput(
-                                              attrs={"placeholder": "New username",
-                                                     "class": "form-control"}))
+        self.fields["username"] = \
+            forms.CharField(required=False,
+                            initial=user.username,
+                            widget=forms.TextInput(
+                            attrs={"placeholder": "New username",
+                                   "class": "form-control"}))
         has_profile_attrs={"id": "hasProfileCheckbox"}
         if user.hasProfile:
             has_profile_attrs["checked"] = ""

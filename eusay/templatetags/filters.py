@@ -3,7 +3,6 @@ from eusay.models import Vote
 from django.template.loader import render_to_string
 from django.template.defaultfilters import stringfilter, pluralize
 from django.utils.safestring import mark_safe
-from eusay.views import get_current_user
 from eusay.forms import CommentForm
 from django.conf import settings
 import re

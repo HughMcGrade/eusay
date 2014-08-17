@@ -5,6 +5,7 @@ Created on 18 Feb 2014
 '''
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.conf import settings
 import datetime
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -222,7 +223,7 @@ class Response(Content):
         return "%s" % self.text
 
 
-class User(usermodels.User):
+class User(usermodels.AbstractUser):
     # The first element in each tuple is the actual value to be stored,
     # and the second element is the human-readable name.
     USER_STATUS_CHOICES = (
@@ -231,7 +232,7 @@ class User(usermodels.User):
         ("Candidate", "EUSA Candidate"),
         ("Officeholder", "EUSA Officeholder")
     )
-    sid = models.CharField("student ID", max_length=20, primary_key=True)
+    sid = models.CharField("student ID", max_length=20, unique=True)
     slug = models.SlugField(default="slug")
     userStatus = models.CharField("user status",
                                   max_length=12,
@@ -289,7 +290,7 @@ class User(usermodels.User):
 
 class HideAction (models.Model):
     id = models.AutoField(primary_key=True)
-    moderator = models.ForeignKey(User)
+    moderator = models.ForeignKey(settings.AUTH_USER_MODEL)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 
@@ -312,7 +313,7 @@ class HideAction (models.Model):
 
 class Report (models.Model):
     id = models.AutoField(primary_key=True)
-    reporter = models.ForeignKey(User)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 

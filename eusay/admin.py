@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
-from eusay.models import Tag, Proposal, User
+from django.contrib.auth import get_user_model
+from eusay.models import Tag, Proposal
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -30,4 +31,4 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Proposal, ProposalAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(get_user_model(), UserAdmin)
