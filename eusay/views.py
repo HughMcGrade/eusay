@@ -34,8 +34,8 @@ def generate_new_user(request):
     if User.objects.filter(username__exact=username).exists():
         user = User.objects.get(username=username)
     else:
-        if User.objects.count() == 0:
-            # if there are no users yet, give sid "s1"
+        if User.objects.exclude(sid__exact="").count() == 0:
+            # if there are no users with sids, give sid "s1"
             sid = "s1"
         else:
             previous_sid = User.objects.all().last().sid
