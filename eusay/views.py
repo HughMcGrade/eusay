@@ -284,52 +284,6 @@ def proposal(request, proposalId, slug):
 
     return response
 
-def vote_comment(request, vote_request_type, comment_id):
-    comment = Comment.objects.all().get(id = comment_id)
-
-    # Check already voted
-    try:
-        previous_vote = Vote.objects.all().get(user=request.user, content=comment)
-        # Already voted
-        if vote_request_type == "get":
-            if previous_vote.isVoteUp:
-                user_vote = 1
-            else:
-                user_vote = -1
-            return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote})
-        elif previous_vote.isVoteUp and vote_request_type == "down":
-            # Toggle vote from up to down
-            previous_vote.delete()
-        elif not previous_vote.isVoteUp and vote_request_type == "up":
-            # Toggle vote from down to up
-            previous_vote.delete()
-        else:
-            # Cancel previous vote
-            previous_vote.delete()
-            return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0})
-    except Vote.DoesNotExist:
-        pass
-    
-    if vote_request_type == "get":
-        # Get hasn't voted
-        return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : 0})
-    
-    new_vote = Vote()
-    if vote_request_type == "up":
-        # Set up vote
-        new_vote.isVoteUp = True
-        user_vote = 1
-    else:
-        # Set down vote
-        new_vote.isVoteUp = False
-        user_vote = -1
-    
-    new_vote.user = request.user
-    new_vote.content = comment
-    new_vote.save()
-    
-    return render(request, "comment_votes.html", { "comment" : comment, "user_vote" : user_vote})
-
 def hide_comment(request, comment_id):
     if not request.user.isModerator:
         return HttpResponseForbidden(_render_message_to_string(request, "Error", "Only moderators may hide comments"))
