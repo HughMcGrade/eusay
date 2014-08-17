@@ -241,6 +241,9 @@ body {
 .comment-reply-link {
     cursor: pointer;
 }
+.proposal-amendment {
+    background-color: #F3F3F3;
+}
 /* Submission form  */
 #similar {
     display: none;

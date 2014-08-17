@@ -48,9 +48,13 @@ class Content (models.Model):
         abstract = True
 
 class Comment (Content):
-    text = models.CharField(max_length=1000)
+    # The maximum length of 'text' is 6100 because a proposal can have 6000
+    # characters in its body and 100 in its title. Because amendments are
+    # stored as Comments, they must be at least as long as Proposals.
+    text = models.CharField(max_length=6100)
     proposal = models.ForeignKey("Proposal", null=False, related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
+    isAmendment = models.BooleanField(default=False)
     ##contentType = ContentType.objects.get(app_label="eusay", model="comment")
     
     def contentType():

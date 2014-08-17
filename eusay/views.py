@@ -516,13 +516,13 @@ def amend_proposal(request, proposal_id):
             amended_title = request.POST['title']
             amended_text = request.POST['text']
 
-            diff = '**Proposed amendments**\n'
+            diff = ""
             if amended_title != proposal.title:
                 title_diff = htmldiff(proposal.title, amended_title)
-                diff = diff + '*Title:* ' + title_diff + '\n'
+                diff += '**Title: ' + title_diff + '**\n'  # make title h1 with markdown
             if amended_text != proposal.text:
                 text_diff = htmldiff(proposal.text, amended_text)
-                diff = diff + '*Text:* ' + text_diff
+                diff += text_diff
 
             form = AmendmentForm()
             form.set_initial(amended_title, amended_text)
@@ -532,6 +532,7 @@ def amend_proposal(request, proposal_id):
             comment.proposal = proposal
             comment.user = request.user
             comment.text = request.POST['text']
+            comment.isAmendment = True
             comment.save()
             return HttpResponseRedirect("/proposal/" + str(proposal_id) + '/' + proposal.slug)
         else:

@@ -27,7 +27,7 @@
             {% if not comment.replyTo %}
                 <!-- comment -->
                 <div id="comment_{{ comment.id }}" class="row">
-                    <div class="col-xs-12 comment">
+                    <div class="col-xs-12 comment{% if comment.isAmendment %} proposal-amendment{% endif %}">
                         <p>
                             {% if comment.user.userStatus != "User" %}
                                 <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
@@ -42,7 +42,13 @@
                             </b>
 
                             {% if comment.user.title %}
-                                <span class="comment-user-title">&nbsp;&nbsp;{{ comment.user.title }}</span>
+                                <span class="comment-user-title">({{ comment.user.title }})</span>
+                            {% endif %}
+
+                            {% if comment.isAmendment %}
+                            <b>
+                                suggested an amendment:
+                            </b>
                             {% endif %}
                         </p>
 
@@ -92,7 +98,7 @@
                         {% endif %}
                         <b>{{ reply.user.username }}</b>
                         {% if reply.user.title %}
-                        <span class="comment-user-title">&nbsp;&nbsp;{{ reply.user.title }}</span>
+                        <span class="comment-user-title">({{ reply.user.title }})</span>
                         {% endif %}
                       </p>
 
