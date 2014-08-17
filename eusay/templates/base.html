@@ -125,6 +125,10 @@ function countChars(val, maxLen) {
               </ul>
             </li>
           </ul>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary btn-sm navbar-btn navbar-right" role="button">
+          Login with EASE
+        </a>
       {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
