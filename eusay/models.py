@@ -58,7 +58,7 @@ class Comment (Content):
     ##contentType = ContentType.objects.get(app_label="eusay", model="comment")
     
     def contentType():
-        return ContentType.objects.get(app_label="eusay", model="proposal")
+        return ContentType.objects.get(app_label="eusay", model="comment")
 
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
