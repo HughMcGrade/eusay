@@ -34,11 +34,11 @@ def generate_new_user(request):
     if User.objects.filter(username__exact=username).exists():
         user = User.objects.get(username=username)
     else:
-        if User.objects.exclude(sid__exact="").count() == 0:
+        if User.objects.exclude(sid__exact="").exclude(sid__exact="Deleted Content").count() == 0:
             # if there are no users with sids, give sid "s1"
             sid = "s1"
         else:
-            previous_sid = User.objects.all().last().sid
+            previous_sid = User.objects.all().exclude(sid__exact="Deleted Content").last().sid
             previous_sid_num = previous_sid[1:]
             new_sid_num = int(previous_sid_num) + 1
             sid = "s" + str(new_sid_num)
@@ -70,11 +70,11 @@ def index(request):
     proposals_template = "proposal_list.html" # just the proposals
 
     # sort by popularity by default
-    proposals = Proposal.get_visible_proposals(sort="popular")
+    proposals = Proposal.objects.get_visible_proposals(sort="popular")
     sort = "popular"
 
     if request.GET.get("sort") == "newest":
-        proposals = Proposal.get_visible_proposals(sort="newest")
+        proposals = Proposal.objects.get_visible_proposals(sort="newest")
         sort = "newest"
 
     context = {
@@ -164,11 +164,11 @@ def tag(request, tagId, slug):
     proposals_template = "proposal_list.html" # just the proposals
 
     # sort by popularity by default
-    proposals = Proposal.get_visible_proposals(tag=tag, sort="popular")
+    proposals = Proposal.objects.get_visible_proposals(tag=tag, sort="popular")
     sort = "popular"
 
     if request.GET.get("sort") == "newest":
-        proposals = Proposal.get_visible_proposals(tag=tag, sort="newest")
+        proposals = Proposal.objects.get_visible_proposals(tag=tag, sort="newest")
         sort = "newest"
 
     context = {
@@ -259,7 +259,7 @@ def proposal(request, proposalId, slug):
                 comment.save()
 
     hide = None
-    if proposal.is_hidden():
+    if proposal.isHidden:
         hide = HideAction.objects.all().get(object_id=proposal.id, content_type=Proposal.contentType())
 
     if request.user.is_authenticated() and not user_vote:
@@ -344,14 +344,13 @@ def proposal_hides(request):
     return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens})
 
 def report_comment(request, comment_id):
-    if not request.user.is_authenticated():
-        return request_login(request)
     comment = Comment.objects.all().get(id = comment_id)
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
-            report.reporter = request.user
+            if request.user.is_authenticated():
+                report.reporter = request.user
             report.content = comment
             report.save()
             messages.add_message(request, messages.INFO, "Your report has been submitted to the moderators.")
@@ -363,14 +362,13 @@ def report_comment(request, comment_id):
         return render(request, "report_comment_form.html", { "comment" : comment, "form" : form})
 
 def report_proposal(request, proposal_id):
-    if not request.user.is_authenticated():
-        return request_login(request)
     proposal = Proposal.objects.all().get(id = proposal_id)
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
-            report.reporter = request.user
+            if request.user.is_authenticated():
+                report.reporter = request.user
             report.content = proposal
             report.save()
             messages.add_message(request, messages.INFO, "Your report has been submitted to the moderators.")
@@ -520,8 +518,7 @@ def delete_proposal(request, proposal_id):
         if request.POST['action'] == 'delete':
             proposal.text = "This proposal has been deleted by its proposer."
             proposal.title = "Deleted proposal"
-            # TODO Dummy user
-            proposal.user = User.objects.all()[0]
+            proposal.user = User.objects.get_deleted_content_user()
             proposal.tags.clear()
             proposal.save()
             messages.add_message(request, messages.INFO, "Proposal deleted")
@@ -539,8 +536,7 @@ def delete_comment(request, comment_id):
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
             comment.text = "This comment has been deleted by its creator."
-            # TODO Dummy user
-            comment.user = User.objects.all()[0]
+            comment.user = User.objects.get_deleted_content_user()
             comment.save()
             messages.add_message(request, messages.INFO, "Comment deleted")
             return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": comment.proposal.id, "slug": comment.proposal.slug}))
