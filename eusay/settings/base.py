@@ -59,7 +59,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'haystack',
     'eusay.templatetags',
-    'notifications',
 )
 
 MIDDLEWARE_CLASSES = (
