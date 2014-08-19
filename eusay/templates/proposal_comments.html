@@ -100,7 +100,13 @@
                         {% if reply.user.userStatus != "User" %}
                         <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
                         {% endif %}
-                        <b>{{ reply.user.username }}</b>
+                        <b>
+                        {% if comment.user.hasProfile%}
+                            <a href="{% url 'user' comment.user.slug %}" class="comment-user-name-link" data-toggle="tooltip" title="This user has made their profile public.">{{comment.user.username }}</a>
+                        {% else %}
+                            {{ comment.user.username }}
+                        {% endif %}
+                        </b>
                         {% if reply.user.title %}
                         <span class="comment-user-title">({{ reply.user.title }})</span>
                         {% endif %}

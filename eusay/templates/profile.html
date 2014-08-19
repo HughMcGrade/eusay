@@ -44,7 +44,7 @@
             {% for comment in profile.comments.all %}
             <tr>
                 <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">{{ comment.proposal.title }}</a></td>
-                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}/#comment_{{ comment.id }}">{{ comment.text }}</a></td>
+                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}#comment_{{ comment.id }}">{{ comment.text }}</a></td>
                 <td>{{ comment.createdAt|date:"F j, Y" }}</td>
             </tr>
             {% empty %}
