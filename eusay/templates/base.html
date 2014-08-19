@@ -3,119 +3,119 @@
 {% notifications_unread as unread_count %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>eusay{% block title %}{% endblock %}</title>
+    <title>eusay{% block title %}{% endblock %}</title>
 
-<!-- JavaScript-->
-<script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-<script src="{% static "js/bootstrap.min.js" %}"></script>
-<script src="{% static "js/voting.js" %}"></script>
-<script src="{% static "js/jquery.hideseek.min.js" %}"></script>
-<script src="{% static "js/jquery-ui.min.js" %}"></script>
-<script src="{% static "js/bootstrap-debugger.js" %}"></script>
-<script src="{% static "js/endless-pagination.js" %}"></script>
-<script>
-jQuery(function($) {
-$(document).ready(function() {
-    // init autocomplete search
-    $("#search-field").autocomplete({
-        source: function(request, response) {
-            $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
-                response(data.results, function(value) {
-                    return {
-                        label: value
-                    };
-                });
-            });
-        },
-        select: function(event, ui) {
-            window.location.href = ui.item.link;
-        }
-    });
+    <!-- JavaScript-->
+    <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/voting.js" %}"></script>
+    <script src="{% static "js/jquery.hideseek.min.js" %}"></script>
+    <script src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "js/bootstrap-debugger.js" %}"></script>
+    <script src="{% static "js/endless-pagination.js" %}"></script>
+    <script>
+      jQuery(function($) {
+      $(document).ready(function() {
+      // init autocomplete search
+      $("#search-field").autocomplete({
+      source: function(request, response) {
+      $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
+      response(data.results, function(value) {
+      return {
+      label: value
+      };
+      });
+      });
+      },
+      select: function(event, ui) {
+      window.location.href = ui.item.link;
+      }
+      });
 
-    // hide formatting help
-    $(".submit-formatting-help").hide(0);
+      // hide formatting help
+      $(".submit-formatting-help").hide(0);
 
-    // init tooltips
-    $('*[data-toggle="tooltip"]').tooltip();
+      // init tooltips
+      $('*[data-toggle="tooltip"]').tooltip();
 
-});
-});
+      });
+      });
 
-// show formatting help
-function showFormattingHelp(div) {
-    $(div).next().slideToggle()
-};
+      // show formatting help
+      function showFormattingHelp(div) {
+      $(div).next().slideToggle()
+      };
 
-// count characters
-function countChars(val, maxLen) {
-    var len = val.value.length;
-    if (len >= maxLen) {
-        val.value = val.value.substring(0, maxLen);
-        $(val).next().text(len + "/" + maxLen);
-    } else {
-        $(val).next().text(len + "/" + maxLen);
-    }
-};
-</script>
-{% block js %}
-{% endblock %}
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
+      // count characters
+      function countChars(val, maxLen) {
+      var len = val.value.length;
+      if (len >= maxLen) {
+      val.value = val.value.substring(0, maxLen);
+      $(val).next().text(len + "/" + maxLen);
+      } else {
+      $(val).next().text(len + "/" + maxLen);
+      }
+      };
+    </script>
+    {% block js %}
+    {% endblock %}
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
 
-<!-- CSS -->
-<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-<link href="{% static "css/style.css" %}" rel="stylesheet">
-<link href="{% static "css/jquery-ui.min.css" %}" rel="stylesheet">
-<link href="{% static "css/jquery-ui.structure.min.css" %}" rel="stylesheet">
-<link href="{% static "css/jquery-ui.theme.min.css" %}" rel="stylesheet">
-<style type="text/css">
-{% block style %}
-{% endblock %}
-</style>
-</head>
+    <!-- CSS -->
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
+    <link href="{% static "css/jquery-ui.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/jquery-ui.structure.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/jquery-ui.theme.min.css" %}" rel="stylesheet">
+    <style type="text/css">
+      {% block style %}
+      {% endblock %}
+    </style>
+  </head>
 
-<body>
-<nav class="navbar navbar-inverse" role="navigation">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#eusay-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="{% url 'frontpage' %}" id="logo">eu<span class="pink">say</span></a>
-    </div>
+  <body>
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#eusay-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="{% url 'frontpage' %}" id="logo">eu<span class="pink">say</span></a>
+	</div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="eusay-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="{% url 'submit' %}">Submit</a></li>
-        <li><a>Browse proposals</a></li>
-        <li><a>Browse tags</a></li>
-	{% if user.is_authenticated and user.isModerator %}
-	<li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
-	{% endif %}
-      </ul>
-      <form class="navbar-form navbar-right" role="search" action="/search" method="get">
-        <div class="form-group">
-            <input type="text" class="form-control" id="search-field" name="q" placeholder="Search">
-        </div>
-      </form>
-      {% if user.is_authenticated %}
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse" id="eusay-navbar-collapse-1">
+	  <ul class="nav navbar-nav">
+            <li><a href="{% url 'submit' %}">Submit</a></li>
+            <li><a>Browse proposals</a></li>
+            <li><a>Browse tags</a></li>
+	    {% if user.is_authenticated and user.isModerator %}
+	    <li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
+	    {% endif %}
+	  </ul>
+	  <form class="navbar-form navbar-right" role="search" action="/search" method="get">
+            <div class="form-group">
+              <input type="text" class="form-control" id="search-field" name="q" placeholder="Search">
+            </div>
+	  </form>
+	  {% if user.is_authenticated %}
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-                <li class="notifier{% if unread_count %} notifier-unread{% endif %}"><a href="/notifications"><span class="glyphicon glyphicon-inbox"></span></a></li>
+            <li class="notifier{% if unread_count %} notifier-unread{% endif %}"><a href="/notifications"><span class="glyphicon glyphicon-inbox"></span></a></li>
             {% endif %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}: {{ user.sid }} <b class="caret"></b></a>
@@ -130,44 +130,44 @@ function countChars(val, maxLen) {
               </ul>
             </li>
           </ul>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary btn-sm navbar-btn navbar-right" role="button">
-          Login with EASE
-        </a>
-      {% endif %}
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-{% block progressbar %}
-{% endblock %}
+	  {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary btn-sm navbar-btn navbar-right" role="button">
+            Login with EASE
+          </a>
+	  {% endif %}
+	</div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    {% block progressbar %}
+    {% endblock %}
 
-{% block jumbotron %}
-{% endblock %}
+    {% block jumbotron %}
+    {% endblock %}
 
-<div id="main_container" class="container mainContainer endless_container">
-  <div id="message_container">
-    {% for message in messages %}
-    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-    </div>
-    {% endfor %}
-  </div>
+    <div id="main_container" class="container mainContainer endless_container">
+      <div id="message_container">
+	{% for message in messages %}
+	<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+	  {{ message }}
+	  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	</div>
+	{% endfor %}
+      </div>
 
-{% block content %}
-{% endblock %}
+      {% block content %}
+      {% endblock %}
 
-    <div class="row footer">
+      <div class="row footer">
         <div class="col-xs-12 text-center">
-            <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'hidden_comments' %}">Hidden comments</a>
+          <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="{% url 'hidden_comments' %}">Hidden comments</a>
         </div>
-    </div>
+      </div>
 
-</div> <!-- ./mainContainer -->
-</body>
+    </div> <!-- ./mainContainer -->
+  </body>
 </html>

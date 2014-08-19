@@ -2,114 +2,114 @@
 {% load static %}
 
 {% block title %}
- | Submit
+| Submit
 {% endblock %}
 
 {% block js %}
 <script>
-$(document).ready(function() {
-    // find similar proposals
-    $("#title").change(function() {
-        var query = $("#title").val();
-        $.getJSON("/api/v1/search?format=json&q=" + query, function(data) {
-            var output = "<ul>";
-            for (var i in data.results) {
-                output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
-            }
-            output += "</ul>";
-            if (data.count == 0) {
-                $("#similar").fadeOut();
-            }
-            else {
-                $("#similarList").html(output);
-                $("#similar").fadeIn();
-            }
-        });
-    });
-
-    // live search tags
-    $('#tag-search').hideseek({
-	    highlight: true
-    });
-
-    // hide checkboxes
-    $('#tag-list input[type=checkbox]').hide();
-
-    // differentiate already checked checkboxes
-    $('#tag-list input').each(function() {
-        if (this.checked) {
-            $(this).parent().css({
-                "background-color": "blue"
-            });
-        }
-    });
-
-    // change tags' look when clicked
-    $('#tag-list input[type=checkbox]').change(function() {
-        if (this.checked) {
-            $(this).parent().css({
-                "background-color": "blue"
-            });
-        }
-        else {
-            $(this).parent().css({
-                "background-color": "#7AA8D5"
-            });
-        }
+ $(document).ready(function() {
+   // find similar proposals
+   $("#title").change(function() {
+     var query = $("#title").val();
+     $.getJSON("/api/v1/search?format=json&q=" + query, function(data) {
+       var output = "<ul>";
+       for (var i in data.results) {
+         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+       }
+       output += "</ul>";
+       if (data.count == 0) {
+         $("#similar").fadeOut();
+       }
+       else {
+         $("#similarList").html(output);
+         $("#similar").fadeIn();
+       }
      });
-});
+   });
+
+   // live search tags
+   $('#tag-search').hideseek({
+     highlight: true
+   });
+
+   // hide checkboxes
+   $('#tag-list input[type=checkbox]').hide();
+
+   // differentiate already checked checkboxes
+   $('#tag-list input').each(function() {
+     if (this.checked) {
+       $(this).parent().css({
+         "background-color": "blue"
+       });
+     }
+   });
+
+   // change tags' look when clicked
+   $('#tag-list input[type=checkbox]').change(function() {
+     if (this.checked) {
+       $(this).parent().css({
+         "background-color": "blue"
+       });
+     }
+     else {
+       $(this).parent().css({
+         "background-color": "#7AA8D5"
+       });
+     }
+   });
+ });
 </script>
 {% endblock %}
 
 {% block content %}
 {% if errors %}
-    {% for field,error in errors.items %}
-        <div class="alert alert-danger"><b>Error in {{ field }} field:</b> {{ error.as_text }}</div>
-    {% endfor %}
+{% for field,error in errors.items %}
+<div class="alert alert-danger"><b>Error in {{ field }} field:</b> {{ error.as_text }}</div>
+{% endfor %}
 {% endif %}
 
 <form method="post" action="">
   {% csrf_token %}
 
-<div class="row">
-  <div class="col-xs-12 col-md-8">
-  <div class="form-group">
-    <label for="title">Title</label>
-    {{ form.title }}
-  </div>
-  <div id="similar" class="alert alert-info">
-      <p><b>Heads up!</b> These proposals might be similar to yours:</p>
-      <div id="similarList"></div>
-  </div>
-
-  <div class="form-group">
-    <label for="text">Proposal Body</label>
-    {% include "markdown_formatting_help.html" %}
-    {{ form.text }}
-    <div class="charNum">0/6000</div>
-  </div>
-  </div>
-
-  <div class="col-xs-12 col-md-4">
-    <div class="alert alert-warning">
-      <h4>How to write a proposal</h4>
-      <p><b>Actions:</b> These should be specific actions that the Sabbatical Officers or EUSA as a whole can resolve to do, for example pressuring or lobbying bodies such as the University or the Government or publicising a particular stance on an issue. Use bullet points or a numbered list.</p>
-      <p><b>Background:</b> This section should contain all of the factual information that led to the submission of this policy. This may include, but is not limited to, statistics, Government policy, current law, EUSA policy, situations that have occurred etc. The point is to inform the reader of the facts that they may not be aware of which have led you to submitting policy on the subject. This can be written as paragraphs, bullet points, a numbered list or a combination of either. You should be as concise as possible.</p>
-      <p><b>Beliefs:</b> This section should provide reasons why we should act in the way described above. It may be a statement of belief drawn from the facts outlined above, or anything else that is a justification of acting in the way outlined, including the desired effects of that action if these are not necessarily clear. This can be written as paragraphs, bullet points, a numbered list or a combination of either. You should be as concise as possible.</p>
-  </div>
-</div>
-</div>
-<div class="row">
+  <div class="row">
     <div class="col-xs-12 col-md-8">
-        <div id="tags">
-            <label for="tag-search">Tags</label>
-            <input class="form-control" id="tag-search" type="text" autocomplete="off" data-list="#tag-list" placeholder="Start typing here" name="tag-search"></input>
-            {{ form.tags }}
-        </div>
+      <div class="form-group">
+	<label for="title">Title</label>
+	{{ form.title }}
+      </div>
+      <div id="similar" class="alert alert-info">
+	<p><b>Heads up!</b> These proposals might be similar to yours:</p>
+	<div id="similarList"></div>
+      </div>
+
+      <div class="form-group">
+	<label for="text">Proposal Body</label>
+	{% include "markdown_formatting_help.html" %}
+	{{ form.text }}
+	<div class="charNum">0/6000</div>
+      </div>
     </div>
-</div>
-<div class="row">
+
+    <div class="col-xs-12 col-md-4">
+      <div class="alert alert-warning">
+	<h4>How to write a proposal</h4>
+	<p><b>Actions:</b> These should be specific actions that the Sabbatical Officers or EUSA as a whole can resolve to do, for example pressuring or lobbying bodies such as the University or the Government or publicising a particular stance on an issue. Use bullet points or a numbered list.</p>
+	<p><b>Background:</b> This section should contain all of the factual information that led to the submission of this policy. This may include, but is not limited to, statistics, Government policy, current law, EUSA policy, situations that have occurred etc. The point is to inform the reader of the facts that they may not be aware of which have led you to submitting policy on the subject. This can be written as paragraphs, bullet points, a numbered list or a combination of either. You should be as concise as possible.</p>
+	<p><b>Beliefs:</b> This section should provide reasons why we should act in the way described above. It may be a statement of belief drawn from the facts outlined above, or anything else that is a justification of acting in the way outlined, including the desired effects of that action if these are not necessarily clear. This can be written as paragraphs, bullet points, a numbered list or a combination of either. You should be as concise as possible.</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+      <div id="tags">
+        <label for="tag-search">Tags</label>
+        <input class="form-control" id="tag-search" type="text" autocomplete="off" data-list="#tag-list" placeholder="Start typing here" name="tag-search"></input>
+        {{ form.tags }}
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <button type="submit" class="btn btn-default">Submit</button>
-</div>
+  </div>
 </form>
 {% endblock %}

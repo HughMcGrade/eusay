@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 
 {% block title %}
- | {{ tag.name }}
+| {{ tag.name }}
 {% endblock %}
 
 {% block js %}
 <script>
-$(document).ready(function() {
-    $.endlessPaginate();
-});
+ $(document).ready(function() {
+   $.endlessPaginate();
+ });
 </script>
 {% endblock %}
 
 {% block content %}
 
 {% if sort == "newest" %}
-    <h2>New proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h2>
-    <p>{{ tag.description }}</p>
+<h2>New proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h2>
+<p>{{ tag.description }}</p>
 {% else %}
-    <h2>Popular proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h2>
-    <p>{{ tag.description }}</p>
+<h2>Popular proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h2>
+<p>{{ tag.description }}</p>
 {% endif %}
 <hr />
 

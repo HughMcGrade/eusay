@@ -2,36 +2,36 @@
 
 {% block js %}
 <script>
-$(document).ready(function() {
-    $.endlessPaginate();
-});
+ $(document).ready(function() {
+   $.endlessPaginate();
+ });
 </script>
 {% endblock %}
 
 {% block jumbotron %}
-    {% if not user.is_authenticated %}
-        <div class="jumbotron">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
-                        <h1>eu<span class="pink">say</span></h1>
-                        <p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
-                        Your votes and comments will help guide the student council's decision.</p>
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg index-main-button" role="button">
-                            Login with EASE
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
+{% if not user.is_authenticated %}
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+        <h1>eu<span class="pink">say</span></h1>
+        <p>Share, vote and comment on ideas for EUSA. Have your voice heard.<br />
+          Your votes and comments will help guide the student council's decision.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg index-main-button" role="button">
+          Login with EASE
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block content %}
 {% if sort == "newest" %}
-    <h2>New proposals <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h2>
+<h2>New proposals <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h2>
 {% else %}
-    <h2>Popular proposals <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h2>
+<h2>Popular proposals <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h2>
 {% endif %}
 <hr />
 {% include proposals_template %}

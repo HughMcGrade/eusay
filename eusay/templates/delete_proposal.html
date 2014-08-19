@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
 {% block title %}
- | Report proposal
+| Report proposal
 {% endblock %}
 
 {% block content %}
 
 <div class="row">
-<div class="col-xs-2"></div>
-<div class="col-xs-8">
-<h1>Delete Proposal</h1>
-<div>
-  <h3>Proposal Title: "{{ proposal.title }}"</h3>
-</div>
-Are you sure you want to delete this proposal? The text, title, tags and proposer will be deleted. Users will see a blank proposal with comments and votes.
-<hr />
-<form method="post" action="">
-  {% csrf_token %}
-  <input type="hidden" name="action" value="delete" />
-  <button type="post" class="btn btn-danger" class="btn btn-md btn-danger">Yes, delete my proposal.</button>
-  <a class="btn btn-md btn-default" href="{% url 'proposal' proposal.id proposal.slug %}">Cancel</a>
-</form>
-</div>
-<div class="col-xs-2"></div>
+  <div class="col-xs-2"></div>
+  <div class="col-xs-8">
+    <h1>Delete Proposal</h1>
+    <div>
+      <h3>Proposal Title: "{{ proposal.title }}"</h3>
+    </div>
+    Are you sure you want to delete this proposal? The text, title, tags and proposer will be deleted. Users will see a blank proposal with comments and votes.
+    <hr />
+    <form method="post" action="">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="delete" />
+      <button type="post" class="btn btn-danger" class="btn btn-md btn-danger">Yes, delete my proposal.</button>
+      <a class="btn btn-md btn-default" href="{% url 'proposal' proposal.id proposal.slug %}">Cancel</a>
+    </form>
+  </div>
+  <div class="col-xs-2"></div>
 </div>
 
 {% endblock %}

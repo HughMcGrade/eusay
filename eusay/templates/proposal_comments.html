@@ -1,174 +1,174 @@
 {% load filters %}
 
 <div class="row">
-    <div class="col-xs-12 col-md-8 col-md-offset-2">
-        <h3>Comments</h3>
-        <hr />
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <h3>Comments</h3>
+    <hr />
 
-        {% if not hide %}
-            <div class="row">
-                <div class="col-xs-12 comment">
-                    <form role="form" method="post" class="proposal-comment-form">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label>Add comment</label>
-                            {% include "markdown_formatting_help.html" %}
-                            {{ form.text }}
-                            <div class="charNum">0/1000</div>
-                        </div>
-                        <button type="post" class="btn btn-default">Submit</button>
-                    </form>
-                </div>
-            </div>
-        {% endif %}
-
-	<div id="proposal_comments">
-        {% for comment in comments %}
-            {% if not comment.replyTo %}
-                <!-- comment -->
-                <div id="comment_{{ comment.id }}" class="row">
-                    <div class="col-xs-12 comment{% if comment.isAmendment %} proposal-amendment{% endif %}">
-                        <p>
-                            {% if comment.user.userStatus != "User" %}
-                                <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
-                            {% endif %}
-
-                            <b>
-                            {% if comment.user.hasProfile%}
-                                <a href="{% url 'user' comment.user.slug %}" class="comment-user-name-link" data-toggle="tooltip" title="This user has made their profile public.">{{comment.user.username }}</a>
-                            {% else %}
-                                {{ comment.user.username }}
-                            {% endif %}
-                            </b>
-
-                            {% if comment.user.title %}
-                                <span class="comment-user-title">({{ comment.user.title }})</span>
-                            {% endif %}
-
-                            {% if comment.isAmendment %}
-                            <b>
-                                suggested an amendment:
-                            </b>
-                            {% endif %}
-                        </p>
-
-                        {{ comment.text | replace_bad_words | my_markdown }}
-
-                        <div class="comment-meta">
-                            {{ comment.createdAt|timesince_human }}
-                            {% if not hide %}
-                                &nbsp;&nbsp;|&nbsp;&nbsp;
-                                <a class="comment-reply-link" onclick="showReplyForm({{ comment.id }})">reply</a>
-                            {% endif %}
-                            &nbsp;&nbsp;|&nbsp;&nbsp;
-                            {% if user.isModerator %}
-                                <a href="{% url 'hide_comment'  comment.id %}">hide comment</a>
-                            {% else %}
-                                <a href="{% url 'report_comment'  comment.id %}">report</a>
-                            {% endif %}
-                            {% if user == comment.user %}
-                                {% if comment.is_new %}
-                                    &nbsp;&nbsp;|&nbsp;&nbsp;
-                                    <a href="{% url 'edit_comment' comment.id %}">edit</a>
-                                {% endif %}
-                            &nbsp;&nbsp;|&nbsp;&nbsp;
-                            <a href="{% url 'delete_comment' comment.id %}">delete</a>
-                            {% endif %}
-                        </div>
-                        <div class="comment-votes">
-			  <form class="comment_vote_form" method="post">
-			    {% csrf_token %}
-			    <input type="hidden" name="request" value="comment_vote" />
-                            <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}
-                            </button>
-                            <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.get_votes_down_count }}
-                            </button>
-			  </form>
-                        </div>
-                    </div>
-                </div>
-		<div id="comment_replies_{{ comment.id }}">
-                  {% if comment|comment_replies %}
-		  {% for reply in comment|comment_replies %}
-                  <!-- comment reply -->
-                  <div id="comment_{{ reply.id }}" class="row">
-                    <div class="col-xs-11 col-xs-offset-1 comment">
-                      <p>
-                        <span class="glyphicon glyphicon-share-alt"></span>
-                        {% if reply.user.userStatus != "User" %}
-                        <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
-                        {% endif %}
-                        <b>
-                        {% if comment.user.hasProfile%}
-                            <a href="{% url 'user' comment.user.slug %}" class="comment-user-name-link" data-toggle="tooltip" title="This user has made their profile public.">{{comment.user.username }}</a>
-                        {% else %}
-                            {{ comment.user.username }}
-                        {% endif %}
-                        </b>
-                        {% if reply.user.title %}
-                        <span class="comment-user-title">({{ reply.user.title }})</span>
-                        {% endif %}
-                      </p>
-
-                      {{ reply.text | replace_bad_words | my_markdown }}
-
-                      <div class="comment-meta">
-                        {{ reply.createdAt|timesince_human }}
-                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                        {% if user.isModerator %}
-                        <a href="{% url 'hide_comment' reply.id %}">hide comment</a>
-                        {% else %}
-                        <a href="{% url 'report_comment' reply.id %}">report</a>
-                        {% endif %}
-                        {% if user == reply.user %}
-                            {% if reply.is_new %}
-                                &nbsp;&nbsp;|&nbsp;&nbsp;
-                                <a href="{% url 'edit_comment' reply.id %}">edit</a>
-                            {% endif %}
-                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                        <a href="{% url 'delete_comment' reply.id %}">delete</a>
-                        {% endif %}
-                      </div>
-
-                      <div class="comment-votes">
-                        <form class="comment_vote_form" method="post">
-			  {% csrf_token %}
-			  <input type="hidden" name="request" value="comment_vote" />  
-			  <button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                            <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
-                          </button>
-                          <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                            <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
-                          </button>
-			</form>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
-		  {% endif %}
-                </div>
-		<!-- comment reply form -->
-                {% if not hide %}
-                    <div class="row">
-                        <div class="col-xs-11 col-xs-offset-1 comment comment-reply-form" id="comment-reply-form-box-{{ comment.id }}">
-                            <form role="form" method="post" class="proposal-comment-form">
-                                <div class="form-group" id="comment-reply-form-{{ comment.id }}">
-                                    <label>Add comment</label>
-                                    {% include "markdown_formatting_help.html" %}
-                                    {{ form.text }}
-                                    <div class="charNum">0/1000</div>
-                                    {% csrf_token %}
-                                    <input type="hidden" name="reply_to" value="{{ comment.id }}" />
-                                </div>
-                                    <button type="post" class="btn btn-default">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-	</div>
+    {% if not hide %}
+    <div class="row">
+      <div class="col-xs-12 comment">
+        <form role="form" method="post" class="proposal-comment-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Add comment</label>
+            {% include "markdown_formatting_help.html" %}
+            {{ form.text }}
+            <div class="charNum">0/1000</div>
+          </div>
+          <button type="post" class="btn btn-default">Submit</button>
+        </form>
+      </div>
     </div>
+    {% endif %}
+
+    <div id="proposal_comments">
+      {% for comment in comments %}
+      {% if not comment.replyTo %}
+      <!-- comment -->
+      <div id="comment_{{ comment.id }}" class="row">
+        <div class="col-xs-12 comment{% if comment.isAmendment %} proposal-amendment{% endif %}">
+          <p>
+            {% if comment.user.userStatus != "User" %}
+            <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
+            {% endif %}
+
+            <b>
+              {% if comment.user.hasProfile%}
+              <a href="{% url 'user' comment.user.slug %}" class="comment-user-name-link" data-toggle="tooltip" title="This user has made their profile public.">{{comment.user.username }}</a>
+              {% else %}
+              {{ comment.user.username }}
+              {% endif %}
+            </b>
+
+            {% if comment.user.title %}
+            <span class="comment-user-title">({{ comment.user.title }})</span>
+            {% endif %}
+
+            {% if comment.isAmendment %}
+            <b>
+              suggested an amendment:
+            </b>
+            {% endif %}
+          </p>
+
+          {{ comment.text | replace_bad_words | my_markdown }}
+
+          <div class="comment-meta">
+            {{ comment.createdAt|timesince_human }}
+            {% if not hide %}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a class="comment-reply-link" onclick="showReplyForm({{ comment.id }})">reply</a>
+            {% endif %}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            {% if user.isModerator %}
+            <a href="{% url 'hide_comment'  comment.id %}">hide comment</a>
+            {% else %}
+            <a href="{% url 'report_comment'  comment.id %}">report</a>
+            {% endif %}
+            {% if user == comment.user %}
+            {% if comment.is_new %}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'edit_comment' comment.id %}">edit</a>
+            {% endif %}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'delete_comment' comment.id %}">delete</a>
+            {% endif %}
+          </div>
+          <div class="comment-votes">
+	    <form class="comment_vote_form" method="post">
+	      {% csrf_token %}
+	      <input type="hidden" name="request" value="comment_vote" />
+              <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-up">
+                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}
+              </button>
+              <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-down">
+                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.get_votes_down_count }}
+              </button>
+	    </form>
+          </div>
+        </div>
+      </div>
+      <div id="comment_replies_{{ comment.id }}">
+        {% if comment|comment_replies %}
+	{% for reply in comment|comment_replies %}
+        <!-- comment reply -->
+        <div id="comment_{{ reply.id }}" class="row">
+          <div class="col-xs-11 col-xs-offset-1 comment">
+            <p>
+              <span class="glyphicon glyphicon-share-alt"></span>
+              {% if reply.user.userStatus != "User" %}
+              <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
+              {% endif %}
+              <b>
+                {% if comment.user.hasProfile%}
+                <a href="{% url 'user' comment.user.slug %}" class="comment-user-name-link" data-toggle="tooltip" title="This user has made their profile public.">{{comment.user.username }}</a>
+                {% else %}
+                {{ comment.user.username }}
+                {% endif %}
+              </b>
+              {% if reply.user.title %}
+              <span class="comment-user-title">({{ reply.user.title }})</span>
+              {% endif %}
+            </p>
+
+            {{ reply.text | replace_bad_words | my_markdown }}
+
+            <div class="comment-meta">
+              {{ reply.createdAt|timesince_human }}
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              {% if user.isModerator %}
+              <a href="{% url 'hide_comment' reply.id %}">hide comment</a>
+              {% else %}
+              <a href="{% url 'report_comment' reply.id %}">report</a>
+              {% endif %}
+              {% if user == reply.user %}
+              {% if reply.is_new %}
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="{% url 'edit_comment' reply.id %}">edit</a>
+              {% endif %}
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="{% url 'delete_comment' reply.id %}">delete</a>
+              {% endif %}
+            </div>
+
+            <div class="comment-votes">
+              <form class="comment_vote_form" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="request" value="comment_vote" />  
+		<button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
+                  <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
+                </button>
+                <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
+                  <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
+                </button>
+	      </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+	{% endif %}
+      </div>
+      <!-- comment reply form -->
+      {% if not hide %}
+      <div class="row">
+        <div class="col-xs-11 col-xs-offset-1 comment comment-reply-form" id="comment-reply-form-box-{{ comment.id }}">
+          <form role="form" method="post" class="proposal-comment-form">
+            <div class="form-group" id="comment-reply-form-{{ comment.id }}">
+              <label>Add comment</label>
+              {% include "markdown_formatting_help.html" %}
+              {{ form.text }}
+              <div class="charNum">0/1000</div>
+              {% csrf_token %}
+              <input type="hidden" name="reply_to" value="{{ comment.id }}" />
+            </div>
+            <button type="post" class="btn btn-default">Submit</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
 </div>

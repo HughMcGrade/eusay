@@ -1,115 +1,115 @@
 {% extends "base.html" %}
 
 {% block title %}
- | {{ profile.username }}
+| {{ profile.username }}
 {% endblock %}
 
 {% block content %}
 {% if error_msg %}
-    <div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
+<div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
 {% endif %}
 <h2>{{ profile.username }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
 <div class="row">
-<div class="col-md-3 col-sm-4 col-xs-12">
-<form id="editUserForm" method="post" action="">
-    {% csrf_token %}
-    Username:
-    {{ form.username }}
-    <p>Public profile? {{ form.hasProfile }}</p>
-    <button type="post" class="btn btn-default btn-sm">Save</button>
-</form>
-</div>
+  <div class="col-md-3 col-sm-4 col-xs-12">
+    <form id="editUserForm" method="post" action="">
+      {% csrf_token %}
+      Username:
+      {{ form.username }}
+      <p>Public profile? {{ form.hasProfile }}</p>
+      <button type="post" class="btn btn-default btn-sm">Save</button>
+    </form>
+  </div>
 </div>
 <p>Join date: {{ profile.date_joined|date:"F j, Y" }}<br />
-Status: {{ profile.userStatus }}{% if profile.title %}: {{ profile.title }}{% endif %}</p>
+  Status: {{ profile.userStatus }}{% if profile.title %}: {{ profile.title }}{% endif %}</p>
 <div class="row">
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">Your submissions</div>
-            <table class="table">
-            <tr>
-                <th>Proposal</th>
-                <th>Tags</th>
-                <th>Date submitted</th>
-            </tr>
-            {% for proposal in profile.proposed.all %}
-            <tr>
-                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
-                <td>{{ proposal.tags.all | join:", " }}</td>
-                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">You haven't submitted any proposals yet.</td></tr>
-            {% endfor %}
-        </table>
-        </div>
+  <div class="col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">Your submissions</div>
+      <table class="table">
+        <tr>
+          <th>Proposal</th>
+          <th>Tags</th>
+          <th>Date submitted</th>
+        </tr>
+        {% for proposal in profile.proposed.all %}
+        <tr>
+          <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
+          <td>{{ proposal.tags.all | join:", " }}</td>
+          <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">You haven't submitted any proposals yet.</td></tr>
+        {% endfor %}
+      </table>
     </div>
+  </div>
 </div>
 <div class="row">
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">Your comments</div>
-            <table class="table">
-            <tr>
-                <th>Proposal</th>
-                <th>Comment</th>
-                <th>Date</th>
-            </tr>
-            {% for comment in profile.comments.all %}
-            <tr>
-                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">{{ comment.proposal.title }}</a></td>
-                <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}#comment_{{ comment.id }}">{{ comment.text }}</a></td>
-                <td>{{ comment.createdAt|date:"F j, Y" }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">You haven't made any comments yet.</td></tr>
-            {% endfor %}
-        </table>
-        </div>
+  <div class="col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">Your comments</div>
+      <table class="table">
+        <tr>
+          <th>Proposal</th>
+          <th>Comment</th>
+          <th>Date</th>
+        </tr>
+        {% for comment in profile.comments.all %}
+        <tr>
+          <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">{{ comment.proposal.title }}</a></td>
+          <td><a href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}#comment_{{ comment.id }}">{{ comment.text }}</a></td>
+          <td>{{ comment.createdAt|date:"F j, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">You haven't made any comments yet.</td></tr>
+        {% endfor %}
+      </table>
     </div>
+  </div>
 </div>
 <div class="row">
-    <div class="col-md-6 col-sm-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">You voted for...</div>
-            <table class="table">
-            <tr>
-                <th>Proposal</th>
-                <th>Tags</th>
-                <th>Date voted</th>
-            </tr>
-            {% for proposal in profile.get_proposals_voted_for %}
-            <tr>
-                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
-                <td>{{ proposal.tags.all | join:", " }}</td>
-                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">You haven't voted for any proposals.</td></tr>
-            {% endfor %}
-        </table>
-        </div>
+  <div class="col-md-6 col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">You voted for...</div>
+      <table class="table">
+        <tr>
+          <th>Proposal</th>
+          <th>Tags</th>
+          <th>Date voted</th>
+        </tr>
+        {% for proposal in profile.get_proposals_voted_for %}
+        <tr>
+          <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
+          <td>{{ proposal.tags.all | join:", " }}</td>
+          <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">You haven't voted for any proposals.</td></tr>
+        {% endfor %}
+      </table>
     </div>
-    <div class="col-md-6 col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">You voted against...</div>
-            <table class="table">
-            <tr>
-                <th>Proposal</th>
-                <th>Tags</th>
-                <th>Date voted</th>
-            </tr>
-            {% for proposal in profile.get_proposals_voted_against %}
-            <tr>
-                <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
-                <td>{{ proposal.tags.all | join:", " }}</td>
-                <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">You haven't voted against any proposals.</td></tr>
-            {% endfor %}
-        </table>
-        </div>
+  </div>
+  <div class="col-md-6 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">You voted against...</div>
+      <table class="table">
+        <tr>
+          <th>Proposal</th>
+          <th>Tags</th>
+          <th>Date voted</th>
+        </tr>
+        {% for proposal in profile.get_proposals_voted_against %}
+        <tr>
+          <td><a href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></td>
+          <td>{{ proposal.tags.all | join:", " }}</td>
+          <td>{{ proposal.createdAt|date:"F j, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">You haven't voted against any proposals.</td></tr>
+        {% endfor %}
+      </table>
     </div>
+  </div>
 </div>
 {% endblock %}

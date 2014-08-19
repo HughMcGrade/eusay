@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 
 {% block title %}
- | Hide comment
+| Hide comment
 {% endblock %}
 
 {% block content %}
 
 <div class="row">
-<div class="col-xs-2"></div>
-<div class="col-xs-8">
-<h1>Hide Comment</h1>
-<div>
-  <h3>Comment Text: "{{ comment.text }}"</h3>
-</div>
-<form id="hide_form" method="post" action="">
-  {% csrf_token %}
-  <div class="form-group">
-    {{ form.reason }}
+  <div class="col-xs-2"></div>
+  <div class="col-xs-8">
+    <h1>Hide Comment</h1>
+    <div>
+      <h3>Comment Text: "{{ comment.text }}"</h3>
+    </div>
+    <form id="hide_form" method="post" action="">
+      {% csrf_token %}
+      <div class="form-group">
+	{{ form.reason }}
+      </div>
+      <button type="post" class="btn btn-default">Submit</button>
+    </form>
   </div>
-  <button type="post" class="btn btn-default">Submit</button>
-</form>
-</div>
-<div class="col-xs-2"></div>
+  <div class="col-xs-2"></div>
 </div>
 
 {% endblock %}
