@@ -10,8 +10,10 @@ import json
 import os
 
 
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname((__file__)))))
+
 # JSON-based secrets module
-with open("secrets.json") as f:
+with open(os.path.join(BASE_DIR, "secrets.json")) as f:
     secrets = json.loads(f.read())
 
 def get_secret(setting, secrets=secrets):
@@ -25,8 +27,6 @@ def get_secret(setting, secrets=secrets):
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
-
-BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname((__file__)))))
 
 AUTH_USER_MODEL = 'eusay.User'
 

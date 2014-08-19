@@ -106,12 +106,16 @@ def profile(request, slug):
                 return HttpResponseRedirect(reverse("user",
                                         kwargs={"slug": better_slugify(form.cleaned_data["username"], domain="User")}))
             else:
-                error_msg = "That username is unavailable."
+                messages.add_message(request,
+                                     messages.ERROR,
+                                     "That username is unavailable.")
+                # error_msg = "That username is unavailable."
                 return render(request,
                               "own_profile.html",
                               {"profile": profile,
-                               "form": form,
-                               "error_msg": error_msg})
+                               "form": form
+                               #"error_msg": error_msg
+                               })
         form = UserForm(current_user=request.user) # unbound form
         return render(request,
                       "own_profile.html",
