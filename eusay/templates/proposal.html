@@ -22,50 +22,73 @@ function hideReplyForms() {
     });
 }
 
-function initForms() {
-    $('.proposal-comment-form').ajaxForm(
-        { clearForm : true,
-	  success: function(response, statusText, xhr) {
-            if (xhr.getResponseHeader('Comment-Id') != null) {
-              // Reply posted
-	      var html = $.parseHTML(response);
-              var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
-              var comment = $(html).find(selector).children();
-              $(selector).html(comment);
-            }
-            else {
-	      var html = $.parseHTML(response);
-	      var selector = '#proposal_comments';
-	      var comments = $(html).find(selector).children();
-	      $(selector).html(comments);
-              //reloadComments($(".comments"), '{{ proposal.id }}', null);
-            }
-            initForms();
-            hideReplyForms();
-        }
-    });
-    $('#proposal_vote_form').ajaxForm(
-        {success: function(response) {
-            //reloadComments($(".comments"), '{{ proposal.id }}', null);
-            var html = $.parseHTML(response);
-            var votes = $(html).find('#proposal_vote_div').children();
-            $('#proposal_vote_div').html(votes);
-            initForms();
+ function putNewMessages(response) {
+   var html = $.parseHTML(response);
+   var selector = '#message_container';
+   var messages = $(html).find(selector).children();
+   if (messages.length != 0) {
+     // New messages
+     $(selector).html(messages);
+     $('html').animate({scrollTop:0}, 'slow');
+   }
+ }
 
-	    // Reload progress bar
-	    var progressBar = $(html).find('#proposal_progress_bar').children();
-	    $('#proposal_progress_bar').html(progressBar);
-        }
-    });
-    $('.comment_vote_form').ajaxForm(
-        {success: function(response, statusText, xhr) {
-            var html = $.parseHTML(response);
-            var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
-            var comment = $(html).find(selector).children();
-            $(selector).html(comment);
-            initForms();
-         }});
-};
+ function initForms() {
+   $('.proposal-comment-form').ajaxForm(
+     { clearForm : true,
+      success: function(response, statusText, xhr) {
+	if (xhr.getResponseHeader('Comment-Id') != null) {
+          // Reply posted
+	  var html = $.parseHTML(response);
+          var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
+          var comment = $(html).find(selector).children();
+	  $(selector).html(comment);
+	}
+	else {
+	  var html = $.parseHTML(response);
+	  var selector = '#proposal_comments';
+	  var comments = $(html).find(selector).children();
+	  if (comments.length != 0) {
+	    $(selector).html(comments);
+	  }
+	}
+	initForms();
+	hideReplyForms();
+	putNewMessages(response);
+      }
+     });
+   $('#proposal_vote_form').ajaxForm(
+     {success: function(response, statusText, xhr) {
+       //reloadComments($(".comments"), '{{ proposal.id }}', null);
+       var html = $.parseHTML(response);
+       var votes = $(html).find('#proposal_vote_div').children();
+       if (votes.length != 0) {
+	 $('#proposal_vote_div').html(votes);
+       }
+       initForms();
+
+       // Reload progress bar
+       var progressBar = $(html).find('#proposal_progress_bar').children();
+       if (progressBar.length != 0) {
+	 $('#proposal_progress_bar').html(progressBar);
+       }
+
+       // Reload messages
+       putNewMessages(response);
+     }
+     });
+   $('.comment_vote_form').ajaxForm(
+     {success: function(response, statusText, xhr) {
+       var html = $.parseHTML(response);
+       var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
+       if (progressBar.length != 0) {
+	 var comment = $(html).find(selector).children();
+       }
+       $(selector).html(comment);
+       initForms();
+       putNewMessages(response);
+     }});
+ };
 $(document).ready(function() {
     initForms();
     // find similar proposals
@@ -83,18 +106,7 @@ $(document).ready(function() {
 
     hideReplyForms();
 });
-/*
-// voting
-function vote(id, direction) {
-    $.post("/vote-proposal/" + direction + "/" + id, {HTTP_X_REQUESTED:'XMLHttpRequest'}, function(data) {
-        if (data.success == true) {
 
-        } else {
-            alert('ERROR: ' + data.error_message);
-        }
-    }, "json");
-}
-*/
 function showReplyForm(id) {
     $("#comment-reply-form-box-" + id).slideToggle("fast", function() {
         $("#comment-reply-form-" + id +  "> textarea").focus()
@@ -225,15 +237,6 @@ function viewHiddenProposal() {
                     {% endif %}
                 </div>
             </div>
-
-<!--        <div class="row">
-                <p>Note: to be replaced with new buttons</p>
-                <div id="proposal_vote_div_{{ proposal.id }}">
-                    <script language="Javascript">
-                        setProposalVoteDiv('{{ proposal.id }}', document.getElementById('proposal_vote_div_{{ proposal.id }}'));
-                    </script>
-                </div>
-            </div>-->
         </div> <!-- /.proposal-page -->
     </div> <!-- /.col -->
 </div> <!-- /.row -->
