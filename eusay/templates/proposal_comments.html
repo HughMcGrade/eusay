@@ -62,13 +62,13 @@
                             {% endif %}
                             &nbsp;&nbsp;|&nbsp;&nbsp;
                             {% if user.isModerator %}
-                                <a href="/hide_comment/{{ comment.id }}">hide comment</a>
+                                <a href="{% url 'hide_comment'  comment.id %}">hide comment</a>
                             {% else %}
-                                <a href="/report_comment/{{ comment.id }}">report</a>
+                                <a href="{% url 'report_comment'  comment.id %}">report</a>
                             {% endif %}
 			    {% if comment.user == comment.user %}
 				&nbsp;&nbsp;|&nbsp;&nbsp;
-				<a href="/delete_comment/{{ comment.id }}">delete</a>
+				<a href="{% url 'delete_comment' comment.id %}">delete</a>
 			    {% endif %}
                         </div>
                         <div class="comment-votes">
@@ -108,13 +108,13 @@
                         {{ reply.createdAt|timesince_human }}
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         {% if user.isModerator %}
-                        <a href="/hide_comment/{{ reply.id }}">hide comment</a>
+                        <a href="{% url 'hide_comment' reply.id %}">hide comment</a>
                         {% else %}
-                        <a href="/report_comment/{{ reply.id }}">report</a>
+                        <a href="{% url 'report_comment' reply.id %}">report</a>
                         {% endif %}
 			{% if reply.user == comment.user %}
 			&nbsp;&nbsp;|&nbsp;&nbsp;
-			<a href="/delete_comment/{{ reply.id }}">delete</a>
+			<a href="{% url 'delete_comment' reply.id %}">delete</a>
 			{% endif %}
                       </div>
 

@@ -92,7 +92,7 @@ function countChars(val, maxLen) {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/" id="logo">eu<span class="pink">say</span></a>
+      <a class="navbar-brand" href="{% url 'frontpage' %}" id="logo">eu<span class="pink">say</span></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -102,7 +102,7 @@ function countChars(val, maxLen) {
         <li><a>Browse proposals</a></li>
         <li><a>Browse tags</a></li>
 	{% if user.isModerator %}
-	<li><a href="/moderator_panel">Moderator Panel</a></li>
+	<li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
 	{% endif %}
       </ul>
       <form class="navbar-form navbar-right" role="search" action="/search" method="get">
@@ -160,8 +160,8 @@ function countChars(val, maxLen) {
             <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
             <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
             <a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'hidden-proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'hidden-comments' %}">Hidden comments</a>
+            <a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{% url 'hidden_comments' %}">Hidden comments</a>
         </div>
     </div>
 

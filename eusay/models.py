@@ -38,14 +38,18 @@ class Content (models.Model):
         #return self.get_votes_count(False)
         return self.downVotes
 
-    def is_hidden(self):
-        return self.isHidden
-        #content_type = ContentType.objects.get_for_model(self)
-        #return HideAction.get_hide_actions(object_id=self.id, content_type=content_type).exists()
-        #return HideAction.objects.all().filter(content=self).exists()
-
     class Meta:
         abstract = True
+
+class CommentManager (models.Manager):
+
+    def get_visible_comments(self, proposal, reply_to=None, sort="popularity"):
+        comments = self.filter(proposal=proposal).filter(replyTo=reply_to).filter(isHidden=False).select_related('user')
+        if sort == "popularity":
+            return sorted(comments, key=lambda c: c.get_score(), reverse=True)
+        elif sort == "newest":
+            return sorted(comments, key=lambda c: c.createdAt)
+
 
 class Comment (Content):
     # The maximum length of 'text' is 6100 because a proposal can have 6000
@@ -56,9 +60,11 @@ class Comment (Content):
     replyTo = models.ForeignKey("self", null=True)
     isAmendment = models.BooleanField(default=False)
     ##contentType = ContentType.objects.get(app_label="eusay", model="comment")
+
+    objects = CommentManager()
     
     def contentType():
-        return ContentType.objects.get(app_label="eusay", model="proposal")
+        return ContentType.objects.get(app_label="eusay", model="comment")
 
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
@@ -73,9 +79,6 @@ class Comment (Content):
 
     def __unicode__(self):
         return "%s" % self.text
-
-    def get_visible_comments(self, proposal, reply_to=None):
-        return [c for c in Comment.objects.all().filter(content = proposal).filter(replyTo = reply_to) if not c.is_hidden()]
 
 class Vote (models.Model):
     isVoteUp = models.BooleanField()
@@ -113,13 +116,29 @@ class Tag (models.Model):
     def __unicode__(self):
         return self.name
 
+class ProposalManager (models.Manager):
+
+    def get_visible_proposals(self, tag=None, sort="popular"):
+        proposals = self.all()
+        if tag:
+            proposals = proposals.filter(tags=tag)
+
+        if sort == "popular":
+            proposals = proposals.order_by("-rank")
+        elif sort == "newest":
+            proposals = proposals.order_by("-createdAt")
+
+        return proposals.filter(isHidden=False)
+
+
 class Proposal (Content):
     title = models.CharField(max_length=100)
     text = models.TextField()
     slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
     rank = models.FloatField(default=0.0)
-    #contentType = ContentType.objects.get(app_label="eusay", model="proposal")
+
+    objects = ProposalManager()
 
     def contentType():
         return ContentType.objects.get(app_label="eusay", model="proposal")
@@ -187,30 +206,7 @@ class Proposal (Content):
             self.get_votes_down_count()
 
     def get_visible_comments(self, reply_to=None, sort="popularity"):
-        if sort == "popularity":
-            return sorted([c for c in self.comments.filter(replyTo=reply_to).select_related('user')
-                           if not c.is_hidden()],
-                          key=lambda c: c.get_score(),
-                          reverse=True)
-        elif sort == "newest":
-            return sorted([c for c in self.comments.filter(replyTo=reply_to).select_related('user')
-                           if not c.is_hidden()],
-                          key=lambda c: c.createdAt)
-
-
-    @staticmethod
-    def get_visible_proposals(tag=None, sort="popular"):
-        proposals = Proposal.objects.all()
-        if tag:
-            proposals = proposals.filter(tags=tag)
-
-        if sort == "popular":
-            proposals = proposals.order_by("-rank")
-        elif sort == "newest":
-            proposals = proposals.order_by("-createdAt")
-
-        return [p for p in proposals if not p.is_hidden()]
-
+        return Comment.objects.get_visible_comments(proposal=self, reply_to=reply_to, sort=sort)
 
 class Response(Content):
     text = models.TextField()
@@ -222,12 +218,20 @@ class Response(Content):
             super(Response, self).save(*args, **kwargs)
         else:
             raise Exception("Only staff and officerholders can respond to proposals!")
+            def __unicode__(self):
+                return "%s" % self.text
 
-    def __unicode__(self):
-        return "%s" % self.text
+class UserManager (usermodels.UserManager):
+    
+    def get_deleted_content_user(self):
+        try:
+            return self.get(username='Deleted Content')
+        except User.DoesNotExist:
+            return self.create(sid='Deleted Content', username='Deleted Content', userStatus='User')
 
 
 class User (usermodels.AbstractUser):
+
     # The first element in each tuple is the actual value to be stored,
     # and the second element is the human-readable name.
     USER_STATUS_CHOICES = (
@@ -247,7 +251,7 @@ class User (usermodels.AbstractUser):
     hasProfile = models.BooleanField("public profile", default=False)
 
     # Use UserManager to get the create_user method, etc.
-    objects = usermodels.UserManager()
+    objects = UserManager()
 
     def proposed(self):
         return Proposal.objects.all().filter(user=self)
@@ -317,7 +321,7 @@ class HideAction (models.Model):
 
 class Report (models.Model):
     id = models.AutoField(primary_key=True)
-    reporter = models.ForeignKey(settings.AUTH_USER_MODEL)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 

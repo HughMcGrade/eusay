@@ -6,7 +6,7 @@
 {% if results %}
 {% for result in results %}
          <p>
-         <a href="/proposal/{{ result.object.id }}">{{ result.object.title }}</a>
+         <a href="{% url 'proposal' result.object.id %}">{{ result.object.title }}</a>
          </p>
 {% endfor %}
 {% else %}

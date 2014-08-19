@@ -24,7 +24,7 @@
       {{ h.content.text }}
     </td>
     <td>
-      <a href="/proposal/{{h.content.proposal.id}}">{{ h.content.proposal.title }}</a>
+      <a href="{% url 'proposal' h.content.proposal.id %}">{{ h.content.proposal.title }}</a>
     </td>
     <td>
       {{ h.reason }}
