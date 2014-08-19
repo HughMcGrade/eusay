@@ -101,7 +101,7 @@ function countChars(val, maxLen) {
         <li><a href="{% url 'submit' %}">Submit</a></li>
         <li><a>Browse proposals</a></li>
         <li><a>Browse tags</a></li>
-	{% if user.isModerator %}
+	{% if user.is_authenticated and user.isModerator %}
 	<li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
 	{% endif %}
       </ul>
@@ -139,20 +139,18 @@ function countChars(val, maxLen) {
 {% block jumbotron %}
 {% endblock %}
 
-<div class="container mainContainer endless_container">
-    {% if messages %}
-    <div id="message_container">
-        {% for message in messages %}
-        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        </div>
-        {% endfor %}
+<div id="main_container" class="container mainContainer endless_container">
+  <div id="message_container">
+    {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     </div>
-    {% endif %}
+    {% endfor %}
+  </div>
 
-    {% block content %}
-    {% endblock %}
+{% block content %}
+{% endblock %}
 
     <div class="row footer">
         <div class="col-xs-12 text-center">

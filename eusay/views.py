@@ -80,13 +80,14 @@ def index(request):
     context = {
         "proposals": proposals,
         "type" : "proposal",
-        #"user" :  user,
         "proposals_template": proposals_template,
         "sort": sort,
     }
-    # ajax requests only return the proposals, not the whole page
-    if request.is_ajax():
+    
+    #ajax requests only return the proposals, not the whole page
+    if request.is_ajax() and 'page' in request.GET:
         template = proposals_template
+    
     return render(request, template, context)
 
 def about(request):
