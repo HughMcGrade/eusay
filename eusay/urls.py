@@ -20,6 +20,9 @@ urlpatterns = patterns('',
     # Proposals
     url(r'^$', eusay_views.index, name="frontpage"),  # Front page
     url(r'^submit/', eusay_views.submit, name="submit"),
+    url(r'^proposal/(?P<proposalId>\d+)/$',
+        eusay_views.proposal,
+        name="proposal"),
     url(r'^proposal/(?P<proposalId>\d+)/(?P<slug>[\w-]*)/$',
         eusay_views.proposal,
         name="proposal"),

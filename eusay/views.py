@@ -209,7 +209,7 @@ def do_vote(user, content, vote_request):
     else:
         raise Exception("Unknown vote request " + str(vote_request))
 
-def proposal(request, proposalId, slug):
+def proposal(request, proposalId, slug=None):
     proposal = Proposal.objects.get(id=proposalId)
     
     # TODO duplication currently for graceful deprecation
