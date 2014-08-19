@@ -67,6 +67,9 @@ urlpatterns = patterns('',
     url(r'^delete_comment/(?P<comment_id>\d+)',
         eusay_views.delete_comment,
         name="delete_comment"),
+    url(r'^edit_comment/(?P<comment_id>\d+)/$',
+        eusay_views.edit_comment,
+        name="edit_comment"),
 
     # Other
     url(r'^about/', eusay_views.about, name="about"),

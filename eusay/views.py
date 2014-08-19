@@ -295,7 +295,9 @@ def hide_comment(request, comment_id):
     if not request.user.is_authenticated():
         return request_login(request)
     elif not request.user.isModerator:
-        messages.add_message(request, messages.ERROR, "Only moderators may perform hide actions.")
+        messages.add_message(request,
+                             messages.ERROR,
+                             "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
         comment = Comment.objects.all().get(id = comment_id)
@@ -313,6 +315,57 @@ def hide_comment(request, comment_id):
         form = HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
                                                           "form": form})
+
+
+def edit_comment(request, comment_id):
+    if not request.user.is_authenticated():
+        return request_login(request)
+    comment = Comment.objects.get(id=comment_id)
+    if not request.user == comment.user:
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You can only edit your own comments.")
+        return HttpResponseRedirect(reverse('proposal',
+                                            args=[
+                                                str(comment.proposal.id),
+                                                comment.proposal.slug
+                                            ]))
+    else:
+        if request.method == "POST":
+            if comment.is_new():
+                form = CommentForm(request.POST, instance=comment)
+                if form.is_valid():
+                    form.save()
+                    messages.add_message(request,
+                                         messages.SUCCESS,
+                                         "Comment edited.")
+                    return HttpResponseRedirect(reverse("proposal", args=[
+                        str(comment.proposal.id), comment.proposal.slug
+                    ]))
+                else:
+                    messages.add_message(request,
+                                         messages.ERROR,
+                                         "Invalid comment.")
+            else:
+                messages.add_message(request,
+                                     messages.ERROR,
+                                     "You can only edit a comment in the "
+                                     "first 5 minutes.")
+        form = CommentForm(instance=comment)
+        if comment.is_new():
+            return render(request,
+                          "edit_comment_form.html",
+                          {"form": form,
+                           "comment": comment})
+        else:
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 "You can only edit a comment in the "
+                                 "first 5 minutes.")
+            return HttpResponseRedirect(reverse("proposal", args=[
+                str(comment.proposal.id), comment.proposal.slug
+            ]))
+
 
 def hide_proposal(request, proposal_id):
     if not request.user.is_authenticated():
@@ -535,14 +588,22 @@ def delete_comment(request, comment_id):
         return request_login(request)
     comment = Comment.objects.get(id=comment_id)
     if comment.user != request.user:
-        messages.add_message(request, messages.ERROR, "You may only delete your own comments. Please submit a report to request another user's comment be hidden.")
-        return HttpResponseRedirect(reverse('frontpage'))
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You may only delete your own comments. "
+                             "Please submit a report to request another "
+                             "user's comment be hidden.")
+        return HttpResponseRedirect(reverse('proposal',
+                                            args=[
+                                                str(comment.proposal.id),
+                                                comment.proposal.slug
+                                            ]))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
             comment.text = "This comment has been deleted by its creator."
             comment.user = User.objects.get_deleted_content_user()
             comment.save()
-            messages.add_message(request, messages.INFO, "Comment deleted")
+            messages.add_message(request, messages.SUCCESS, "Comment deleted")
             return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": comment.proposal.id, "slug": comment.proposal.slug}))
     else:
         return render(request, 'delete_comment.html', {'comment': comment})
@@ -552,16 +613,25 @@ def logout(request):
     if request.user.is_authenticated():
         # TODO: delete cosign cookie(s)
         django_logout(request)
-        messages.add_message(request, messages.SUCCESS, "You have been logged out.")
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             "You have been logged out.")
     else:
-        messages.add_message(request, messages.ERROR, "You can't log out if you aren't logged in first!")
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You can't log out if you aren't logged "
+                             "in first!")
     return redirect(reverse("frontpage"))
 
 
 def login(request):
     if request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, "You are already logged in.")
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You are already logged in.")
     else:
         generate_new_user(request)
-        messages.add_message(request, messages.SUCCESS, "You are now logged in.")
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             "You are now logged in.")
     return redirect(reverse("frontpage"))

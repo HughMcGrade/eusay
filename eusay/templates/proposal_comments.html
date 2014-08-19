@@ -66,10 +66,14 @@
                             {% else %}
                                 <a href="{% url 'report_comment'  comment.id %}">report</a>
                             {% endif %}
-			    {% if comment.user == comment.user %}
-				&nbsp;&nbsp;|&nbsp;&nbsp;
-				<a href="{% url 'delete_comment' comment.id %}">delete</a>
-			    {% endif %}
+                            {% if user == comment.user %}
+                                {% if comment.is_new %}
+                                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                                    <a href="{% url 'edit_comment' comment.id %}">edit</a>
+                                {% endif %}
+                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                            <a href="{% url 'delete_comment' comment.id %}">delete</a>
+                            {% endif %}
                         </div>
                         <div class="comment-votes">
 			  <form class="comment_vote_form" method="post">
@@ -112,10 +116,14 @@
                         {% else %}
                         <a href="{% url 'report_comment' reply.id %}">report</a>
                         {% endif %}
-			{% if reply.user == comment.user %}
-			&nbsp;&nbsp;|&nbsp;&nbsp;
-			<a href="{% url 'delete_comment' reply.id %}">delete</a>
-			{% endif %}
+                        {% if user == reply.user %}
+                            {% if reply.is_new %}
+                                &nbsp;&nbsp;|&nbsp;&nbsp;
+                                <a href="{% url 'edit_comment' reply.id %}">edit</a>
+                            {% endif %}
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <a href="{% url 'delete_comment' reply.id %}">delete</a>
+                        {% endif %}
                       </div>
 
                       <div class="comment-votes">

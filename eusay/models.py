@@ -66,6 +66,13 @@ class Comment (Content):
     def contentType():
         return ContentType.objects.get(app_label="eusay", model="comment")
 
+    def is_new(self):
+        """
+        :return: True if the comment is less than 5 minutes old
+        """
+        timesince = datetime.datetime.now() - self.createdAt
+        return timesince < datetime.timedelta(minutes=5)
+
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
             return sorted([c for c in Comment.objects.filter(replyTo=self).select_related('user')],
