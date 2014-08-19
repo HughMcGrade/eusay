@@ -1,0 +1,8 @@
+# update ranks every 15	minutes
+# mkdir	-p /home/admin/logs/cron/
+# chgrp	-R apache /home/admin/logs/
+# chmod -R 775 /home/admin/logs/
+# sudo su apache
+# crontab crontab
+*/15    *       *       *       *       /home/admin/.virtualenvs/eusay/bin/python /home/admin/public_html/eusay/manage.py update_ranks --settings=eusay.settings.production >> /home/admin/logs/cron/update$
+
