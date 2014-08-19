@@ -298,13 +298,13 @@ class ReportTest (TestCase):
         # View form anonymously
         url = reverse('report_comment', args=[self.comment.id])
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
         # Report anonymously
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(Report.DoesNotExist, Report.objects.get, content_type=Comment.contentType(), object_id=self.comment.id)
+        self.assertTrue(Report.objects.filter(content_type=Comment.contentType(), object_id=self.comment.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
@@ -321,19 +321,19 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.get(content_type=Comment.contentType(), object_id=self.comment.id))
+        self.assertTrue(Report.objects.filter(content_type=Comment.contentType(), object_id=self.comment.id))
 
     def testReportProposal(self):
         # View form anonymously
         url = reverse('report_proposal', args=[self.proposal.id])
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
         # Report anonymously
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(Report.DoesNotExist, Report.objects.get, content_type=Proposal.contentType(), object_id=self.proposal.id)
+        self.assertTrue(Report.objects.filter(content_type=Proposal.contentType(), object_id=self.proposal.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
@@ -350,7 +350,7 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.get(content_type=Proposal.contentType(), object_id=self.proposal.id))
+        self.assertTrue(Report.objects.filter(content_type=Proposal.contentType(), object_id=self.proposal.id))
 
     def testModeratorPanel(self):
         url = reverse('moderator_panel')
