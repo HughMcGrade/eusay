@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 
 {% block title %}
- | Edit comment
+| Edit comment
 {% endblock %}
 
 
 {%  block content %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
-            <form method="post" action="">
-                {%  csrf_token %}
-                <div class="form-group">
-                    <label>Edit comment</label>
-                    {% include "markdown_formatting_help.html" %}
-                    {{ form.text }}
-                    <div class="charNum">0/6000</div>
-                </div>
-                <button type="post" class="btn btn-success">Submit</button>
-                <a class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
-            </form>
-        </div>
-    </div>
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+    <form method="post" action="">
+      {%  csrf_token %}
+      <div class="form-group">
+        <label>Edit comment</label>
+        {% include "markdown_formatting_help.html" %}
+        {{ form.text }}
+        <div class="charNum">0/6000</div>
+      </div>
+      <button type="post" class="btn btn-success">Submit</button>
+      <a class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
+    </form>
+  </div>
+</div>
 
 {% endblock %}

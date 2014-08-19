@@ -4,9 +4,9 @@
 
 {% block title %}
 {% if not hide %}
- | {{ proposal.title }}
+| {{ proposal.title }}
 {% else %}
- | Hidden proposal
+| Hidden proposal
 {% endif %}
 {% endblock %}
 
@@ -15,12 +15,12 @@
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 <script>
 
-function hideReplyForms() {
-    // hide comment reply forms
-    $(".comment-reply-form").hide({
-        duration: 0
-    });
-}
+ function hideReplyForms() {
+   // hide comment reply forms
+   $(".comment-reply-form").hide({
+     duration: 0
+   });
+ }
 
  function putNewMessages(response) {
    var html = $.parseHTML(response);
@@ -89,34 +89,34 @@ function hideReplyForms() {
        putNewMessages(response);
      }});
  };
-$(document).ready(function() {
-    initForms();
-    // find similar proposals
-    $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
-        var output = "<ul>";
-        for (var i in data.results) {
-            output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
-        }
-        output += "</ul>";
-        if (data.count > 0) {
-            $("#similarList").html(output);
-            $("#similar").fadeIn();
-        }
-    });
+ $(document).ready(function() {
+   initForms();
+   // find similar proposals
+   $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
+     var output = "<ul>";
+     for (var i in data.results) {
+       output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+     }
+     output += "</ul>";
+     if (data.count > 0) {
+       $("#similarList").html(output);
+       $("#similar").fadeIn();
+     }
+   });
 
-    hideReplyForms();
-});
+   hideReplyForms();
+ });
 
-function showReplyForm(id) {
-    $("#comment-reply-form-box-" + id).slideToggle("fast", function() {
-        $("#comment-reply-form-" + id +  "> textarea").focus()
-    });
-};
-function viewHiddenProposal() {
-    $("#view-hidden-proposal-button").slideUp(function() {
-        $(".proposal-hidden").slideDown()
-    });
-}
+ function showReplyForm(id) {
+   $("#comment-reply-form-box-" + id).slideToggle("fast", function() {
+     $("#comment-reply-form-" + id +  "> textarea").focus()
+   });
+ };
+ function viewHiddenProposal() {
+   $("#view-hidden-proposal-button").slideUp(function() {
+     $(".proposal-hidden").slideDown()
+   });
+ }
 </script>
 
 {% endblock %}
@@ -126,131 +126,131 @@ function viewHiddenProposal() {
 
 {% block content %}
 {% if hide %}
-    <div class="row">
-        <div class="col-xs-12 col-md-8 col-md-offset-2">
-            <div class="panel panel-danger">
-                <div class="panel-heading">Careful now</div>
-                <div class="panel-body">
-                    <p>This proposal has been hidden. You can still view it, but it may not abide by EUSA safe space policy!</p>
-                    <p><strong>Reason:</strong> {{ hide.reason }}</p>
-                    <button type="button" class="btn btn-danger" id="view-hidden-proposal-button" onclick="viewHiddenProposal()">View anyway</button>
-                </div>
-            </div>
-        </div>
+<div class="row">
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <div class="panel panel-danger">
+      <div class="panel-heading">Careful now</div>
+      <div class="panel-body">
+        <p>This proposal has been hidden. You can still view it, but it may not abide by EUSA safe space policy!</p>
+        <p><strong>Reason:</strong> {{ hide.reason }}</p>
+        <button type="button" class="btn btn-danger" id="view-hidden-proposal-button" onclick="viewHiddenProposal()">View anyway</button>
+      </div>
     </div>
+  </div>
+</div>
 {% endif %}
 
 {% if proposal.response %}
-    <div class="row">
-        <div class="col-xs-12 col-md-6 col-md-offset-3">
-            <div class="page-shadow proposal-response">
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="page-shadow proposal-response">
 
-                <div class="row">
-                    <div class="col-xs-12">
-                        <h4 class="text-center">
-                            <span class="glyphicon glyphicon-star comment-user-status"></span>
-                            {{ proposal.response.user.username }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
-                        </h4>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-12">
-                        {{ proposal.response.text }}
-                    </div>
-                </div>
-                <hr />
-
-                <div class="row">
-                    <div class="col-xs-6">
-                        <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
-                    </div>
-                </div>
-            </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <h4 class="text-center">
+            <span class="glyphicon glyphicon-star comment-user-status"></span>
+            {{ proposal.response.user.username }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
+          </h4>
         </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12">
+          {{ proposal.response.text }}
+        </div>
+      </div>
+      <hr />
+
+      <div class="row">
+        <div class="col-xs-6">
+          <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 {% endif %}
 
 <div class="row">
-    <div class="col-xs-12 col-md-8 col-md-offset-2">
-        <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
-            <div class="row">
-                <div class="col-xs-12">
-                    <h2 class="text-center">{{ proposal.title }}</h2>
-                </div>
-            </div>
-            <div id="proposal_progress_bar" class="progress proposal-progress-bar">
-                <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
-                </div>
-                <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
-                </div>
-            </div>
-            <div class="row proposal-text">
-                <div class="col-xs-10 col-xs-offset-1">
-                    {{ proposal.text | my_markdown }}
-                </div>
-            </div>
-            <hr />
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2 class="text-center">{{ proposal.title }}</h2>
+        </div>
+      </div>
+      <div id="proposal_progress_bar" class="progress proposal-progress-bar">
+        <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} vote{{ proposal.get_votes_up_count|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
+        </div>
+        <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} vote{{ proposal.get_votes_down_count|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
+        </div>
+      </div>
+      <div class="row proposal-text">
+        <div class="col-xs-10 col-xs-offset-1">
+          {{ proposal.text | my_markdown }}
+        </div>
+      </div>
+      <hr />
 
-	    <form id="proposal_vote_form" method="post">
-            <input type="hidden" name="request" value="proposal_vote" />
-            {% csrf_token %}
-            <div id="proposal_vote_div" class="row proposal-vote-buttons">
-                <div class="col-md-3 col-md-offset-2 col-xs-6">
-                    <button name="vote" value="up" type="submit" class="btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
-                </div>
-                <div class="col-md-3 col-md-offset-2 col-xs-6">
-                    <button name="vote" value="down" type="submit" class="btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
-                </div>
-            </div>
-	     </form>
+      <form id="proposal_vote_form" method="post">
+        <input type="hidden" name="request" value="proposal_vote" />
+        {% csrf_token %}
+        <div id="proposal_vote_div" class="row proposal-vote-buttons">
+          <div class="col-md-3 col-md-offset-2 col-xs-6">
+            <button name="vote" value="up" type="submit" class="btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+          </div>
+          <div class="col-md-3 col-md-offset-2 col-xs-6">
+            <button name="vote" value="down" type="submit" class="btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
+          </div>
+        </div>
+      </form>
 
-            {% if proposal.tags.all %}
-                <div class="row proposal-tags">
-                    <div class="col-xs-12">
-                        <p>Tags:<br />
-                        {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
-                    </div>
-                </div>
+      {% if proposal.tags.all %}
+      <div class="row proposal-tags">
+        <div class="col-xs-12">
+          <p>Tags:<br />
+            {% for tag in proposal.tags.all %}<a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>{% endfor %}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="row proposal-metainfo">
+        <div class="col-xs-6">
+          <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
+        </div>
+        <div class="col-xs-6 btn-toolbar">
+          {% if not hide %}
+          <div class="btn-group pull-right">
+            {% if user.isModerator and not hide %}
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
+            {% else %}
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'report_proposal' proposal.id %}">Report</a>
             {% endif %}
-
-            <div class="row proposal-metainfo">
-                <div class="col-xs-6">
-                    <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
-                </div>
-                <div class="col-xs-6 btn-toolbar">
-                    {% if not hide %}
-                        <div class="btn-group pull-right">
-                            {% if user.isModerator and not hide %}
-                            <a type="button" class="btn btn-default btn-xs" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
-                            {% else %}
-                            <a type="button" class="btn btn-default btn-xs" href="{% url 'report_proposal' proposal.id %}">Report</a>
-                            {% endif %}
-                            <a type="button" class="btn btn-default btn-xs" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
-                            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
-                                <a type="button" class="btn btn-default btn-xs" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
-                            {% endif %}
-			    {% if proposal.user = user %}
-				<a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
-			    {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div> <!-- /.proposal-page -->
-    </div> <!-- /.col -->
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
+            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
+            {% endif %}
+	    {% if proposal.user = user %}
+	    <a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
+	    {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div> <!-- /.proposal-page -->
+  </div> <!-- /.col -->
 </div> <!-- /.row -->
 
 <div class="comments{% if hide %} proposal-hidden{% endif %}">
-{% include "proposal_comments.html" %}
+  {% include "proposal_comments.html" %}
 </div>
 
 <!--<div class="row" id="similar">
-    <div class="col-xs-12">
-        <h3>Similar proposals:</h3>
-        <div id="similarList">
-        </div>
-    </div>
+<div class="col-xs-12">
+<h3>Similar proposals:</h3>
+<div id="similarList">
+</div>
+</div>
 </div>-->
 
 {% endblock %}

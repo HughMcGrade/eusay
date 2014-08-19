@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
- | Moderation
+| Moderation
 {% endblock %}
 
 {% load static %}
@@ -12,35 +12,35 @@
 
 <script>
 
-function reloadMessages() {
-    $.ajax({
-               type : "get",
-               url : "/get_messages/",
-               success : function (response) {
-                        $('#message_container').html(response);
-               },
-               error : function (response) {
-                        $('#message_container').html(response);
-               }
-    });
-}
-
-// Not used
-function removeRow() {
-     table = $(this).parents('tr').parents('tbody');
-     $(this).parents('tr').remove();
-     if (!table.html()) {
-          $(table).text("None!");
+ function reloadMessages() {
+   $.ajax({
+     type : "get",
+     url : "/get_messages/",
+     success : function (response) {
+       $('#message_container').html(response);
+     },
+     error : function (response) {
+       $('#message_container').html(response);
      }
-}
+   });
+ }
 
-$(document).ready(function() {
-    $('.action_form').each(function (item) {
-        $(item).ajaxForm({ complete : function() { 
-            reloadMessages();
-        }});
-    });
-});
+ // Not used
+ function removeRow() {
+   table = $(this).parents('tr').parents('tbody');
+   $(this).parents('tr').remove();
+   if (!table.html()) {
+     $(table).text("None!");
+   }
+ }
+
+ $(document).ready(function() {
+   $('.action_form').each(function (item) {
+     $(item).ajaxForm({ complete : function() { 
+       reloadMessages();
+     }});
+   });
+ });
 
 </script>
 
@@ -52,42 +52,42 @@ $(document).ready(function() {
 
 {% if comment_reports %}
 <table class="table table-striped">
-<thead>
-  <th>Comment</th>
-  <th>Proposal</th>
-  <th>Reason</th>
-  <th>Reporter</th>
-  <th>Action</th>
-</thead>
-<tbody>
-  {% for r in comment_reports %}
-  <tr id="report_{{ r.id }}">
-    <td>
-      {{ r.content.text }}
-    </td>
-    <td>
-      <a href="{% url 'proposal' r.content.proposal.id r.content.proposal.slug %}">{{ r.content.proposal.title }}</a>
-    </td>
-    <td>
-      {{ r.reason }}
-    </td>
-    <td>
-      {{ r.reporter.name }}
-    </td>
-    <td>
-      <form method="POST" class="action_form">
-	{% csrf_token %}
-	<input type="hidden" name="report" value="{{ r.id }}" />
-	<input type="submit" class="btn btn-primary" name="action" value="Hide" />
-	<input type="submit" class="btn btn-default" name="action" value="Ignore" />
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
-</tbody>
+  <thead>
+    <th>Comment</th>
+    <th>Proposal</th>
+    <th>Reason</th>
+    <th>Reporter</th>
+    <th>Action</th>
+  </thead>
+  <tbody>
+    {% for r in comment_reports %}
+    <tr id="report_{{ r.id }}">
+      <td>
+	{{ r.content.text }}
+      </td>
+      <td>
+	<a href="{% url 'proposal' r.content.proposal.id r.content.proposal.slug %}">{{ r.content.proposal.title }}</a>
+      </td>
+      <td>
+	{{ r.reason }}
+      </td>
+      <td>
+	{{ r.reporter.name }}
+      </td>
+      <td>
+	<form method="POST" class="action_form">
+	  {% csrf_token %}
+	  <input type="hidden" name="report" value="{{ r.id }}" />
+	  <input type="submit" class="btn btn-primary" name="action" value="Hide" />
+	  <input type="submit" class="btn btn-default" name="action" value="Ignore" />
+	</form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 {% else %}
-  No open comment reports
+No open comment reports
 {% endif %}
 
 
@@ -95,38 +95,38 @@ $(document).ready(function() {
 
 {% if proposal_reports %}
 <table class="table table-striped">
-<thead>
-  <th>Proposal</th>
-  <th>Reason</th>
-  <th>Reporter</th>
-  <th>Action</th>
-</thead>
-<tbody>
-  {% for r in proposal_reports %}
-  <tr id="report_{{ r.id }}">
-    <td>
-      <a href="{% url 'proposal' r.content.id r.content.slug %}">{{ r.content.title }}</a>
-    </td>
-    <td>
-      {{ r.reason }}
-    </td>
-    <td>
-      {{ r.reporter.name }}
-    </td>
-    <td>
-      <form method="POST" class="action_form">
-	{% csrf_token %}
-	<input type="hidden" name="report" value="{{ r.id }}" />
-	<input type="submit" class="btn btn-primary" name="action" value="Hide" />
-	<input type="submit" class="btn btn-default" name="action" value="Ignore" />
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
+  <thead>
+    <th>Proposal</th>
+    <th>Reason</th>
+    <th>Reporter</th>
+    <th>Action</th>
+  </thead>
+  <tbody>
+    {% for r in proposal_reports %}
+    <tr id="report_{{ r.id }}">
+      <td>
+	<a href="{% url 'proposal' r.content.id r.content.slug %}">{{ r.content.title }}</a>
+      </td>
+      <td>
+	{{ r.reason }}
+      </td>
+      <td>
+	{{ r.reporter.name }}
+      </td>
+      <td>
+	<form method="POST" class="action_form">
+	  {% csrf_token %}
+	  <input type="hidden" name="report" value="{{ r.id }}" />
+	  <input type="submit" class="btn btn-primary" name="action" value="Hide" />
+	  <input type="submit" class="btn btn-default" name="action" value="Ignore" />
+	</form>
+      </td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% else %}
-  No open proposal reports
+No open proposal reports
 {% endif %}
 
 {% endblock %}

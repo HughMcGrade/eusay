@@ -5,9 +5,9 @@
 
 {% if results %}
 {% for result in results %}
-         <p>
-         <a href="{% url 'proposal' result.object.id result.object.slug %}">{{ result.object.title }}</a>
-         </p>
+<p>
+  <a href="{% url 'proposal' result.object.id result.object.slug %}">{{ result.object.title }}</a>
+</p>
 {% endfor %}
 {% else %}
 Nothing found!

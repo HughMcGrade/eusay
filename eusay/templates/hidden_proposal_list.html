@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
- | Hidden proposals
+| Hidden proposals
 {% endblock %}
 
 {% block content %}
@@ -10,30 +10,30 @@
 
 {% if hiddens %}
 <table class="table table-striped">
-<thead>
-  <th>Proposal</th>
-  <th>Reason</th>
-  <th>Moderator</th>
-  <th>Date</th>
-</thead>
-<tbody>
-  {% for h in hiddens %}
-  <tr>
-    <td>
-      <a href="{% url 'proposal' h.content.id h.content.slug %}">{{ h.content.title }}</a>
-    </td>
-    <td>
-      {{ h.reason }}
-    </td>
-    <td>
-      {{ h.moderator.name }}
-    </td>
-    <td>
-      {{ h.createdAt }}
-    </td>
-  </tr>
-  {% endfor %}
-</tbody>
+  <thead>
+    <th>Proposal</th>
+    <th>Reason</th>
+    <th>Moderator</th>
+    <th>Date</th>
+  </thead>
+  <tbody>
+    {% for h in hiddens %}
+    <tr>
+      <td>
+	<a href="{% url 'proposal' h.content.id h.content.slug %}">{{ h.content.title }}</a>
+      </td>
+      <td>
+	{{ h.reason }}
+      </td>
+      <td>
+	{{ h.moderator.name }}
+      </td>
+      <td>
+	{{ h.createdAt }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 {% else %}
 No hidden proposals

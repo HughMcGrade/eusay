@@ -5,49 +5,49 @@
 
 {% if forloop.counter0|divisibleby:3 %}<div class="row">{% endif %}
 
-<div class="col-sm-4">
+  <div class="col-sm-4">
     <div class="page-shadow index-proposal" id="proposal_{{ proposal.id }}">
-        {% if proposal.response %}
-            <div class="ribbon">
-                <a><span class="glyphicon glyphicon-star"></span></a>
-            </div>
-        {% endif %}
-        <div class="index-proposal-title">
-            <h4><a class="pink" href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></h4>
+      {% if proposal.response %}
+      <div class="ribbon">
+        <a><span class="glyphicon glyphicon-star"></span></a>
+      </div>
+      {% endif %}
+      <div class="index-proposal-title">
+        <h4><a class="pink" href="{% url 'proposal' proposal.id proposal.slug %}">{{ proposal.title }}</a></h4>
+      </div>
+      <div>(Tags here?)</div>
+      {% if user.isModerator %}
+      <div>Rank: {{ proposal.rank }}</div>
+      {% endif %}
+      <hr />
+      <div class="row">
+        <div class="col-sm-6 col-xs-12">
+          <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.get_votes_up_count }} For</a>
         </div>
-        <div>(Tags here?)</div>
-        {% if user.isModerator %}
-        <div>Rank: {{ proposal.rank }}</div>
-        {% endif %}
-        <hr />
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
-                <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.get_votes_up_count }} For</a>
-            </div>
-            <div class="col-sm-6 col-xs-12">
-                <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.get_votes_down_count }} Against</a>
-            </div>
+        <div class="col-sm-6 col-xs-12">
+          <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.get_votes_down_count }} Against</a>
         </div>
-<!--        <div class="progress proposal-progress-bar">
-            <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
-            </div>
-            <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
-            </div>
-        </div> -->
+      </div>
+      <!--        <div class="progress proposal-progress-bar">
+		  <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.get_votes_up_count }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
+		  </div>
+		  <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.get_votes_down_count }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
+		  </div>
+      </div> -->
 
-    <!-- TODO: think of how to display categories and subcategories -->
-    <!-- TODO: put a ribbon or something on proposals with official responses -->
-    <!--
-        <div>
+      <!-- TODO: think of how to display categories and subcategories -->
+      <!-- TODO: put a ribbon or something on proposals with official responses -->
+      <!--
+          <div>
             Tags: {{ proposal.tags.all | join:", " }}
-        </div>
-    -->
-        <div>
-            {{ proposal.createdAt | date:"j N Y P" }}
-        </div>
+          </div>
+	  -->
+      <div>
+        {{ proposal.createdAt | date:"j N Y P" }}
+      </div>
     </div><!-- /.proposal -->
 
-</div> <!-- /.col -->
-{% if forloop.counter|divisibleby:3 %}</div><!-- /.row -->{% endif %}
+  </div> <!-- /.col -->
+  {% if forloop.counter|divisibleby:3 %}</div><!-- /.row -->{% endif %}
 {% endfor %}
 {% show_more "Show more proposals" "..." %}
