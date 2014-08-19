@@ -4,6 +4,9 @@ from .base import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 
+ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
+                  ".eusay.eusa.ed.ac.uk"]  # Period matches any subdomains
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
