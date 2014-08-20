@@ -28,7 +28,7 @@ def get_secret(setting, secrets=secrets):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
 
-AUTH_USER_MODEL = 'eusay.User'
+AUTH_USER_MODEL = 'users.User'
 
 # Required for django-endless-pagination plugin
 # http://django-endless-pagination.readthedocs.org
@@ -38,7 +38,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.contrib.messages.context_processors.messages',
 )
 
-TEMPLATE_DIRS = os.path.join(BASE_DIR, "eusay/templates")
+TEMPLATE_DIRS = os.path.join(BASE_DIR, "core/templates")
 
 ALLOWED_HOSTS = []
 
@@ -49,16 +49,22 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'eusay',
+    'core',
+    'proposals',
+    'comments',
+    'votes',
+    'moderation',
+    'users',
+    'tags',
     'api_v1',
     'search',
-    'eusay.settings',
+    'core.settings',
 
     # Added
     'endless_pagination',
     'rest_framework',
     'haystack',
-    'eusay.templatetags',
+    'core.templatetags',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -70,9 +76,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'eusay.urls'
+ROOT_URLCONF = 'core.urls'
 
-WSGI_APPLICATION = 'eusay.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
