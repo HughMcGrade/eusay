@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
 
-from eusay import models
+from core.tests import addObjects
 
 class ProfileTest (TestCase):
 
@@ -41,7 +42,7 @@ class ProfileTest (TestCase):
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
         previous_name = self.user.username
-        self.user = User.objects.get(id=self.user.id)
+        self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.username, previous_name)
 
         # Log in as self
@@ -51,7 +52,7 @@ class ProfileTest (TestCase):
         post = {'username' : 'Brendan', 'hasProfile' : self.user.hasProfile}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.user = User.objects.get(id=self.user.id)
+        self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.username, 'Brendan')
         
     def testChangeHasProfile(self):
@@ -64,7 +65,7 @@ class ProfileTest (TestCase):
         post = {'username':self.user.username, 'hasProfile' : not self.user.hasProfile}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
-        self.user = User.objects.get(id=self.user.id)
+        self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.hasProfile, previous_value)
 
         # Log in as self
@@ -74,5 +75,5 @@ class ProfileTest (TestCase):
         post = {'username':'Brendan', 'hasProfile' : not self.user.hasProfile}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
-        self.user = User.objects.get(id=self.user.id)
+        self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.hasProfile, not previous_value)

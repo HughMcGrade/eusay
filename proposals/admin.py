@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from proposal.models import Proposal
+from proposals.models import Proposal
 
 class ProposalAdmin(admin.ModelAdmin):
     exclude = ("id",)

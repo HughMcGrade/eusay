@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth import models as usermodels
+from django.contrib.contenttypes.models import ContentType
+
+from core.utils import better_slugify
+from proposals.models import Proposal
+from comments.models import Comment
+from votes.models import Vote
 
 class UserManager(usermodels.UserManager):
 
@@ -34,6 +41,7 @@ class User(usermodels.AbstractUser):
 
     def proposed(self):
         return Proposal.objects.all().filter(user=self)
+
 
     def comments(self):
         return Comment.objects.all().filter(user=self)

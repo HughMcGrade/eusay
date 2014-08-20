@@ -5,8 +5,9 @@ from django.core.urlresolvers import reverse
 from rest_framework import generics
 from haystack.query import SearchQuerySet
 
-from eusay.models import Proposal, Comment
-from eusay.utils import to_queryset, better_slugify
+from proposals.models import Proposal
+from comments.models import Comment
+from core.utils import to_queryset, better_slugify
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, \
     CommentDetailSerializer, CommentListSerializer
 

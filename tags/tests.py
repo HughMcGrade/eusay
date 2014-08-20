@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from eusay import models
+from tags.models import Tag
+from core.tests import addObjects
 
 class TagTest (TestCase):
     

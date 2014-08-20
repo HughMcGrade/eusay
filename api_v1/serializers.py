@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 
-from eusay.models import Proposal, Comment
+from proposals.models import Proposal
+from comments.models import Comment
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):

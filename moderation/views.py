@@ -1,4 +1,14 @@
 from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect,\
+    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.core.urlresolvers import reverse
+
+from users.views import request_login
+from moderation.forms import HideActionForm, ReportForm
+from proposals.models import Proposal
+from comments.models import Comment
+from moderation.models import HideAction, Report
 
 def hide_comment(request, comment_id):
     if not request.user.is_authenticated():
@@ -11,7 +21,7 @@ def hide_comment(request, comment_id):
     else:
         comment = Comment.objects.all().get(id=comment_id)
         if request.method == "POST":
-            form = forms.HideActionForm(request.POST)
+            form = HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = request.user
@@ -24,7 +34,7 @@ def hide_comment(request, comment_id):
             else:
                 messages.add_message(request, messages.ERROR,\
                                      "Invalid hide comment form")
-        form = forms.HideActionForm()
+        form = HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
                                                           "form": form})
 
@@ -38,7 +48,7 @@ def hide_proposal(request, proposal_id):
     else:
         proposal = Proposal.objects.all().get(id=proposal_id)
         if request.method == "POST":
-            form = forms.HideActionForm(request.POST)
+            form = HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = request.user
@@ -51,7 +61,7 @@ def hide_proposal(request, proposal_id):
             else:
                 messages.add_message(request, messages.ERROR,
                                      "Invalid hide proposal form")
-        form = forms.HideActionForm()
+        form = HideActionForm()
         return render(request,
                       "hide_proposal_form.html",
                       {"proposal": proposal,
@@ -70,7 +80,7 @@ def proposal_hides(request):
 def report_comment(request, comment_id):
     comment = Comment.objects.all().get(id=comment_id)
     if request.method == "POST":
-        form = forms.ReportForm(request.POST)
+        form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             if request.user.is_authenticated():
@@ -85,7 +95,7 @@ def report_comment(request, comment_id):
             messages.add_message(request, messages.ERROR,
                                  "Invalid report comment form")
     else:
-        form = forms.ReportForm()
+        form = ReportForm()
         return render(request, "report_comment_form.html",
                       {"comment" : comment, "form" : form})
 
@@ -93,7 +103,7 @@ def report_proposal(request, proposal_id):
     proposal = Proposal.objects.all()\
                                .get(id=proposal_id)
     if request.method == "POST":
-        form = forms.ReportForm(request.POST)
+        form = ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             if request.user.is_authenticated():
@@ -108,7 +118,7 @@ def report_proposal(request, proposal_id):
             messages.add_message(request, messages.ERROR,
                                  "Invalid report proposal form")
     else:
-        form = forms.ReportForm()
+        form = ReportForm()
         return render(request, "report_proposal_form.html",
                       {"proposal" : proposal, "form" : form})
 

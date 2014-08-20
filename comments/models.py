@@ -1,5 +1,9 @@
+import datetime
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+
+from core.models import Content
 
 class CommentManager(models.Manager):
 
@@ -18,7 +22,7 @@ class Comment(Content):
     # characters in its body and 100 in its title. Because amendments are
     # stored as Comments, they must be at least as long as Proposals.
     text = models.CharField(max_length=6100)
-    proposal = models.ForeignKey("Proposal", null=False,\
+    proposal = models.ForeignKey('proposals.Proposal', null=False,\
                                  related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
     isAmendment = models.BooleanField(default=False)
@@ -26,7 +30,7 @@ class Comment(Content):
     objects = CommentManager()
 
     def contentType():
-        return ContentType.objects.get(app_label="eusay", model="comment")
+        return ContentType.objects.get(app_label="comments", model="comment")
 
     def is_new(self):
         """

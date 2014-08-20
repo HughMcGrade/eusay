@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from tags.models import Tag
+from proposals.models import Proposal
 
 def tag(request, tagId, slug):
     tag = Tag.objects.get(id=tagId)

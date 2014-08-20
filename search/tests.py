@@ -1,7 +1,8 @@
 from django.test import TestCase
 
-from eusay.models import Proposal, User, Tag
-
+from proposals.models import Proposal
+from users.models import User
+from tags.models import Tag
 
 class SearchTest(TestCase):
 

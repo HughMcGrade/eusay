@@ -1,4 +1,11 @@
 from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
+
+from comments.models import Comment
+from comments.forms import CommentForm
 
 def edit_comment(request, comment_id):
     if not request.user.is_authenticated():
@@ -67,7 +74,7 @@ def delete_comment(request, comment_id):
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
             comment.text = "This comment has been deleted by its creator."
-            comment.user = User.objects.get_deleted_content_user()
+            comment.user = get_user_model().objects.get_deleted_content_user()
             comment.save()
             messages.add_message(request, messages.SUCCESS, "Comment deleted")
             return HttpResponseRedirect(reverse("proposal",

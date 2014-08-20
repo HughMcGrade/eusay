@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from eusay import models
+from proposals.models import Proposal, Response
+from comments.models import Comment
+from core.tests import addObjects
 
 class IndexTest (TestCase):
     

@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from eusay import models
+from comments import models
+from core.tests import addObjects
 
 class DeleteTest (TestCase):
 

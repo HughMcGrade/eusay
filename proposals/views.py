@@ -3,11 +3,18 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 
 from lxml.html.diff import htmldiff
 
-from eusay import forms
-from .models import *
+from proposals.forms import ProposalForm, ResponseForm, AmendmentForm
+from comments.forms import CommentForm
+from proposals.models import Proposal, Response
+from comments.models import Comment
+from tags.models import Tag
+from users.views import request_login
+from moderation.models import HideAction
+from votes.views import do_vote
 
 def index(request):
     template = "index.html" # main HTML
@@ -39,7 +46,7 @@ def submit(request):
         return request_login(request)
     tags = Tag.objects.all()
     if request.method == 'POST':  # If the form has been submitted...
-        form = forms.ProposalForm(request.POST)  # A form bound to the POST data
+        form = ProposalForm(request.POST)  # A form bound to the POST data
         if form.is_valid():  # All validation rules pass
             proposal = form.save(commit=False)
             proposal.user = request.user
@@ -55,7 +62,7 @@ def submit(request):
                                                    "tags": tags,
                                                    "errors": errors})
     else:
-        form = forms.ProposalForm() # An unbound form
+        form = ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form,
                                                "tags": tags})
 
@@ -96,7 +103,7 @@ def proposal(request, proposalId, slug=None):
                                 + request.POST['request'])
             proposal = Proposal.objects.get(id=proposalId)
         else:
-            form = forms.CommentForm(request.POST)
+            form = CommentForm(request.POST)
             comment = form.save(commit=False)
             if 'reply_to' in request.POST and request.POST['reply_to']:
                 # Comment is a reply
@@ -117,7 +124,7 @@ def proposal(request, proposalId, slug=None):
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)
 
-    form = forms.CommentForm()
+    form = CommentForm()
     comments = proposal.get_visible_comments()
     response = render(request,
                       "proposal.html",
@@ -141,7 +148,7 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
         return HttpResponseRedirect(reverse('frontpage'))
     proposal = Proposal.objects.get(id=proposalId)
     if request.method == 'POST':
-        form = forms.ResponseForm(request.POST)
+        form = ResponseForm(request.POST)
         if form.is_valid():
             response = form.save(commit=False)
             response.user = request.user
@@ -153,7 +160,7 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
         else:
             messages.add_message(request, messages.ERROR,
                                  "Invalid response form")
-    form = forms.ResponseForm()
+    form = ResponseForm()
     return render(request,
                   "respond_to_proposal_form.html",
                   {"proposal": proposal, "form": form})
@@ -176,7 +183,7 @@ def amend_proposal(request, proposal_id):
                 text_diff = htmldiff(proposal.text, amended_text)
                 diff += text_diff
 
-            form = forms.AmendmentForm()
+            form = AmendmentForm()
             form.set_initial(amended_title, amended_text)
             return render(request, "amend_proposal.html",
                           {'proposal' : proposal, 'form' : form,
@@ -194,7 +201,7 @@ def amend_proposal(request, proposal_id):
         else:
             raise Exception('Unknown form action')
     else:
-        form = forms.AmendmentForm()
+        form = AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html",
                       {'proposal' : proposal, 'form' : form})
@@ -217,7 +224,7 @@ def amend_proposal(request, proposal_id):
                 text_diff = htmldiff(proposal.text, amended_text)
                 diff += text_diff
 
-            form = forms.AmendmentForm()
+            form = AmendmentForm()
             form.set_initial(amended_title, amended_text)
             return render(request, "amend_proposal.html",
                           {'proposal' : proposal, 'form' : form,
@@ -235,7 +242,7 @@ def amend_proposal(request, proposal_id):
         else:
             raise Exception('Unknown form action')
     else:
-        form = forms.AmendmentForm()
+        form = AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html",
                       {'proposal' : proposal, 'form' : form})
@@ -257,7 +264,7 @@ def amend_proposal(request, proposal_id):
                 text_diff = htmldiff(proposal.text, amended_text)
                 diff += text_diff
 
-            form = forms.AmendmentForm()
+            form = AmendmentForm()
             form.set_initial(amended_title, amended_text)
             return render(request, "amend_proposal.html",
                           {'proposal' : proposal, 'form' : form,
@@ -275,7 +282,7 @@ def amend_proposal(request, proposal_id):
         else:
             raise Exception('Unknown form action')
     else:
-        form = forms.AmendmentForm()
+        form = AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html",
                       {'proposal' : proposal, 'form' : form})
@@ -296,7 +303,7 @@ def delete_proposal(request, proposal_id):
         if request.POST['action'] == 'delete':
             proposal.text = "This proposal has been deleted by its proposer."
             proposal.title = "Deleted proposal"
-            proposal.user = User.objects.get_deleted_content_user()
+            proposal.user = get_user_model().objects.get_deleted_content_user()
             proposal.tags.clear()
             proposal.save()
             messages.add_message(request, messages.INFO, "Proposal deleted")

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from eusay.models import Tag
+from tags.models import Tag
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "description")

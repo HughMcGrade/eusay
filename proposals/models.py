@@ -2,8 +2,13 @@ from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponse, HttpResponseRedirect
 
-from .utils import better_slugify
+from core.utils import better_slugify
+from core.models import Content
+from tags.models import Tag
+from votes.models import Vote
+from comments.models import Comment
 
 class ProposalManager(models.Manager):
 
@@ -30,7 +35,7 @@ class Proposal(Content):
     objects = ProposalManager()
 
     def contentType():
-        return ContentType.objects.get(app_label="eusay", model="proposal")
+        return ContentType.objects.get(app_label="proposals", model="proposal")
 
     def __unicode__(self):
         return self.title
@@ -80,7 +85,7 @@ class Proposal(Content):
                                           self._hours_since(
                                               comment.createdAt)) * 4
 
-        votes = Vote.get_votes(self)
+        votes = user.get_votes()#Vote.get_votes(self)
         for vote in votes:
             hour_age = self._hours_since(vote.createdAt)
             if vote.isVoteUp:

@@ -1,14 +1,16 @@
-from django import template
-from eusay.models import Vote
-from django.template.loader import render_to_string
-from django.template.defaultfilters import stringfilter, pluralize
-from django.utils.safestring import mark_safe
-from eusay.forms import CommentForm
-from django.conf import settings
 import re
 import markdown
 import bleach
 import datetime
+
+from django.template.loader import render_to_string
+from django.template.defaultfilters import stringfilter, pluralize
+from django.utils.safestring import mark_safe
+from django import template
+from django.conf import settings
+
+from votes.models import Vote
+from comments.forms import CommentForm
 
 register = template.Library()
 

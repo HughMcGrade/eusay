@@ -1,4 +1,17 @@
+import random
+
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect,\
+    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.contrib import messages
+
+from django.contrib.auth import authenticate as django_authenticate, \
+    login as django_login, logout as django_logout
+
+from core.utils import better_slugify
+from users.models import User
+from users.forms import UserForm
 
 RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',\
 'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne', 'Michelina',\
@@ -59,7 +72,7 @@ def profile(request, slug):
         # own profile
         if request.method == "POST":
             # if the form as been submitted
-            form = forms.UserForm(request.POST,
+            form = UserForm(request.POST,
                                   instance=request.user,
                                   current_user=request.user)
             if form.is_valid():
@@ -78,7 +91,7 @@ def profile(request, slug):
                               "own_profile.html",
                               {"profile": user,
                                "form": form})
-        form = forms.UserForm(current_user=request.user) # unbound form
+        form = UserForm(current_user=request.user) # unbound form
         return render(request,
                       "own_profile.html",
                       {'profile': user,
@@ -123,7 +136,7 @@ def logout(request):
                              messages.ERROR,
                              "You can't log out if you aren't logged "
                              "in first!")
-    return redirect(reverse("frontpage"))
+    return HttpResponseRedirect(reverse("frontpage"))
 
 
 def login(request):
@@ -136,4 +149,4 @@ def login(request):
         messages.add_message(request,
                              messages.SUCCESS,
                              "You are now logged in.")
-    return redirect(reverse("frontpage"))
+    return HttpResponseRedirect(reverse("frontpage"))

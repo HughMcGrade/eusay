@@ -81,10 +81,10 @@
      {success: function(response, statusText, xhr) {
        var html = $.parseHTML(response);
        var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
-       if (progressBar.length != 0) {
-	 var comment = $(html).find(selector).children();
+       var comment = $(html).find(selector).children();
+       if (comment.length != 0) {
+	 $(selector).html(comment);
        }
-       $(selector).html(comment);
        initForms();
        putNewMessages(response);
      }});

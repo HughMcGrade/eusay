@@ -1,7 +1,10 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from eusay import models
+from core.tests import addObjects
+from comments.models import Comment
+from proposals.models import Proposal
+from moderation.models import Report, HideAction
 
 class HideTest (TestCase):
 
@@ -19,7 +22,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.comment = models.Comment.objects.get(id=self.comment.id)
+        self.comment = Comment.objects.get(id=self.comment.id)
         self.assertFalse(self.comment.isHidden)
 
         # Log in as non-moderator
@@ -33,7 +36,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.comment = models.Comment.objects.get(id=self.comment.id)
+        self.comment = Comment.objects.get(id=self.comment.id)
         self.assertFalse(self.comment.isHidden)
 
         # Log in as moderator
@@ -51,7 +54,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.comment = models.Comment.objects.get(id=self.comment.id)
+        self.comment = Comment.objects.get(id=self.comment.id)
         self.assertTrue(self.comment.isHidden)
 
     def testHideProposal(self):
@@ -65,7 +68,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.proposal = models.Proposal.objects.get(id=self.proposal.id)
+        self.proposal = Proposal.objects.get(id=self.proposal.id)
         self.assertFalse(self.proposal.isHidden)
 
         # Log in as non-moderator
@@ -79,7 +82,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.proposal = models.Proposal.objects.get(id=self.proposal.id)
+        self.proposal = Proposal.objects.get(id=self.proposal.id)
         self.assertFalse(self.proposal.isHidden)
 
         # Log in as moderator
@@ -97,7 +100,7 @@ class HideTest (TestCase):
         post = {'reason' : 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.proposal = models.Proposal.objects.get(id=self.proposal.id)
+        self.proposal = Proposal.objects.get(id=self.proposal.id)
         self.assertTrue(self.proposal.isHidden)
 
     def testViewHiddenComments(self):
@@ -127,7 +130,7 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=models.Comment.contentType(), object_id=self.comment.id))
+        self.assertTrue(Report.objects.filter(content_type=Comment.contentType(), object_id=self.comment.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
@@ -144,7 +147,7 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=models.Comment.contentType(), object_id=self.comment.id))
+        self.assertTrue(Report.objects.filter(content_type=Comment.contentType(), object_id=self.comment.id))
 
     def testReportProposal(self):
         # View form anonymously
@@ -156,7 +159,7 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=models.Proposal.contentType(), object_id=self.proposal.id))
+        self.assertTrue(Report.objects.filter(content_type=Proposal.contentType(), object_id=self.proposal.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
@@ -173,7 +176,7 @@ class ReportTest (TestCase):
         post = {'reason' : 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=models.Proposal.contentType(), object_id=self.proposal.id))
+        self.assertTrue(Report.objects.filter(content_type=Proposal.contentType(), object_id=self.proposal.id))
 
     def testModeratorPanel(self):
         url = reverse('moderator_panel')
@@ -186,14 +189,14 @@ class ReportTest (TestCase):
         post = {'action' : 'Hide', 'report' : self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(models.HideAction.DoesNotExist, models.HideAction.objects.get, object_id=self.reported_comment.id, content_type=models.Comment.contentType())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_comment.id, content_type=Comment.contentType())
         self.assertTrue(Report.objects.get(id=self.comment_report.id))
 
         # Hide from proposal report anonymously
         post = {'action' : 'Hide', 'report' : self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(models.HideAction.DoesNotExist, models.HideAction.objects.get, object_id=self.reported_proposal.id, content_type=models.Proposal.contentType())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_proposal.id, content_type=Proposal.contentType())
         self.assertTrue(Report.objects.get(id=self.proposal_report.id))
 
         # Login as non-moderator
@@ -207,14 +210,14 @@ class ReportTest (TestCase):
         post = {'action' : 'Hide', 'report' : self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(models.HideAction.DoesNotExist, models.HideAction.objects.get, object_id=self.reported_comment.id, content_type=models.Comment.contentType())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_comment.id, content_type=Comment.contentType())
         self.assertTrue(Report.objects.get(id=self.comment_report.id))
 
         # Hide from proposal report as non-moderator
         post = {'action' : 'Hide', 'report' : self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(models.HideAction.DoesNotExist, models.HideAction.objects.get, object_id=self.reported_proposal.id, content_type=models.Proposal.contentType())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_proposal.id, content_type=Proposal.contentType())
         self.assertTrue(Report.objects.get(id=self.proposal_report.id))
 
         # Login as moderator
@@ -228,12 +231,12 @@ class ReportTest (TestCase):
         post = {'action' : 'Hide', 'report' : self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(models.HideAction.objects.get(object_id=self.reported_comment.id, content_type=models.Comment.contentType()))
+        self.assertTrue(HideAction.objects.get(object_id=self.reported_comment.id, content_type=Comment.contentType()))
         self.assertRaises(Report.DoesNotExist, Report.objects.get, id=self.comment_report.id)
 
         # Hide from proposal report as moderator
         post = {'action' : 'Hide', 'report' : self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(models.HideAction.objects.get(object_id=self.reported_proposal.id, content_type=models.Proposal.contentType()))
+        self.assertTrue(HideAction.objects.get(object_id=self.reported_proposal.id, content_type=Proposal.contentType()))
         self.assertRaises(Report.DoesNotExist, Report.objects.get, id=self.proposal_report.id)

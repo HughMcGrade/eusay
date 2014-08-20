@@ -2,10 +2,12 @@ from django.db import models
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from django.conf import settings
+
 class Vote(models.Model):
     isVoteUp = models.BooleanField()
     createdAt = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey("User")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()

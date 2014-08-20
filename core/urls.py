@@ -3,11 +3,11 @@ from django.contrib import admin
 
 from core import views as core_views
 from proposals import views as proposal_views
-from comment import views as comment_views
-from vote import views as vote_views
+from comments import views as comment_views
+from votes import views as vote_views
 from moderation import views as moderation_views
 from users import views as user_views
-from tag import views as tag_views
+from tags import views as tag_views
 from search import views as search_views
 
 admin.autodiscover()
@@ -57,7 +57,7 @@ urlpatterns = patterns('',
         name="report_proposal"),
     url(r'^make_mod', user_views.make_mod),
     url(r'^make_staff', user_views.make_staff),
-    url(r'^get_messages/', eusay_views.get_messages),
+    #url(r'^get_messages/', _views.get_messages),
     url(r'^hide_comment/(?P<comment_id>\d+)',
         moderation_views.hide_comment,
         name="hide_comment"),

@@ -1,12 +1,14 @@
 from django.contrib.contenttypes.models import ContentType
 
+from votes.models import Vote
+
 # Doesn't render anything
 
 def do_vote(user, content, vote_request):
     try:
         content_type = ContentType.objects.get_for_model(content)
-        vote = Vote.objects.all().get(user=user,\
-                                      object_id=content.id,\
+        vote = Vote.objects.all().get(user=user,
+                                      object_id=content.id,
                                       content_type=content_type)
         # Test for cancel vote
         if (vote_request == "up" and vote.isVoteUp)\
