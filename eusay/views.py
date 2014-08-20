@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate as django_authenticate, \
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from .forms import *
+import eusay.forms as forms
 from .models import *
 from .utils import better_slugify
 
@@ -22,11 +22,18 @@ import datetime
 from lxml.html.diff import htmldiff
 
 
-rand_names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
-get_rand_name = lambda: random.choice(rand_names)
+RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',\
+'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne', 'Michelina',\
+'Juliana', 'Odell', 'Juliet', 'Carli', 'Asha', 'Pearl', 'Kamala', 'Rubie',\
+'Elmer', 'Taren', 'Salley', 'Raymonde', 'Shelba', 'Alison', 'Wilburn', 'Katy',\
+'Denyse', 'Rosemary', 'Brooke', 'Carson', 'Tashina', 'Kristi', 'Aline',\
+'Yevette', 'Eden', 'Christoper', 'Juana', 'Marcie', 'Wendell', 'Vonda',\
+'Dania', 'Sheron', 'Meta', 'Frank', 'Thad', 'Cherise']
+get_rand_name = lambda: random.choice(RAND_NAMES)
 
 def request_login(request):
-    messages.add_message(request, messages.INFO, "You must be logged in to do this")
+    messages.add_message(request, messages.INFO,\
+                         "You must be logged in to do this")
     return HttpResponseRedirect(reverse('frontpage'))
 
 def generate_new_user(request):
@@ -34,11 +41,14 @@ def generate_new_user(request):
     if User.objects.filter(username__exact=username).exists():
         user = User.objects.get(username=username)
     else:
-        if User.objects.exclude(sid__exact="").exclude(sid__exact="Deleted Content").count() == 0:
+        if User.objects.exclude(sid__exact="")\
+                       .exclude(sid__exact="Deleted Content").count() == 0:
             # if there are no users with sids, give sid "s1"
             sid = "s1"
         else:
-            previous_sid = User.objects.all().exclude(sid__exact="Deleted Content").last().sid
+            previous_sid = User.objects.all()\
+                                       .exclude(sid__exact="Deleted Content")\
+                                       .last().sid
             previous_sid_num = previous_sid[1:]
             new_sid_num = int(previous_sid_num) + 1
             sid = "s" + str(new_sid_num)
@@ -83,29 +93,32 @@ def index(request):
         "proposals_template": proposals_template,
         "sort": sort,
     }
-    
-    #ajax requests only return the proposals, not the whole page
+
     if request.is_ajax() and 'page' in request.GET:
+        # AJAX request for pagination
         template = proposals_template
-    
+
     return render(request, template, context)
 
 def about(request):
     return render(request, "about.html")
 
 def profile(request, slug):
-    profile = User.objects.get(slug=slug)
-    if request.user == profile:
+    user = User.objects.get(slug=slug)
+    if request.user == user:
         # own profile
         if request.method == "POST":
             # if the form as been submitted
-            form = UserForm(request.POST,
-                            instance=request.user,
-                            current_user=request.user)
+            form = forms.UserForm(request.POST,
+                                  instance=request.user,
+                                  current_user=request.user)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect(reverse("user",
-                                        kwargs={"slug": better_slugify(form.cleaned_data["username"], domain="User")}))
+                url = reverse("user",
+                              kwargs={"slug": better_slugify(form.cleaned_data
+                                                             ["username"],
+                                                             domain="User")})
+                return HttpResponseRedirect(url)
             else:
                 messages.add_message(request,
                                      messages.ERROR,
@@ -113,31 +126,29 @@ def profile(request, slug):
                 # error_msg = "That username is unavailable."
                 return render(request,
                               "own_profile.html",
-                              {"profile": profile,
-                               "form": form
-                               #"error_msg": error_msg
-                               })
-        form = UserForm(current_user=request.user) # unbound form
+                              {"profile": user,
+                               "form": form})
+        form = forms.UserForm(current_user=request.user) # unbound form
         return render(request,
                       "own_profile.html",
-                      {'profile': profile,
+                      {'profile': user,
                        'form': form})
-    elif profile.hasProfile:
+    elif user.hasProfile:
         # another's (public) profile
         return render(request,
                       "profile.html",
-                      {'profile': profile})
+                      {'profile': user})
     else:
         return render(request,
                       "no_profile.html",
-                      {"profile": profile})
+                      {"profile": user})
 
 def submit(request):
     if not request.user.is_authenticated():
         return request_login(request)
     tags = Tag.objects.all()
     if request.method == 'POST':  # If the form has been submitted...
-        form = ProposalForm(request.POST)  # A form bound to the POST data
+        form = forms.ProposalForm(request.POST)  # A form bound to the POST data
         if form.is_valid():  # All validation rules pass
             proposal = form.save(commit=False)
             proposal.user = request.user
@@ -153,7 +164,7 @@ def submit(request):
                                                    "tags": tags,
                                                    "errors": errors})
     else:
-        form = ProposalForm() # An unbound form
+        form = forms.ProposalForm() # An unbound form
         return render(request, 'submit.html', {'form': form,
                                                "tags": tags})
 
@@ -173,7 +184,8 @@ def tag(request, tagId, slug):
     sort = "popular"
 
     if request.GET.get("sort") == "newest":
-        proposals = Proposal.objects.get_visible_proposals(tag=tag, sort="newest")
+        proposals = Proposal.objects.get_visible_proposals\
+                    (tag=tag, sort="newest")
         sort = "newest"
 
     context = {
@@ -191,14 +203,17 @@ def tag(request, tagId, slug):
 def do_vote(user, content, vote_request):
     try:
         content_type = ContentType.objects.get_for_model(content)
-        vote = Vote.objects.all().get(user=user, object_id=content.id, content_type=content_type)
+        vote = Vote.objects.all().get(user=user,\
+                                      object_id=content.id,\
+                                      content_type=content_type)
         # Test for cancel vote
-        if (vote_request == "up" and vote.isVoteUp) or (vote_request == "down" and not vote.isVoteUp):
+        if (vote_request == "up" and vote.isVoteUp)\
+           or (vote_request == "down" and not vote.isVoteUp):
             vote.delete()
             return 0
     except Vote.DoesNotExist:
         vote = Vote(user=user, content=content)
-    
+
     if vote_request == "up":
         vote.isVoteUp = True
         vote.save()
@@ -212,11 +227,6 @@ def do_vote(user, content, vote_request):
 
 def proposal(request, proposalId, slug=None):
     proposal = Proposal.objects.get(id=proposalId)
-    
-    # TODO duplication currently for graceful deprecation
-    
-    #if request.is_ajax():
-    #    return render(request, "proposal_comments.html", {"proposal" : proposal, "comments" : comments, "user": user })
 
     response_headers = dict()
 
@@ -248,14 +258,16 @@ def proposal(request, proposalId, slug=None):
                 else:
                     raise Exception('Unknown vote string ' + vote_string)
             else:
-                raise Exception('Unknown POST request ' + request.POST['request'])
+                raise Exception('Unknown POST request '\
+                                + request.POST['request'])
             proposal = Proposal.objects.get(id=proposalId)
         else:
-            form = CommentForm(request.POST) # A form bound to the POST data
+            form = forms.CommentForm(request.POST)
             comment = form.save(commit=False)
             if 'reply_to' in request.POST and request.POST['reply_to']:
                 # Comment is a reply
-                comment.replyTo = Comment.objects.get(id = request.POST['reply_to'])
+                comment.replyTo = Comment.objects\
+                                         .get(id=request.POST['reply_to'])
                 response_headers['Comment-Id'] = request.POST['reply_to']
             if form.is_valid(): # All validation rules pass
                 # Process the data in form.cleaned_data
@@ -265,28 +277,21 @@ def proposal(request, proposalId, slug=None):
 
     hide = None
     if proposal.isHidden:
-        hide = HideAction.objects.all().get(object_id=proposal.id, content_type=Proposal.contentType())
+        hide = HideAction.objects.all().get(object_id=proposal.id,\
+                                            content_type=Proposal.contentType())
 
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)
 
-    form = CommentForm() # An unbound form
-    
-    '''
-    # For sorted:
-    comments = sorted(proposal.get_visible_comments(), key=lambda c: c.get_score())
-    comments.reverse()
-    '''
+    form = forms.CommentForm()
     comments = proposal.get_visible_comments()
-    
     response = render(request,
-                  "proposal.html",
-                  {"form": form,
-                   "proposal": proposal,
-                   "comments": comments,
-                   "user_vote": user_vote,
-                   #"comments_template": "proposal_comments.html",
-                   "hide": hide})
+                      "proposal.html",
+                      {"form": form,
+                       "proposal": proposal,
+                       "comments": comments,
+                       "user_vote": user_vote,
+                       "hide": hide})
     for key in response_headers:
         response[key] = response_headers[key]
 
@@ -301,19 +306,22 @@ def hide_comment(request, comment_id):
                              "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        comment = Comment.objects.all().get(id = comment_id)
+        comment = Comment.objects.all().get(id=comment_id)
         if request.method == "POST":
-            form = HideActionForm(request.POST)
+            form = forms.HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = request.user
                 hide_action.content = comment
                 hide_action.save()
-                messages.add_message(request, messages.INFO, "The comment has been hidden and hide action logged")
+                messages.add_message(request, messages.INFO,\
+                                     ("The comment has been hidden"\
+                                      "and hide action logged"))
                 return HttpResponseRedirect(reverse('frontpage'))
             else:
-                messages.add_message(request, messages.ERROR, "Invalid hide comment form")
-        form = HideActionForm()
+                messages.add_message(request, messages.ERROR,\
+                                     "Invalid hide comment form")
+        form = forms.HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
                                                           "form": form})
 
@@ -334,7 +342,7 @@ def edit_comment(request, comment_id):
     else:
         if request.method == "POST":
             if comment.is_new():
-                form = CommentForm(request.POST, instance=comment)
+                form = forms.CommentForm(request.POST, instance=comment)
                 if form.is_valid():
                     form.save()
                     messages.add_message(request,
@@ -352,7 +360,7 @@ def edit_comment(request, comment_id):
                                      messages.ERROR,
                                      "You can only edit a comment in the "
                                      "first 5 minutes.")
-        form = CommentForm(instance=comment)
+        form = forms.CommentForm(instance=comment)
         if comment.is_new():
             return render(request,
                           "edit_comment_form.html",
@@ -372,81 +380,98 @@ def hide_proposal(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
     if not request.user.isModerator:
-        messages.add_message(request, messages.ERROR, "Only moderators may perform hide actions.")
+        messages.add_message(request, messages.ERROR,
+                             "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        proposal = Proposal.objects.all().get(id = proposal_id)
+        proposal = Proposal.objects.all().get(id=proposal_id)
         if request.method == "POST":
-            form = HideActionForm(request.POST)
+            form = forms.HideActionForm(request.POST)
             if form.is_valid():
                 hide_action = form.save(commit=False)
                 hide_action.moderator = request.user
                 hide_action.content = proposal
                 hide_action.save()
-                messages.add_message(request, messages.INFO, "The proposal has been hidden and hide action logged")
+                messages.add_message(request, messages.INFO,
+                                     ("The proposal has been hidden and"\
+                                      "hide action logged"))
                 return HttpResponseRedirect(reverse('frontpage'))
             else:
-                messages.add_message(request, messages.ERROR, "Invalid hide proposal form")
-        form = HideActionForm()
+                messages.add_message(request, messages.ERROR,
+                                     "Invalid hide proposal form")
+        form = forms.HideActionForm()
         return render(request,
                       "hide_proposal_form.html",
                       {"proposal": proposal,
                        "form": form})
 
 def comment_hides(request):
-    hiddens = HideAction.objects.all().filter(content_type=Comment.contentType())
-    return render(request, "hidden_comment_list.html", { "hiddens" : hiddens})
+    hiddens = HideAction.objects.all()\
+                                .filter(content_type=Comment.contentType())
+    return render(request, "hidden_comment_list.html", {"hiddens" : hiddens})
 
 def proposal_hides(request):
-    hiddens = HideAction.objects.all().filter(content_type=Proposal.contentType())
-    return render(request, "hidden_proposal_list.html", { "hiddens" : hiddens})
+    hiddens = HideAction.objects.all()\
+                                .filter(content_type=Proposal.contentType())
+    return render(request, "hidden_proposal_list.html", {"hiddens" : hiddens})
 
 def report_comment(request, comment_id):
-    comment = Comment.objects.all().get(id = comment_id)
+    comment = Comment.objects.all().get(id=comment_id)
     if request.method == "POST":
-        form = ReportForm(request.POST)
+        form = forms.ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             if request.user.is_authenticated():
                 report.reporter = request.user
             report.content = comment
             report.save()
-            messages.add_message(request, messages.INFO, "Your report has been submitted to the moderators.")
+            messages.add_message(request, messages.INFO,
+                                 ("Your report has been submitted"\
+                                  "to the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
-            messages.add_message(request, messages.ERROR, "Invalid report comment form")
+            messages.add_message(request, messages.ERROR,
+                                 "Invalid report comment form")
     else:
-        form = ReportForm()
-        return render(request, "report_comment_form.html", { "comment" : comment, "form" : form})
+        form = forms.ReportForm()
+        return render(request, "report_comment_form.html",
+                      {"comment" : comment, "form" : form})
 
 def report_proposal(request, proposal_id):
-    proposal = Proposal.objects.all().get(id = proposal_id)
+    proposal = Proposal.objects.all()\
+                               .get(id=proposal_id)
     if request.method == "POST":
-        form = ReportForm(request.POST)
+        form = forms.ReportForm(request.POST)
         if form.is_valid():
             report = form.save(commit=False)
             if request.user.is_authenticated():
                 report.reporter = request.user
             report.content = proposal
             report.save()
-            messages.add_message(request, messages.INFO, "Your report has been submitted to the moderators.")
+            messages.add_message(request, messages.INFO,
+                                 ("Your report has been submitted to"\
+                                  "the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
-            messages.add_message(request, messages.ERROR, "Invalid report proposal form")
+            messages.add_message(request, messages.ERROR,
+                                 "Invalid report proposal form")
     else:
-        form = ReportForm()
-        return render(request, "report_proposal_form.html", { "proposal" : proposal, "form" : form})
+        form = forms.ReportForm()
+        return render(request, "report_proposal_form.html",
+                      {"proposal" : proposal, "form" : form})
 
 
 def respond_to_proposal(request, proposalId, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
-    if request.user.userStatus != "Staff" and request.user.userStatus != "Officeholder":
-        messages.add_message(request, messages.ERROR, "Regular users cannot respond to proposals.")
+    if request.user.userStatus != "Staff"\
+       and request.user.userStatus != "Officeholder":
+        messages.add_message(request, messages.ERROR,
+                             "Regular users cannot respond to proposals.")
         return HttpResponseRedirect(reverse('frontpage'))
     proposal = Proposal.objects.get(id=proposalId)
     if request.method == 'POST':
-        form = ResponseForm(request.POST)
+        form = forms.ResponseForm(request.POST)
         if form.is_valid():
             response = form.save(commit=False)
             response.user = request.user
@@ -456,8 +481,9 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
                                                 args=[str(proposal.id),
                                                       proposal.slug]))
         else:
-            messages.add_message(request, messages.ERROR, "Invalid response form")
-    form = ResponseForm()
+            messages.add_message(request, messages.ERROR,
+                                 "Invalid response form")
+    form = forms.ResponseForm()
     return render(request,
                   "respond_to_proposal_form.html",
                   {"proposal": proposal, "form": form})
@@ -467,12 +493,13 @@ def moderator_panel(request):
     if not request.user.is_authenticated():
         return request_login(request)
     if not request.user.isModerator:
-        messages.add_message(request, messages.ERROR, "Only moderators may access the moderator panel.")
+        messages.add_message(request, messages.ERROR,
+                             "Only moderators may access the moderator panel.")
         if request.is_ajax():
             return HttpResponseForbidden("")
         else:
             return HttpResponseRedirect(reverse('frontpage'))
-    
+
     if request.method == "POST":
         report_id = request.POST.get("report")
         report = Report.objects.get(id=report_id)
@@ -488,24 +515,30 @@ def moderator_panel(request):
                 report.delete()
                 messages.add_message(request, messages.INFO, "Content hidden")
             except Report.DoesNotExist:
-                messages.add_message(request, messages.ERROR, "Report not found")
+                messages.add_message(request, messages.ERROR,
+                                     "Report not found")
                 ajaxResponseType = HttpResponseNotFound
         elif action == "Ignore":
             try:
                 report.delete()
-                messages.add_message(request, messages.INFO, "Report ignored")
+                messages.add_message(request, messages.INFO,
+                                     "Report ignored")
             except Report.DoesNotExist:
-                messages.add_message(request, messages.ERROR, "Report not found")
+                messages.add_message(request, messages.ERROR,
+                                     "Report not found")
                 ajaxResponseType = HttpResponseNotFound
         else:
             messages.add_message("Moderation action type not found")
             ajaxResponseType = HttpResponseNotFound
         if request.is_ajax():
             return ajaxResponseType("")
-    
+
     comment_reports = Report.objects.filter(content_type=Comment.contentType())
-    proposal_reports = Report.objects.filter(content_type=Proposal.contentType())
-    return render(request, "moderator_panel.html", { "comment_reports" : comment_reports, "proposal_reports" : proposal_reports})
+    proposal_reports = Report.objects.filter\
+                       (content_type=Proposal.contentType())
+    return render(request, "moderator_panel.html",
+                  {"comment_reports" : comment_reports,
+                   "proposal_reports" : proposal_reports})
 
 
 # Temporary for debugging
@@ -542,14 +575,17 @@ def amend_proposal(request, proposal_id):
             diff = ""
             if amended_title != proposal.title:
                 title_diff = htmldiff(proposal.title, amended_title)
-                diff += '**Title: ' + title_diff + '**\n'  # make title h1 with markdown
+                # Make title h1 with markdown
+                diff += '**Title: ' + title_diff + '**\n'
             if amended_text != proposal.text:
                 text_diff = htmldiff(proposal.text, amended_text)
                 diff += text_diff
 
-            form = AmendmentForm()
+            form = forms.AmendmentForm()
             form.set_initial(amended_title, amended_text)
-            return render(request, "amend_proposal.html", { 'proposal' : proposal, 'form': form, 'diff' : diff })
+            return render(request, "amend_proposal.html",
+                          {'proposal' : proposal, 'form' : form,
+                           'diff' : diff})
         elif request.POST['action'] == 'post':
             comment = Comment()
             comment.proposal = proposal
@@ -557,20 +593,28 @@ def amend_proposal(request, proposal_id):
             comment.text = request.POST['text']
             comment.isAmendment = True
             comment.save()
-            return HttpResponseRedirect(reverse('proposal', args=[proposal_id, proposal.slug]))
+            return HttpResponseRedirect(reverse('proposal',
+                                                args=[proposal_id,
+                                                      proposal.slug]))
         else:
             raise Exception('Unknown form action')
     else:
-        form = AmendmentForm()
+        form = forms.AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
-        return render(request, "amend_proposal.html", { 'proposal' : proposal, 'form' : form })
+        return render(request, "amend_proposal.html",
+                      {'proposal' : proposal, 'form' : form})
 
 def delete_proposal(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
     proposal = Proposal.objects.get(id=proposal_id)
     if proposal.user != request.user:
-        messages.add_message(request, messages.ERROR, "You may only delete your own proposals. Please submit a report to request another user's proposal be hidden.")
+        messages.add_message(request, messages.ERROR, ("You may only delete"
+                                                       "your own proposals."
+                                                       "Please submit a report"
+                                                       "to request another"
+                                                       "user's proposal be"
+                                                       "hidden."))
         return HttpResponseRedirect(reverse('frontpage'))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
@@ -580,9 +624,12 @@ def delete_proposal(request, proposal_id):
             proposal.tags.clear()
             proposal.save()
             messages.add_message(request, messages.INFO, "Proposal deleted")
-            return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": proposal.id, "slug": proposal.slug}))
+            return HttpResponseRedirect(reverse("proposal",
+                                                kwargs={"proposalId" :
+                                                        proposal.id, "slug":
+                                                        proposal.slug}))
     else:
-        return render(request, 'delete_proposal.html', { 'proposal' : proposal})
+        return render(request, 'delete_proposal.html', {'proposal' : proposal})
 
 def delete_comment(request, comment_id):
     if not request.user.is_authenticated():
@@ -605,7 +652,11 @@ def delete_comment(request, comment_id):
             comment.user = User.objects.get_deleted_content_user()
             comment.save()
             messages.add_message(request, messages.SUCCESS, "Comment deleted")
-            return HttpResponseRedirect(reverse("proposal", kwargs={"proposalId": comment.proposal.id, "slug": comment.proposal.slug}))
+            return HttpResponseRedirect(reverse("proposal",
+                                                kwargs={"proposalId" :
+                                                        comment.proposal.id,
+                                                        "slug":
+                                                        comment.proposal.slug}))
     else:
         return render(request, 'delete_comment.html', {'comment': comment})
 
