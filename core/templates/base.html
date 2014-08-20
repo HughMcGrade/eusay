@@ -17,48 +17,48 @@
     <script src="{% static "js/bootstrap-debugger.js" %}"></script>
     <script src="{% static "js/endless-pagination.js" %}"></script>
     <script>
-      jQuery(function($) {
-      $(document).ready(function() {
-      // init autocomplete search
-      $("#search-field").autocomplete({
-      source: function(request, response) {
-      $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
-      response(data.results, function(value) {
-      return {
-      label: value
-      };
-      });
-      });
-      },
-      select: function(event, ui) {
-      window.location.href = ui.item.link;
-      }
-      });
+     jQuery(function($) {
+       $(document).ready(function() {
+	 // init autocomplete search
+	 $("#search-field").autocomplete({
+	   source: function(request, response) {
+	     $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
+	       response(data.results, function(value) {
+		 return {
+		   label: value
+		 };
+	       });
+	     });
+	   },
+	   select: function(event, ui) {
+	     window.location.href = ui.item.link;
+	   }
+	 });
 
-      // hide formatting help
-      $(".submit-formatting-help").hide(0);
+	 // hide formatting help
+	 $(".submit-formatting-help").hide(0);
 
-      // init tooltips
-      $('*[data-toggle="tooltip"]').tooltip();
+	 // init tooltips
+	 $('*[data-toggle="tooltip"]').tooltip();
 
-      });
-      });
+       });
+     });
 
-      // show formatting help
-      function showFormattingHelp(div) {
-      $(div).next().slideToggle()
-      };
+     // show formatting help
+     function showFormattingHelp(div) {
+       $(div).next().slideToggle()
+     };
 
-      // count characters
-      function countChars(val, maxLen) {
-      var len = val.value.length;
-      if (len >= maxLen) {
-      val.value = val.value.substring(0, maxLen);
-      $(val).next().text(len + "/" + maxLen);
-      } else {
-      $(val).next().text(len + "/" + maxLen);
-      }
-      };
+     // count characters
+     function countChars(val, maxLen) {
+       var len = val.value.length;
+       if (len >= maxLen) {
+	 val.value = val.value.substring(0, maxLen);
+	 $(val).next().text(len + "/" + maxLen);
+       } else {
+	 $(val).next().text(len + "/" + maxLen);
+       }
+     };
     </script>
     {% block js %}
     {% endblock %}
