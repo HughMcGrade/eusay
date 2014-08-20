@@ -13,6 +13,7 @@ class Content(models.Model):
     upVotes = models.IntegerField(default=0)
     downVotes = models.IntegerField(default=0)
     isHidden = models.BooleanField(default=False)
+    rank = models.FloatField(default=0.0)
 
     def get_votes_count(self, isUp):
         try:

@@ -41,11 +41,11 @@ class Comment(Content):
 
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
-            return sorted([c for c in Comment.objects.filter(replyTo=self)\
-                           .select_related('user')], key=lambda c: c.get_score)
+            return Comment.objects.filter(replyTo=self)\
+                .select_related('user').order_by("rank")
         elif sort == "chronological":
-            return [c for c in Comment.objects.filter(replyTo=self)\
-                    .select_related('user').order_by("createdAt")]
+            return Comment.objects.filter(replyTo=self)\
+                .select_related('user').order_by("createdAt")
 
     def get_score(self):
         return self.get_votes_up_count() - self.get_votes_down_count()

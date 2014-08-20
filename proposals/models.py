@@ -30,7 +30,6 @@ class Proposal(Content):
     text = models.TextField()
     slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
-    rank = models.FloatField(default=0.0)
 
     objects = ProposalManager()
 
