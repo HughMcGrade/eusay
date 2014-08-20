@@ -1,8 +1,8 @@
 from .base import *
 
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = True
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
                   ".eusay.eusa.ed.ac.uk"]  # Period matches any subdomains
