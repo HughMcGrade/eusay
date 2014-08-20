@@ -62,6 +62,12 @@ body {
 	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+    -webkit-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -ms-transition: all 0.2s linear;
+    -kthtml-transition: all 0.2s linear;
+    transition: all 0.2s linear;
 }
 .page-shadow:before, .page-shadow:after {
 	position: absolute;
@@ -100,15 +106,60 @@ body {
     font-size: 0.6em;
 }
 .index-proposal {
-    min-height: 250px;
     margin-bottom: 20px;
     padding: 15px;
     position: relative;
     overflow: hidden;
+    position: relative;
+    min-height: 220px;
+}
+.index-proposal:hover {
+    position: relative;
+	background-color: #fff;
+	-webkit-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+    -webkit-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -ms-transition: all 0.2s linear;
+    -kthtml-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+    cursor: pointer;
+}
+.index-proposal hr {
+    margin-top: 7px;
+    margin-bottom: 10px;
 }
 .index-proposal-title {
-    min-height: 62px;
     margin-bottom: 7px;
+}
+.index-proposal-title span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    /* edit: fixes overlap error in IE7/8,
+    make sure you have an empty gif */
+    background-image: url('/static/img/empty.gif');
+}
+.index-proposal-bottom {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    right: 15px;
+}
+.index-proposal-tags {
+    color: grey;
+    font-size: 0.9em;
+    z-index: 2;
+}
+.index-proposal-date {
+    color: grey;
+    font-size: 0.9em;
+    margin-top: 4px;
 }
 .endless_more, .endless_loading {
 	display: block;
