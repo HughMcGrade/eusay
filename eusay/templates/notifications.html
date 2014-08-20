@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+| Notifications
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <h3>Notifications</h3>
+        <b>Unread</b>
+        <ul>
+            {% for key, count in unread %}
+                {% include "notifications-list.html" %}
+            {% endfor %}
+        </ul>
+        <b>Read</b>
+        <ul class="notifications-read">
+            {% for key, count in read %}
+                {% include "notifications-list.html" %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
