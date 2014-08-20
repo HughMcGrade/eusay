@@ -1,7 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from eusay.models import Response, Comment
+from proposals.models import Response
+from comments.models import Comment
 from .models import Notification
 
 
@@ -57,4 +58,4 @@ def notify_commenter_of_reply(**kwargs):
 @receiver(post_save, sender=Comment)
 def notify_commenter_of_reply_in_thread(**kwargs):
     comment = kwargs.get("instance")
-    recipients
+#    recipients

@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'api_v1',
     'search',
     'core.settings',
+    'notifications',
 
     # Added
     'endless_pagination',

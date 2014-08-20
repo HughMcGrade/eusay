@@ -102,6 +102,7 @@ class Proposal(Content):
         return Comment.objects.get_visible_comments\
             (proposal=self, reply_to=reply_to, sort=sort)
 
+
 class Response(Content):
     text = models.TextField()
     proposal = models.OneToOneField(Proposal, related_name="response")
@@ -113,5 +114,6 @@ class Response(Content):
         else:
             raise Exception\
                 ("Only staff and officerholders can respond to proposals!")
-            def __unicode__(self):
-                return "%s" % self.text
+
+    def __unicode__(self):
+        return "%s" % self.text

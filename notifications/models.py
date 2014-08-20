@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-
-from eusay.models import User
+from django.conf import settings
 
 
 class NotificationManager(models.Manager):
@@ -26,7 +25,8 @@ class Notification(models.Model):
         # TODO: add notifications for votes?
     )
 
-    recipient = models.ForeignKey(User, related_name="notifications")
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  related_name="notifications")
     type = models.CharField(max_length=50,
                             choices=NOTIFICATION_TYPES,
                             blank=False)

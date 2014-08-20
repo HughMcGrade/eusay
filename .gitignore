@@ -6,7 +6,6 @@ db.sqlite3
 .idea
 .settings
 /core/settings/whoosh_index
-celerybeat-schedule.db
 secrets.json
 
 # -*- mode: gitignore; -*-

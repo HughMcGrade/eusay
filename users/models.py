@@ -6,6 +6,7 @@ from core.utils import better_slugify
 from proposals.models import Proposal
 from comments.models import Comment
 from votes.models import Vote
+from notifications.models import Notification
 
 class UserManager(usermodels.UserManager):
 
@@ -84,6 +85,9 @@ class User(usermodels.AbstractUser):
                                  .filter(content_type=Proposal.contentType())\
                                  .filter(isVoteUp=False)
         return [vote.content for vote in user_votes]
+
+    def has_unread_notifications(self):
+        return bool(Notification.objects.get_unread(self))
 
     def __unicode__(self):
         return self.username + " (" + self.sid + ")"

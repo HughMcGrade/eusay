@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from eusay.views import request_login
+from users.views import request_login
 from .models import Notification
 
 

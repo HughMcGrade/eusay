@@ -7,7 +7,7 @@ from django.conf import settings
 class Vote(models.Model):
     isVoteUp = models.BooleanField()
     createdAt = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="votes")
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()

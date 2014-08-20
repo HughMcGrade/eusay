@@ -1,1 +1,1 @@
-#import notifications.signals
+from notifications import signals

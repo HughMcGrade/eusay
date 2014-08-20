@@ -19,6 +19,11 @@ urlpatterns = patterns('',
     # Django admin
     url(r'^admin/', include(admin.site.urls)),
 
+    # Notifications
+    url(r'notifications/',
+        include("notifications.urls",
+                namespace="notifications")),
+
     # Authentication
     url(r'^logout/$', user_views.logout, name="logout"),
     url(r'^login/$', user_views.login, name="login"),

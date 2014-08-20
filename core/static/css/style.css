@@ -36,13 +36,14 @@ body {
 .red {
     color: red;
 }
-.tri {
-    font-size: 1.3em;
+.notifier {
+    border-left: 1px solid #444444;
+    border-right: 1px solid #444444;
 }
-.tri:hover {
-    color: grey;
-    text-decoration: none;
+.notifier-unread span {
+    color: red;
 }
+
 /* Make markdown h1s, h2s, blockquotes look good in proposals and comments */
 .comment h1, .proposal-text h1 {
     font-size: 1.3em;
