@@ -40,9 +40,27 @@
 
 	 // init tooltips
 	 $('*[data-toggle="tooltip"]').tooltip();
-
+	 prepareNotificationButton();
        });
      });
+
+     function prepareNotificationButton() {
+       var isVisible = false;
+       $('*[data-poload]').click(function(event) {
+	 event.preventDefault();
+	 var e=$(this);
+	 if (isVisible) {
+	   e.popover('hide');
+	   isVisible = false;
+	 }
+	 else {
+	   $.get(e.data('poload'),function(d) {
+             e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
+	     isVisible = true;
+	   });
+	 }
+       });
+     }
 
      // show formatting help
      function showFormattingHelp(div) {
@@ -113,7 +131,7 @@
 	  {% if user.is_authenticated %}
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            <li class="notifier"><a href="/notifications"><span class="glyphicon glyphicon-inbox{% if user.has_unread_notifications %} pink{% endif %}"></span></a></li>
+            <li class="notifier"><a id="notifications_button" data-container="body" data-toggle="popover" title="Notifications" data-placement="bottom" data-poload="{% url 'notifications:all' %}" href="{% url 'notifications:all' %}"><span class="glyphicon glyphicon-inbox{% if user.has_unread_notifications %} pink{% endif %}"></span></a></li>
             {% endif %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}: {{ user.sid }} <b class="caret"></b></a>

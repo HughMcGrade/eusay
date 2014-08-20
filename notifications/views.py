@@ -13,6 +13,10 @@ def notifications(request):
         request_login(request)
         return HttpResponseRedirect(reverse("frontpage"))
     else:
+        template = "notifications.html"
+
+        if request.is_ajax():
+            template = "popover_notifications.html"
 
         unread = Notification.objects.get_unread(request.user)
         read = Notification.objects.get_read(request.user)
@@ -30,6 +34,6 @@ def notifications(request):
         for n in unread:
             n.mark_as_read()
         return render(request,
-                      "notifications.html",
+                      template,
                       {"read": read_notifications.items(),
                        "unread": unread_notifications.items()})
