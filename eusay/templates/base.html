@@ -1,6 +1,4 @@
 {% load static %}
-{% load notifications_tags %}
-{% notifications_unread as unread_count %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -115,7 +113,7 @@
 	  {% if user.is_authenticated %}
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            <li class="notifier{% if unread_count %} notifier-unread{% endif %}"><a href="/notifications"><span class="glyphicon glyphicon-inbox"></span></a></li>
+            <li class="notifier notifier-unread"><a href="/notifications"><span class="glyphicon glyphicon-inbox"></span></a></li>
             {% endif %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}: {{ user.sid }} <b class="caret"></b></a>
