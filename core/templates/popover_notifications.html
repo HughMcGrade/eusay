@@ -3,7 +3,7 @@ No unread notifications
 {% else %}
 <ul>
   {% for key, count in unread %}
-  {% include "notifications_list.html" %}
+  {% include "notifications_entry.html" %}
   {% endfor %}
 </ul>
 {% endif %}
