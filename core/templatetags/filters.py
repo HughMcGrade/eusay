@@ -17,7 +17,7 @@ register = template.Library()
 @register.filter
 def comment_user_vote(comment, user):
     try:
-        vote = Vote.get_votes(comment).get(user = user)
+        vote = comment.votes.get(user = user)
     except Exception:
         vote = None
     if not vote:
