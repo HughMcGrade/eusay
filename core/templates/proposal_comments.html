@@ -16,7 +16,7 @@
             {{ form.text }}
             <div class="charNum">0/1000</div>
           </div>
-          <button type="post" class="btn btn-default">Submit</button>
+          <button type="post" class="submit-comment-button btn btn-default">Submit</button>
         </form>
       </div>
     </div>
@@ -136,10 +136,10 @@
               <form class="comment_vote_form" method="post">
 		{% csrf_token %}
 		<input type="hidden" name="request" value="comment_vote" />  
-		<button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
+		<button name="vote" value="up{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm comment-votes-up">
                   <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.upVotes }}
                 </button>
-                <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
+                <button name="vote" value="down{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm comment-votes-down">
                   <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.downVotes }}
                 </button>
 	      </form>
@@ -162,7 +162,7 @@
               {% csrf_token %}
               <input type="hidden" name="reply_to" value="{{ comment.id }}" />
             </div>
-            <button type="post" class="btn btn-default">Submit</button>
+            <button type="post" class="submit-comment-button btn btn-default">Submit</button>
           </form>
         </div>
       </div>

@@ -36,7 +36,13 @@
  function initForms() {
    $('.proposal-comment-form').ajaxForm(
      { clearForm : true,
+      beforeSend: function() {
+	$('.submit-comment-button').attr('disabled', true);
+	$('.submit-comment-button').text('Submitting...');
+      },
       success: function(response, statusText, xhr) {
+	$('.submit-comment-button').attr('disabled', false);
+	$('.submit-comment-button').text('Submit');
 	if (xhr.getResponseHeader('Comment-Id') != null) {
           // Reply posted
 	  var html = $.parseHTML(response);
@@ -58,35 +64,42 @@
       }
      });
    $('#proposal_vote_form').ajaxForm(
-     {success: function(response, statusText, xhr) {
-       //reloadComments($(".comments"), '{{ proposal.id }}', null);
-       var html = $.parseHTML(response);
-       var votes = $(html).find('#proposal_vote_div').children();
-       if (votes.length != 0) {
-	 $('#proposal_vote_div').html(votes);
-       }
-       initForms();
+     { beforeSend: function() {
+       $('.proposal-vote-button').attr('disabled', true);
+       },
+       success: function(response, statusText, xhr) {
+	 $('.proposal-vote-button').attr('disabled', false);
+	 var html = $.parseHTML(response);
+	 var votes = $(html).find('#proposal_vote_div').children();
+	 if (votes.length != 0) {
+	   $('#proposal_vote_div').html(votes);
+	 }
+	 initForms();
 
-       // Reload progress bar
-       var progressBar = $(html).find('#proposal_progress_bar').children();
-       if (progressBar.length != 0) {
-	 $('#proposal_progress_bar').html(progressBar);
-       }
+	 // Reload progress bar
+	 var progressBar = $(html).find('#proposal_progress_bar').children();
+	 if (progressBar.length != 0) {
+	   $('#proposal_progress_bar').html(progressBar);
+	 }
 
-       // Reload messages
-       putNewMessages(response);
-     }
+	 // Reload messages
+	 putNewMessages(response);
+       }
      });
    $('.comment_vote_form').ajaxForm(
-     {success: function(response, statusText, xhr) {
-       var html = $.parseHTML(response);
-       var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
-       var comment = $(html).find(selector).children();
-       if (comment.length != 0) {
-	 $(selector).html(comment);
-       }
-       initForms();
-       putNewMessages(response);
+     {beforeSend: function() {
+       	 $('.comment-vote-button').attr('disabled', true);
+      },
+      success: function(response, statusText, xhr) {
+       	$('.comment-vote-button').attr('disabled', false);
+	var html = $.parseHTML(response);
+	var selector = '#comment_' + xhr.getResponseHeader("Comment-Id");
+	var comment = $(html).find(selector).children();
+	if (comment.length != 0) {
+	  $(selector).html(comment);
+	}
+	initForms();
+	putNewMessages(response);
      }});
  };
  $(document).ready(function() {
@@ -197,10 +210,10 @@
         {% csrf_token %}
         <div id="proposal_vote_div" class="row proposal-vote-buttons">
           <div class="col-md-3 col-md-offset-2 col-xs-6">
-            <button name="vote" value="up" type="submit" class="btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
+            <button name="vote" value="up" type="submit" class="proposal-vote-button btn btn-lg btn-block {% if user_vote == -1 %} btn-default {% else %} btn-success {% endif %}"><span class="glyphicon glyphicon-thumbs-up"></span> Agree</button>
           </div>
           <div class="col-md-3 col-md-offset-2 col-xs-6">
-            <button name="vote" value="down" type="submit" class="btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
+            <button name="vote" value="down" type="submit" class="proposal-vote-button btn btn-lg btn-block {% if user_vote == 1 %} btn-default {% else %} btn-danger {% endif %}"><span class="glyphicon glyphicon-thumbs-down"></span> Disagree</button>
           </div>
         </div>
       </form>
