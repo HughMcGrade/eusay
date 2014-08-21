@@ -1,9 +1,23 @@
 /* Base */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
 .footer {
-    margin: 40px auto 20px auto;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  min-height: 30px;
+  background-color: #101010;
+  padding: 10px;
 }
 .footer a, .footer {
-    color: grey;
+    color: #999;
 }
 .format-help-link:hover {
     cursor: pointer;
@@ -31,10 +45,10 @@ body {
 	border-radius: 0px !important;
 }
 .green {
-    color: green;
+    color: green; !important
 }
 .red {
-    color: red;
+    color: red; !important
 }
 .notifier {
     border-left: 1px solid #444444;
@@ -110,8 +124,7 @@ body {
     padding: 15px;
     position: relative;
     overflow: hidden;
-    position: relative;
-    min-height: 220px;
+    height: 250px;
 }
 .index-proposal:hover {
     position: relative;
@@ -131,10 +144,16 @@ body {
     margin-top: 7px;
     margin-bottom: 10px;
 }
-.index-proposal-title {
-    margin-bottom: 7px;
+.index-proposal-top {
+    height: 150px;
+    overflow: hidden;
+}
+.index-proposal-tags {
+    color: grey;
+    font-size: 0.9em;
 }
 .index-proposal-title span {
+    /* make whole div into a link */
     position: absolute;
     width: 100%;
     height: 100%;
@@ -143,20 +162,15 @@ body {
     z-index: 1;
     /* edit: fixes overlap error in IE7/8,
     make sure you have an empty gif */
-    background-image: url('/static/img/empty.gif');
+    background-image: url('/static/img/blank.gif');
 }
 .index-proposal-bottom {
     position: absolute;
-    bottom: 10px;
-    left: 15px;
+    bottom: 15px;
     right: 15px;
+    left: 15px;
 }
-.index-proposal-tags {
-    color: grey;
-    font-size: 0.9em;
-    z-index: 2;
-}
-.index-proposal-date {
+.index-proposal-meta {
     color: grey;
     font-size: 0.9em;
     margin-top: 4px;

@@ -85,3 +85,17 @@ def humanize_timesince(date):
 
     return u"a few seconds ago"
 
+
+@register.filter(name="smart_time")
+def smart_time(date):
+    delta = datetime.datetime.now() - date
+
+    num_years = delta.days // 365
+    if num_years > 0:
+        return date.strftime("%d %b, %Y")
+
+    elif date.date() != datetime.date.today():
+        return date.strftime("%d %b")
+
+    else:
+        return date.strftime("%H:%M")
