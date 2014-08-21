@@ -48,6 +48,7 @@
        var isVisible = false;
        $('*[data-poload]').click(function(event) {
 	 event.preventDefault();
+	 event.stopPropagation();
 	 var e=$(this);
 	 if (isVisible) {
 	   e.popover('hide');
@@ -56,12 +57,30 @@
 	 else {
 	   e.popover({html: true, content:'Loading...', trigger: 'manual'}).popover('show');
 	   isVisible = true;
-	   $.get(e.data('poload'),function(d) {
+	   if (typeof notificationsContent == 'undefined') {
+	     $.get(e.data('poload'),function(d) {
+	       e.popover('destroy');
+               e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
+	       notificationsContent = d;
+	       $('.notifier span').removeClass('pink');
+	     });
+	   }
+	   else {
 	     e.popover('destroy');
-             e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
-	   });
+	     e.popover({html: true, content: notificationsContent, trigger: 'manual'}).popover('show');
+	   }
 	 }
        });
+
+       $(document).on('click', function(event) {
+	 $('*[data-poload]').each(function() {
+	   if (isVisible) {
+	     $(this).popover('hide');
+	     isVisible = false;
+	   }
+	   });
+       });
+
      }
 
      // show formatting help
@@ -173,8 +192,10 @@
       {% block content %}
       {% endblock %}
 
-      <div class="row footer">
-        <div class="col-xs-12 text-center">
+    </div> <!-- ./mainContainer -->
+
+      <div class="footer">
+        <div class="container text-center">
           <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -184,6 +205,5 @@
         </div>
       </div>
 
-    </div> <!-- ./mainContainer -->
   </body>
 </html>

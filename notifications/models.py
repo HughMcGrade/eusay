@@ -22,6 +22,8 @@ class Notification(models.Model):
         ("proposal_amendment", "new suggested amendment to"),
         ("comment_reply", "new reply to"),
         ("student_council_soon", "student council coming up"),
+        ("comment_hidden", "comment hidden"),
+        ("proposal_hidden", "proposal hidden"),
         # TODO: add notifications for votes?
     )
 

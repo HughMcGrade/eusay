@@ -1,9 +1,23 @@
 /* Base */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
 .footer {
-    margin: 40px auto 20px auto;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  min-height: 30px;
+  background-color: #101010;
+  padding: 10px;
 }
 .footer a, .footer {
-    color: grey;
+    color: #999;
 }
 .format-help-link:hover {
     cursor: pointer;
@@ -31,10 +45,10 @@ body {
 	border-radius: 0px !important;
 }
 .green {
-    color: green;
+    color: green; !important
 }
 .red {
-    color: red;
+    color: red; !important
 }
 .notifier {
     border-left: 1px solid #444444;
@@ -43,7 +57,27 @@ body {
 .notifier-unread span {
     color: red;
 }
-
+#notifications-view-more {
+    position: relative;
+}
+#notifications-view-more hr {
+    margin-bottom: 5px;
+}
+#notifications-view-more p {
+    margin-bottom: 0;
+}
+#notifications-view-more span {
+    /* make whole div into a link */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    /* edit: fixes overlap error in IE7/8,
+    make sure you have an empty gif */
+    background-image: url('/static/img/blank.gif');
+}
 /* Make markdown h1s, h2s, blockquotes look good in proposals and comments */
 .comment h1, .proposal-text h1 {
     font-size: 1.3em;
@@ -110,8 +144,7 @@ body {
     padding: 15px;
     position: relative;
     overflow: hidden;
-    position: relative;
-    min-height: 220px;
+    height: 250px;
 }
 .index-proposal:hover {
     position: relative;
@@ -131,10 +164,15 @@ body {
     margin-top: 7px;
     margin-bottom: 10px;
 }
+.index-proposal-top {
+    height: 150px;
+    overflow: hidden;
+}
 .index-proposal-title {
-    margin-bottom: 7px;
+    margin-bottom: 5px;
 }
 .index-proposal-title span {
+    /* make whole div into a link */
     position: absolute;
     width: 100%;
     height: 100%;
@@ -143,20 +181,23 @@ body {
     z-index: 1;
     /* edit: fixes overlap error in IE7/8,
     make sure you have an empty gif */
-    background-image: url('/static/img/empty.gif');
-}
-.index-proposal-bottom {
-    position: absolute;
-    bottom: 10px;
-    left: 15px;
-    right: 15px;
+    background-image: url('/static/img/blank.gif');
 }
 .index-proposal-tags {
     color: grey;
     font-size: 0.9em;
-    z-index: 2;
 }
-.index-proposal-date {
+.index-proposal-user {
+    color: grey;
+    font-size: 0.9em;
+}
+.index-proposal-bottom {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    left: 15px;
+}
+.index-proposal-meta {
     color: grey;
     font-size: 0.9em;
     margin-top: 4px;
@@ -237,6 +278,13 @@ body {
 .proposal-page {
 	margin-bottom: 15px;
 	padding: 15px;
+}
+#proposal-title {
+    margin-bottom: 10px;
+}
+#proposal-user {
+    margin-top: 0;
+    color: grey;
 }
 .proposal-text {
     margin-top: 20px;

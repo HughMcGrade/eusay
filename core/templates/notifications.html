@@ -8,16 +8,13 @@
 <div class="row">
     <div class="col-xs-12 col-sm-8 col-sm-offset-2">
         <h3>Notifications</h3>
-        <b>Unread</b>
         <ul>
             {% for key, count in unread %}
-                {% include "notifications-list.html" %}
+                <b>{% include "notifications_entry.html" %}</b>
             {% endfor %}
-        </ul>
-        <b>Read</b>
-        <ul class="notifications-read">
+        
             {% for key, count in read %}
-                {% include "notifications-list.html" %}
+                {% include "notifications_entry.html" %}
             {% endfor %}
         </ul>
     </div>
