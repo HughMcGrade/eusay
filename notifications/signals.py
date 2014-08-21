@@ -1,8 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from proposals.models import Response
+from proposals.models import Response, Proposal
 from comments.models import Comment
+from moderation.models import HideAction
 from .models import Notification
 
 
@@ -76,3 +77,19 @@ def notify_commenter_of_reply_in_thread(created, **kwargs):
             Notification.objects.create(recipient=recipient,
                                         type=type,
                                         content=content)
+
+
+@receiver(post_save, sender=HideAction)
+def notify_submitter_if_content_hidden(created, **kwargs):
+    hide_action = kwargs.get("instance")
+    if created:
+        # Don't notify submitter if they hide their own content
+        if hide_action.moderator != hide_action.content.user:
+            recipient = hide_action.content.user
+            if hide_action.content_type == Proposal.contentType():
+                type = "proposal_hidden"
+            elif hide_action.content_type == Comment.contentType():
+                type = "comment_hidden"
+            Notification.objects.create(recipient=recipient,
+                                        type=type,
+                                        content=hide_action.content)
