@@ -72,7 +72,7 @@ def notify_commenter_of_reply_in_thread(created, **kwargs):
         recipients = [reply.user for reply in comment.replyTo.get_replies()
                       if not reply.user == comment.user]
         type = "comment_reply"
-        content = comment  # TODO: standardize what content is
+        content = comment.replyTo
         for recipient in recipients:
             Notification.objects.create(recipient=recipient,
                                         type=type,
