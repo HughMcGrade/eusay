@@ -57,7 +57,27 @@ body {
 .notifier-unread span {
     color: red;
 }
-
+#notifications-view-more {
+    position: relative;
+}
+#notifications-view-more hr {
+    margin-bottom: 5px;
+}
+#notifications-view-more p {
+    margin-bottom: 0;
+}
+#notifications-view-more span {
+    /* make whole div into a link */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    /* edit: fixes overlap error in IE7/8,
+    make sure you have an empty gif */
+    background-image: url('/static/img/blank.gif');
+}
 /* Make markdown h1s, h2s, blockquotes look good in proposals and comments */
 .comment h1, .proposal-text h1 {
     font-size: 1.3em;

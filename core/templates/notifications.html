@@ -11,13 +11,13 @@
         <b>Unread</b>
         <ul>
             {% for key, count in unread %}
-                {% include "notifications-list.html" %}
+                {% include "notifications_list.html" %}
             {% endfor %}
         </ul>
         <b>Read</b>
         <ul class="notifications-read">
             {% for key, count in read %}
-                {% include "notifications-list.html" %}
+                {% include "notifications_list.html" %}
             {% endfor %}
         </ul>
     </div>

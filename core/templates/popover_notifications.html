@@ -3,9 +3,11 @@ No unread notifications
 {% else %}
 <ul>
   {% for key, count in unread %}
-  {% include "notifications-list.html" %}
+  {% include "notifications_list.html" %}
   {% endfor %}
 </ul>
 {% endif %}
-<hr />
-<p class="text-center"><a href="{% url 'notifications:all' %}">View All</a></p>
+<div id="notifications-view-more">
+    <hr />
+    <p class="text-center"><a href="{% url 'notifications:all' %}">View All<span></span></a></p>
+</div>
