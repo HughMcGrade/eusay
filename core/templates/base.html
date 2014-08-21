@@ -117,8 +117,6 @@
 	<div class="collapse navbar-collapse" id="eusay-navbar-collapse-1">
 	  <ul class="nav navbar-nav">
             <li><a href="{% url 'submit' %}">Submit</a></li>
-            <li><a>Browse proposals</a></li>
-            <li><a>Browse tags</a></li>
 	    {% if user.is_authenticated and user.isModerator %}
 	    <li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
 	    {% endif %}
