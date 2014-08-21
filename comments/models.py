@@ -48,7 +48,7 @@ class Comment(Content):
                 .select_related('user').order_by("createdAt")
 
     def get_score(self):
-        return self.get_votes_up_count() - self.get_votes_down_count()
+        return self.upVotes - self.downVotes
 
     def __unicode__(self):
         return "%s" % self.text

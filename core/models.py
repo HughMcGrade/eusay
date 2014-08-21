@@ -16,18 +16,7 @@ class Content(models.Model):
     rank = models.FloatField(default=0.0)
 
     def get_votes_count(self, isUp):
-        try:
-            return len(Vote.get_votes(self).filter(isVoteUp=isUp))
-        except Exception:
-            return 0
-
-    def get_votes_up_count(self):
-        #return self.get_votes_count(True)
-        return self.upVotes
-
-    def get_votes_down_count(self):
-        #return self.get_votes_count(False)
-        return self.downVotes
+        return len(Vote.get_votes(self).filter(isVoteUp=isUp))
 
     def get_votes(self):
         return self.votes
