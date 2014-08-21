@@ -192,8 +192,10 @@
       {% block content %}
       {% endblock %}
 
-      <div class="row footer">
-        <div class="col-xs-12 text-center">
+    </div> <!-- ./mainContainer -->
+
+      <div class="footer">
+        <div class="container text-center">
           <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -203,6 +205,5 @@
         </div>
       </div>
 
-    </div> <!-- ./mainContainer -->
   </body>
 </html>
