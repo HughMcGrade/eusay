@@ -48,6 +48,7 @@
        var isVisible = false;
        $('*[data-poload]').click(function(event) {
 	 event.preventDefault();
+	 event.stopPropagation();
 	 var e=$(this);
 	 if (isVisible) {
 	   e.popover('hide');
@@ -62,6 +63,16 @@
 	   });
 	 }
        });
+
+       $(document).on('click', function(event) {
+	 $('*[data-poload]').each(function() {
+	   if (isVisible) {
+	     $(this).popover('hide');
+	     isVisible = false;
+	   }
+	   });
+       });
+
      }
 
      // show formatting help
