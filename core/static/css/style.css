@@ -143,7 +143,7 @@ body {
     z-index: 1;
     /* edit: fixes overlap error in IE7/8,
     make sure you have an empty gif */
-    background-image: url('/static/img/empty.gif');
+    background-image: url('/static/img/blank.gif');
 }
 .index-proposal-bottom {
     position: absolute;
