@@ -4,6 +4,15 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.conf import settings
 
+class VoteManager(models.Manager):
+    def get_votes(self, content):
+        content_type = ContentType.objects.get_for_model(content)
+        return Vote.objects.filter(content_type=content_type,
+                                   object_id=content.id)
+
+    def get_votes_count(self, content, is_up):
+        return self.get_votes(content).filter(isVoteUp=is_up).count()
+
 class Vote(models.Model):
     isVoteUp = models.BooleanField()
     createdAt = models.DateTimeField(auto_now_add=True)
@@ -13,14 +22,11 @@ class Vote(models.Model):
     object_id = models.PositiveIntegerField()
     content = GenericForeignKey()
 
-    @staticmethod
-    def get_votes(content):
-        content_type = ContentType.objects.get_for_model(content)
-        return Vote.objects.filter(content_type=content_type,\
-                                   object_id=content.id)
+    objects = VoteManager()
 
     def save(self, *args, **kwargs):
         super(Vote, self).save(*args, **kwargs)
-        self.content.upVotes = self.content.get_votes_count(True)
-        self.content.downVotes = self.content.get_votes_count(False)
+        self.content.upVotes = Vote.objects.get_votes_count(self.content, True)
+        self.content.downVotes = Vote.objects.get_votes_count(self.content,
+                                                              False)
         self.content.save()

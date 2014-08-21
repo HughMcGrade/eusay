@@ -28,10 +28,10 @@
           <hr />
           <div class="row">
             <div class="col-sm-6 col-xs-12">
-              <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.get_votes_up_count }} For</a>
+              <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.upVotes }} For</a>
             </div>
             <div class="col-sm-6 col-xs-12">
-              <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.get_votes_down_count }} Against</a>
+              <a href="{% url 'proposal' proposal.id proposal.slug %}" role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.downVotes }} Against</a>
             </div>
             </div>
 

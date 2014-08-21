@@ -52,8 +52,8 @@ class Proposal(Content):
                                            "slug": self.slug})
 
     def get_votes_up_percentage(self):
-        votes_up = self.get_votes_up_count()
-        votes_total = votes_up + self.get_votes_down_count()
+        votes_up = self.upVotes
+        votes_total = votes_up + self.downVotes
         if votes_total == 0:
             return 0
         else:
@@ -94,8 +94,8 @@ class Proposal(Content):
 
         return rank * \
             self._proximity_coefficient() + \
-            self.get_votes_up_count() - \
-            self.get_votes_down_count()
+            self.upVotes - \
+            self.downVotes
 
     def get_visible_comments(self, reply_to=None, sort="popularity"):
         return Comment.objects.get_visible_comments\

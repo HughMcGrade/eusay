@@ -80,10 +80,10 @@
 	      {% csrf_token %}
 	      <input type="hidden" name="request" value="comment_vote" />
               <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.get_votes_up_count }}
+                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.upVotes }}
               </button>
               <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.get_votes_down_count }}
+                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.downVotes }}
               </button>
 	    </form>
           </div>
@@ -137,10 +137,10 @@
 		{% csrf_token %}
 		<input type="hidden" name="request" value="comment_vote" />  
 		<button name="vote" value="up{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                  <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.get_votes_up_count }}
+                  <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.upVotes }}
                 </button>
                 <button name="vote" value="down{{ reply.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                  <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.get_votes_down_count }}
+                  <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.downVotes }}
                 </button>
 	      </form>
             </div>

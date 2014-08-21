@@ -54,9 +54,11 @@
 	   isVisible = false;
 	 }
 	 else {
+	   e.popover({html: true, content:'Loading...', trigger: 'manual'}).popover('show');
+	   isVisible = true;
 	   $.get(e.data('poload'),function(d) {
+	     e.popover('destroy');
              e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
-	     isVisible = true;
 	   });
 	 }
        });
