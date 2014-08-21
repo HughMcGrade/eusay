@@ -9,7 +9,7 @@
 {% elif key.0 == "student_council_soon" %}
     <li>{{ count }} student council{{ count|pluralize }} coming up soon!</li>
 {% elif key.0 == "comment_hidden" %}
-    <li>Your comment on <a href="{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a>was hidden by a moderator.</li>
+    <li>Your comment on <a href="{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a> was hidden by a moderator.</li>
 {% elif key.0 == "proposal_hidden" %}
-    <li>Your proposal <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a>was hidden by a moderator.</li>
+    <li>Your proposal <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a> was hidden by a moderator.</li>
 {% endif %}

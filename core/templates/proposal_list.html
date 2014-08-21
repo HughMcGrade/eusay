@@ -18,6 +18,9 @@
             {{ proposal.title }}
             <span></span>
         </a></h4>
+      <div class="index-proposal-user">
+          by {{ proposal.user.username }}
+      </div>
       <div class="index-proposal-tags">
           {{ proposal.tags.all | join:", " }}
       </div>

@@ -189,7 +189,15 @@
     <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
       <div class="row">
         <div class="col-xs-12">
-          <h2 class="text-center">{{ proposal.title }}</h2>
+          <h2 id="proposal-title" class="text-center">{{ proposal.title }}</h2>
+          <p id="proposal-user" class="text-center">
+          by
+          {% if proposal.user.hasProfile %}
+              <a href="{% url 'user' proposal.user.slug %}">{{ proposal.user.username }}</a>
+          {% else %}
+              {{ proposal.user.username }}
+          {% endif %}
+          </p>
         </div>
       </div>
       <div id="proposal_progress_bar" class="progress proposal-progress-bar">

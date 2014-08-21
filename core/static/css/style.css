@@ -148,9 +148,8 @@ body {
     height: 150px;
     overflow: hidden;
 }
-.index-proposal-tags {
-    color: grey;
-    font-size: 0.9em;
+.index-proposal-title {
+    margin-bottom: 5px;
 }
 .index-proposal-title span {
     /* make whole div into a link */
@@ -163,6 +162,14 @@ body {
     /* edit: fixes overlap error in IE7/8,
     make sure you have an empty gif */
     background-image: url('/static/img/blank.gif');
+}
+.index-proposal-tags {
+    color: grey;
+    font-size: 0.9em;
+}
+.index-proposal-user {
+    color: grey;
+    font-size: 0.9em;
 }
 .index-proposal-bottom {
     position: absolute;
@@ -251,6 +258,13 @@ body {
 .proposal-page {
 	margin-bottom: 15px;
 	padding: 15px;
+}
+#proposal-title {
+    margin-bottom: 10px;
+}
+#proposal-user {
+    margin-top: 0;
+    color: grey;
 }
 .proposal-text {
     margin-top: 20px;
