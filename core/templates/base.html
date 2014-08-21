@@ -57,10 +57,18 @@
 	 else {
 	   e.popover({html: true, content:'Loading...', trigger: 'manual'}).popover('show');
 	   isVisible = true;
-	   $.get(e.data('poload'),function(d) {
+	   if (typeof notificationsContent == 'undefined') {
+	     $.get(e.data('poload'),function(d) {
+	       e.popover('destroy');
+               e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
+	       notificationsContent = d;
+	       $('.notifier span').removeClass('pink');
+	     });
+	   }
+	   else {
 	     e.popover('destroy');
-             e.popover({html: true, content: d, trigger: 'manual'}).popover('show');
-	   });
+	     e.popover({html: true, content: notificationsContent, trigger: 'manual'}).popover('show');
+	   }
 	 }
        });
 
