@@ -28,7 +28,7 @@ def hide_comment(request, comment_id):
                 hide_action.content = comment
                 hide_action.save()
                 messages.add_message(request, messages.INFO,\
-                                     ("The comment has been hidden"\
+                                     ("The comment has been hidden "\
                                       "and hide action logged"))
                 return HttpResponseRedirect(reverse('frontpage'))
             else:
@@ -55,7 +55,7 @@ def hide_proposal(request, proposal_id):
                 hide_action.content = proposal
                 hide_action.save()
                 messages.add_message(request, messages.INFO,
-                                     ("The proposal has been hidden and"\
+                                     ("The proposal has been hidden and "\
                                       "hide action logged"))
                 return HttpResponseRedirect(reverse('frontpage'))
             else:
@@ -88,7 +88,7 @@ def report_comment(request, comment_id):
             report.content = comment
             report.save()
             messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted"\
+                                 ("Your report has been submitted "\
                                   "to the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
@@ -111,7 +111,7 @@ def report_proposal(request, proposal_id):
             report.content = proposal
             report.save()
             messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted to"\
+                                 ("Your report has been submitted to "\
                                   "the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
