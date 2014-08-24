@@ -31,11 +31,11 @@
       {% endif %}
           <hr />
           <div class="row">
-            <div class="col-xs-12">
-                <div class="btn-group btn-group-justified">
-                    <a role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.upVotes }} For</a>
-                    <a role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.downVotes }} Against</a>
-                </div>
+            <div class="col-xs-6">
+                <a role="button" class="btn btn-sm btn-block btn-success"><span class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.upVotes }} For</a>
+            </div>
+            <div class="col-xs-6">
+                <a role="button" class="btn btn-sm btn-block btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.downVotes }} Against</a>
             </div>
           </div>
        <div class="index-proposal-meta">
