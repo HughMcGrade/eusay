@@ -1,9 +1,5 @@
 Hi {{ username }},
+you have {{ count }} new notification{{ count|pluralize }} on eusay:
 
-you have {{ count }} new notification{{ count||pluralize }} on eusay:
-
-{% for key, count in unread %}
-    {% include "notifications_entry_plaintext.txt %}
-{% endfor %}
-
+{% for key, count in unread %}*{% include "notifications_entry_plaintext.txt" %}{% endfor %}
 You can see all your notifications on https://eusay.eusa.ed.ac.uk/notifications/.

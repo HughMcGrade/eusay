@@ -27,15 +27,15 @@ class Command(BaseCommand):
                            "count": count,
                            "unread": notifications_dict.items()}
 
-                text_content = render_to_string("notifications_email.txt",
+                text_content = render_to_string("notification_email.txt",
                                                 context)
-                html_content = render_to_string("notifications_email.html",
+                html_content = render_to_string("notification_email.html",
                                                 context)
 
-                subject = "{0}, you have {1} new {2} on eusay!".\
+                subject = "{0}, you have {1} new notification{2} on eusay!".\
                     format(user.username,
                            count,
-                           pluralize(count, "notification"))
+                           pluralize(count))
                 to_email = user.email
                 msg = EmailMultiAlternatives(subject,
                                              text_content,
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         connection = get_connection()
         connection.send_messages(emails)
 
-        self.stdout.write("{0}: Successfully sent {1} {2}".format(
+        self.stdout.write("{0}: Successfully sent {1} email{2}".format(
             datetime.now().isoformat(),
             len(emails),
-            pluralize(len(emails), "email")))
+            pluralize(len(emails))))

@@ -2,16 +2,6 @@
 
 <html>
     <body>
-        <p>
-            <b>Hi {{ username }},</b><br />
-            You have {{ count }} new notification{{ count|pluralize }} on <a href="https://eusay.eusa.ed.ac.uk">eusay</a>:<br />
-        </p>
-        <ul>
-            {% for key, count in unread %}
-                {% include "notifications_entry.html" %}
-            {% endfor %}
-        </ul>
-
         <table>
             <tr>
                 <td><b>Hi {{ username }},</b></td>
