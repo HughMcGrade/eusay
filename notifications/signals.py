@@ -86,9 +86,9 @@ def notify_submitter_if_content_hidden(created, **kwargs):
         # Don't notify submitter if they hide their own content
         if hide_action.moderator != hide_action.content.user:
             recipient = hide_action.content.user
-            if hide_action.content_type == Proposal.contentType():
+            if hide_action.content_type == Proposal.get_content_type():
                 type = "proposal_hidden"
-            elif hide_action.content_type == Comment.contentType():
+            elif hide_action.content_type == Comment.get_content_type():
                 type = "comment_hidden"
             Notification.objects.create(recipient=recipient,
                                         type=type,

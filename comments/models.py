@@ -16,7 +16,6 @@ class CommentManager(models.Manager):
         elif sort == "newest":
             return sorted(comments, key=lambda c: c.createdAt)
 
-
 class Comment(Content):
     # The maximum length of 'text' is 6100 because a proposal can have 6000
     # characters in its body and 100 in its title. Because amendments are
@@ -29,8 +28,10 @@ class Comment(Content):
 
     objects = CommentManager()
 
-    def contentType():
-        return ContentType.objects.get(app_label="comments", model="comment")
+    def get_content_type():
+        if not hasattr(Comment, '_content_type'):
+            Comment._content_type = ContentType.objects.get(app_label="comments", model="comment")
+        return Comment._content_type
 
     def is_new(self):
         """

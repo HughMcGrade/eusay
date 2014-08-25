@@ -119,7 +119,7 @@ def proposal(request, proposalId, slug=None):
     hide = None
     if proposal.isHidden:
         hide = HideAction.objects.all().get(object_id=proposal.id,\
-                                            content_type=Proposal.contentType())
+                                            content_type=Proposal.get_content_type())
 
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)

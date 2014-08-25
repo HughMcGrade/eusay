@@ -33,11 +33,13 @@ class Proposal(Content):
 
     objects = ProposalManager()
 
-    def contentType():
-        return ContentType.objects.get(app_label="proposals", model="proposal")
-
     def __unicode__(self):
         return self.title
+
+    def get_content_type():
+        if not hasattr(Proposal, '_content_type'):
+            Proposal._content_type = ContentType.objects.get(app_label="proposals", model="proposal")
+        return Proposal._content_type
 
     def save(self, *args, **kwargs):
         is_initial = not self.pk

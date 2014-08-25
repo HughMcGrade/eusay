@@ -72,7 +72,7 @@ class User(usermodels.AbstractUser):
         has voted for.
         """
         user_votes = Vote.objects.filter(user=self)\
-                                 .filter(content_type=Proposal.contentType())\
+                                 .filter(content_type=Proposal.get_content_type())\
                                  .filter(isVoteUp=True)
         return [vote.content for vote in user_votes]
 
@@ -82,7 +82,7 @@ class User(usermodels.AbstractUser):
         the user has voted against.
         """
         user_votes = Vote.objects.filter(user=self)\
-                                 .filter(content_type=Proposal.contentType())\
+                                 .filter(content_type=Proposal.get_content_type())\
                                  .filter(isVoteUp=False)
         return [vote.content for vote in user_votes]
 

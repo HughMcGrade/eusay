@@ -69,12 +69,12 @@ def hide_proposal(request, proposal_id):
 
 def comment_hides(request):
     hiddens = HideAction.objects.all()\
-                                .filter(content_type=Comment.contentType())
+                                .filter(content_type=Comment.get_content_type())
     return render(request, "hidden_comment_list.html", {"hiddens" : hiddens})
 
 def proposal_hides(request):
     hiddens = HideAction.objects.all()\
-                                .filter(content_type=Proposal.contentType())
+                                .filter(content_type=Proposal.get_content_type())
     return render(request, "hidden_proposal_list.html", {"hiddens" : hiddens})
 
 def report_comment(request, comment_id):
@@ -166,9 +166,9 @@ def moderator_panel(request):
         if request.is_ajax():
             return ajaxResponseType("")
 
-    comment_reports = Report.objects.filter(content_type=Comment.contentType())
+    comment_reports = Report.objects.filter(content_type=Comment.get_content_type())
     proposal_reports = Report.objects.filter\
-                       (content_type=Proposal.contentType())
+                       (content_type=Proposal.get_content_type())
     return render(request, "moderator_panel.html",
                   {"comment_reports" : comment_reports,
                    "proposal_reports" : proposal_reports})
