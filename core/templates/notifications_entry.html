@@ -1,15 +1,15 @@
 {% if key.0 == "proposal_response" %}
-    <li>Official response to <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
+    <li>Official response to <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
 {% elif key.0 == "proposal_comment" %}
-    <li>{{ count }} new comment{{ count|pluralize }} on <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
+    <li>{{ count }} new comment{{ count|pluralize }} on <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
 {% elif key.0 == "proposal_amendment" %}
-    <li>{{ count }} new amendment{{ count|pluralize }} to <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
+    <li>{{ count }} new amendment{{ count|pluralize }} to <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
 {% elif key.0 == "comment_reply" %}
-    <li>{{ count }} new repl{{ count|pluralize:"y,ies" }} to your comment on <a href="{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a></li>
+    <li>{{ count }} new repl{{ count|pluralize:"y,ies" }} to your comment on <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a></li>
 {% elif key.0 == "student_council_soon" %}
     <li>{{ count }} student council{{ count|pluralize }} coming up soon!</li>
 {% elif key.0 == "comment_hidden" %}
-    <li>Your comment on <a href="{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a> was hidden by a moderator.</li>
+    <li>Your comment on <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}">{{ key.1.proposal.title }}</a> was hidden by a moderator.</li>
 {% elif key.0 == "proposal_hidden" %}
-    <li>Your proposal <a href="{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a> was hidden by a moderator.</li>
+    <li>Your proposal <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a> was hidden by a moderator.</li>
 {% endif %}
