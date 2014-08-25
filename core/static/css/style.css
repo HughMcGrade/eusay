@@ -334,7 +334,9 @@ body {
     color: #F4CC11;
 }
 .comment-votes {
-    float: right;
+    position: absolute;
+    top: 15px;
+    right: 15px;
     color: grey;
     font-size: 0.9em;
 }
@@ -361,15 +363,15 @@ body {
 
 /* Tags */
 .tag {
-    background-color: #7AA8D5;
+    background-color: #D5F7D0;
     margin: 3px;
     padding: 1px 3px;
-    color: #ECECEC;
+    color: #767676;
     display: inline-block;
 }
 .tag:hover {
-    background-color: #6A92BE;
-    color: #C5C5C5;
+    background-color: #b7ebb1;
+    color: #606060;
 }
 #tag-list label {
     /* tags in submit page */

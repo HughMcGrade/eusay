@@ -23,7 +23,7 @@ def edit_comment(request, comment_id):
     else:
         if request.method == "POST":
             if comment.is_new():
-                form = forms.CommentForm(request.POST, instance=comment)
+                form = CommentForm(request.POST, instance=comment)
                 if form.is_valid():
                     form.save()
                     messages.add_message(request,
@@ -41,7 +41,7 @@ def edit_comment(request, comment_id):
                                      messages.ERROR,
                                      "You can only edit a comment in the "
                                      "first 5 minutes.")
-        form = forms.CommentForm(instance=comment)
+        form = CommentForm(instance=comment)
         if comment.is_new():
             return render(request,
                           "edit_comment_form.html",
