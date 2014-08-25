@@ -51,15 +51,24 @@
             </b>
             {% endif %}
           </p>
+          <div class="comment-votes">
+	    <form class="comment_vote_form" method="post">
+	      {% csrf_token %}
+	      <input type="hidden" name="request" value="comment_vote" />
+              <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-up">
+                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.upVotes }}
+              </button>
+              <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-down">
+                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.downVotes }}
+              </button>
+	    </form>
+          </div>
+
 
           {{ comment.text | replace_bad_words | my_markdown }}
 
           <div class="comment-meta">
             {{ comment.createdAt|timesince_human }}
-            {% if not hide %}
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            <a class="comment-reply-link" onclick="showReplyForm({{ comment.id }})">reply</a>
-            {% endif %}
             &nbsp;&nbsp;|&nbsp;&nbsp;
             {% if user.isModerator %}
             <a href="{% url 'hide_comment'  comment.id %}">hide comment</a>
@@ -74,18 +83,9 @@
             &nbsp;&nbsp;|&nbsp;&nbsp;
             <a href="{% url 'delete_comment' comment.id %}">delete</a>
             {% endif %}
-          </div>
-          <div class="comment-votes">
-	    <form class="comment_vote_form" method="post">
-	      {% csrf_token %}
-	      <input type="hidden" name="request" value="comment_vote" />
-              <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-up">
-                <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.upVotes }}
-              </button>
-              <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm comment-votes-down">
-                <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.downVotes }}
-              </button>
-	    </form>
+            {% if not hide %}
+            <a class="comment-reply-link pull-right" onclick="showReplyForm({{ comment.id }})"><span class="glyphicon glyphicon-share-alt"></span>&nbsp;reply</a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -112,6 +112,19 @@
               {% endif %}
             </p>
 
+          <div class="comment-votes">
+              <form class="comment_vote_form" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="request" value="comment_vote" />
+		<button name="vote" value="up{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-up">
+                  <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.upVotes }}
+                </button>
+                <button name="vote" value="down{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-down">
+                  <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.downVotes }}
+                </button>
+	      </form>
+            </div>
+
             {{ reply.text | replace_bad_words | my_markdown }}
 
             <div class="comment-meta">
@@ -130,19 +143,6 @@
               &nbsp;&nbsp;|&nbsp;&nbsp;
               <a href="{% url 'delete_comment' reply.id %}">delete</a>
               {% endif %}
-            </div>
-
-            <div class="comment-votes">
-              <form class="comment_vote_form" method="post">
-		{% csrf_token %}
-		<input type="hidden" name="request" value="comment_vote" />  
-		<button name="vote" value="up{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm comment-votes-up">
-                  <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.upVotes }}
-                </button>
-                <button name="vote" value="down{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm comment-votes-down">
-                  <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.downVotes }}
-                </button>
-	      </form>
             </div>
           </div>
         </div>
