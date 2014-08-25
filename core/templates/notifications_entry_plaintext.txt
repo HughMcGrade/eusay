@@ -1,0 +1,15 @@
+{% if key.0 == "proposal_response" %}
+    Official response to {{ key.1.title }}
+{% elif key.0 == "proposal_comment" %}
+    {{ count }} new comment{{ count|pluralize }} on {{ key.1.title }}
+{% elif key.0 == "proposal_amendment" %}
+    {{ count }} new amendment{{ count|pluralize }} to {{ key.1.title }}
+{% elif key.0 == "comment_reply" %}
+    {{ count }} new repl{{ count|pluralize:"y,ies" }} to your comment on {{ key.1.proposal.title }}
+{% elif key.0 == "student_council_soon" %}
+   {{ count }} student council{{ count|pluralize }} coming up soon!
+{% elif key.0 == "comment_hidden" %}
+    Your comment on {{ key.1.proposal.title }} was hidden by a moderator.
+{% elif key.0 == "proposal_hidden" %}
+    Your proposal {{ key.1.title }} was hidden by a moderator.
+{% endif %}

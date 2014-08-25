@@ -28,6 +28,9 @@ def get_secret(setting, secrets=secrets):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
 
+MANDRILL_API_KEY = get_secret("MANDRILL_API_KEY")
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+
 AUTH_USER_MODEL = 'users.User'
 
 # Required for django-endless-pagination plugin
@@ -66,6 +69,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'haystack',
     'core.templatetags',
+    'djrill'
 )
 
 MIDDLEWARE_CLASSES = (
