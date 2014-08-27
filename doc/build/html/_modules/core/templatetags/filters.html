@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.templatetags.filters &mdash; eusay 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="eusay 0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.templatetags.filters</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;The filters used in eusay templates&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">markdown</span>
+<span class="kn">import</span> <span class="nn">bleach</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django.template.loader</span> <span class="kn">import</span> <span class="n">render_to_string</span>
+<span class="kn">from</span> <span class="nn">django.template.defaultfilters</span> <span class="kn">import</span> <span class="n">stringfilter</span><span class="p">,</span> <span class="n">pluralize</span>
+<span class="kn">from</span> <span class="nn">django.utils.safestring</span> <span class="kn">import</span> <span class="n">mark_safe</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">template</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+
+<span class="kn">from</span> <span class="nn">votes.models</span> <span class="kn">import</span> <span class="n">Vote</span>
+<span class="kn">from</span> <span class="nn">comments.forms</span> <span class="kn">import</span> <span class="n">CommentForm</span>
+
+<span class="n">register</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Library</span><span class="p">()</span>
+
+<span class="nd">@register.filter</span>
+<div class="viewcode-block" id="comment_user_vote"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.comment_user_vote">[docs]</a><span class="k">def</span> <span class="nf">comment_user_vote</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the vote, or lack thereof, of ``user`` on ``comment``</span>
+
+<span class="sd">    :returns: The vote of ``user`` on ``comment`` as ``0`` for no vote, ``-1`` for down vote and ``1`` for up vote</span>
+<span class="sd">    :rtype: integer</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">vote</span> <span class="o">=</span> <span class="n">comment</span><span class="o">.</span><span class="n">votes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">vote</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">vote</span><span class="p">:</span>
+        <span class="n">user_vote</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">vote</span><span class="o">.</span><span class="n">isVoteUp</span><span class="p">:</span>
+        <span class="n">user_vote</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">user_vote</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">render_to_string</span><span class="p">(</span><span class="s">&#39;comment_votes.html&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s">&#39;comment&#39;</span> <span class="p">:</span> <span class="n">comment</span><span class="p">,</span> <span class="s">&#39;user_vote&#39;</span> <span class="p">:</span> <span class="n">user_vote</span> <span class="p">})</span>
+</div>
+<span class="nd">@register.filter</span>
+<div class="viewcode-block" id="comment_replies"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.comment_replies">[docs]</a><span class="k">def</span> <span class="nf">comment_replies</span><span class="p">(</span><span class="n">comment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the replies to ``comment``</span>
+
+<span class="sd">    :returns: Replies to ``comment`` sorted chronologically</span>
+<span class="sd">    :rtype: QuerySet</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">comment</span><span class="o">.</span><span class="n">get_replies</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="s">&quot;chronological&quot;</span><span class="p">)</span>
+</div>
+<span class="nd">@register.filter</span>
+<span class="nd">@stringfilter</span>
+<div class="viewcode-block" id="replace_bad_words"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.replace_bad_words">[docs]</a><span class="k">def</span> <span class="nf">replace_bad_words</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with dashes</span>
+
+<span class="sd">    :type value: string </span>
+<span class="sd">    :returns: ``value`` without profanities</span>
+<span class="sd">    :rtype: string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#Replaces profanities in strings with safe words</span>
+    <span class="c"># For instance, &quot;shit&quot; becomes &quot;s--t&quot;</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;[^\w]&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">bad_words_seen</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">PROFANITIES_LIST</span><span class="p">:</span>
+            <span class="n">bad_words_seen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bad_words_seen</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">bad_words_seen</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;-&#39;</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">word</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">value</span>
+</div>
+<span class="nd">@register.filter</span><span class="p">(</span><span class="n">is_safe</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="nd">@stringfilter</span>
+<div class="viewcode-block" id="my_markdown"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.my_markdown">[docs]</a><span class="k">def</span> <span class="nf">my_markdown</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom markdown filter</span>
+
+<span class="sd">    :param text: Text to render as markdown</span>
+<span class="sd">    :returns: ``text`` rendered to markdown</span>
+<span class="sd">    :rtype: string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;nl2br&quot;</span><span class="p">,</span> <span class="p">]</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">markdown</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">)</span>
+    <span class="n">linkified</span> <span class="o">=</span> <span class="n">bleach</span><span class="o">.</span><span class="n">linkify</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+    <span class="n">allowed_tags</span> <span class="o">=</span> <span class="n">bleach</span><span class="o">.</span><span class="n">ALLOWED_TAGS</span>
+    <span class="n">allowed_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;ins&quot;</span><span class="p">)</span>
+    <span class="n">allowed_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;del&quot;</span><span class="p">)</span>
+    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">bleach</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">linkified</span><span class="p">,</span> <span class="n">strip_comments</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">allowed_tags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mark_safe</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">)</span>
+
+</div>
+<span class="nd">@register.filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;timesince_human&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="humanize_timesince"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.humanize_timesince">[docs]</a><span class="k">def</span> <span class="nf">humanize_timesince</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts ``date`` to a human readable string describing the time since</span>
+
+<span class="sd">    :param date: Date to convert</span>
+<span class="sd">    :returns: Time since string</span>
+<span class="sd">    :rtype: string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">date</span>
+
+    <span class="n">num_years</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">//</span> <span class="mi">365</span>
+    <span class="k">if</span> <span class="n">num_years</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">u&quot;</span><span class="si">%d</span><span class="s"> year</span><span class="si">%s</span><span class="s"> ago&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_years</span><span class="p">,</span> <span class="n">pluralize</span><span class="p">(</span><span class="n">num_years</span><span class="p">))</span>
+
+    <span class="n">num_weeks</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">//</span> <span class="mi">7</span>
+    <span class="k">if</span> <span class="n">num_weeks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">u&quot;</span><span class="si">%d</span><span class="s"> week</span><span class="si">%s</span><span class="s"> ago&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_weeks</span><span class="p">,</span> <span class="n">pluralize</span><span class="p">(</span><span class="n">num_weeks</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">u&quot;</span><span class="si">%d</span><span class="s"> day</span><span class="si">%s</span><span class="s"> ago&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">delta</span><span class="o">.</span><span class="n">days</span><span class="p">,</span> <span class="n">pluralize</span><span class="p">(</span><span class="n">delta</span><span class="o">.</span><span class="n">days</span><span class="p">))</span>
+
+    <span class="n">num_hours</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">seconds</span> <span class="o">//</span> <span class="mi">3600</span>
+    <span class="k">if</span> <span class="n">num_hours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">u&quot;</span><span class="si">%d</span><span class="s"> hour</span><span class="si">%s</span><span class="s"> ago&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_hours</span><span class="p">,</span> <span class="n">pluralize</span><span class="p">(</span><span class="n">num_hours</span><span class="p">))</span>
+
+    <span class="n">num_minutes</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">seconds</span> <span class="o">//</span> <span class="mi">60</span>
+    <span class="k">if</span> <span class="n">num_minutes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">u&quot;</span><span class="si">%d</span><span class="s"> minute</span><span class="si">%s</span><span class="s"> ago&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_minutes</span><span class="p">,</span> <span class="n">pluralize</span><span class="p">(</span><span class="n">num_minutes</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="s">u&quot;a few seconds ago&quot;</span>
+
+</div>
+<span class="nd">@register.filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;smart_time&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="smart_time"><a class="viewcode-back" href="../../../core.html#core.templatetags.filters.smart_time">[docs]</a><span class="k">def</span> <span class="nf">smart_time</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates string describing ``date`` depending on relation to current time - hour and minute if ``date`` is today, day and month if ``date`` is this year and day, month and year if ``date`` was before this year.</span>
+
+<span class="sd">    :rtype: string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">date</span>
+
+    <span class="n">num_years</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">//</span> <span class="mi">365</span>
+    <span class="k">if</span> <span class="n">num_years</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s"> %b, %Y&quot;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">date</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="o">!=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s"> %b&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%H:%M&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Hugh McGrade and Tao Bojlen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

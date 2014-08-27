@@ -1,3 +1,4 @@
+"""URL patterns for all apps"""
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 

@@ -12,17 +12,16 @@ class Content(models.Model):
     Content models should be subclassed to create models for user content such
     as proposals and comments which can be voted on, ranked and moderated.
 
-    Attributes:
-    id            Primary key for content subclasses
-    createdAt     DateTime of creation
-    lastModified  DateTime of last modification
-    user          Creator of content
-    upVotes       Up vote count, set by save method of Vote model(only!)
-    downVotes     Down vote count, set by save method of Vote model(only!)
-    isHidden      True if the content has been hidden, set by save method of
-                  HideAction (only!)
-    rank          Rank of the content for ordering by popularity, set by
-                  cron job
+    :ivar id:            Primary key for content subclasses
+    :ivar createdAt:     DateTime of creation
+    :ivar lastModified:  DateTime of last modification
+    :ivar user:          Creator of content
+    :ivar upVotes:       Up vote count, set by save method of Vote model(only!)
+    :ivar downVotes:     Down vote count, set by :meth:``votes.Vote.save``(only!)
+    :ivar isHidden:      True if the content has been hidden, set by save\
+                         method of HideAction (only!)
+    :ivar rank:          Rank of the content for ordering by popularity, set by\
+                         cron job
 
     """
     id = models.AutoField(primary_key=True)
@@ -35,16 +34,19 @@ class Content(models.Model):
     rank = models.FloatField(default=0.0)
 
     def get_votes_count(self, isUp):
-        """Query vote table and return number of either up or down votes"""
+        """
+        Query vote table and return number of either up or down votes.
+
+        :rtype: integer
+        """
         return self.votes.filter(isVoteUp=isUp).count()
 
     def get_voters(self, target="all"):
         """
         Get users who have voted on this content.
 
-        Keyword arguments:
-        target -- "all" (default) for all users, "up" for voters for and "down"
-        for voters against
+        :param target: ``"all"`` (default) for all users, ``"up"`` for voters for and ``"down"`` for voters against
+        :rtype: QuerySet
         """
         content_type = ContentType.objects.get_for_model(self)
         users = get_user_model().objects\

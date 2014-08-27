@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Core &mdash; eusay 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="eusay 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to eusay’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to eusay’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">eusay 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="core">
+<h1>Core<a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h1>
+<p>The Core app contains a few common features of the eusay app - the Content model and about page view, as well as the template filters and templates for all pages.</p>
+<div class="section" id="module-core.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-core.models" title="Permalink to this headline">¶</a></h2>
+<p>Core models module defining abstract model Content</p>
+<dl class="class">
+<dt id="core.models.Content">
+<em class="property">class </em><tt class="descclassname">core.models.</tt><tt class="descname">Content</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/core/models.html#Content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.Content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract model for website content.</p>
+<p>Content models should be subclassed to create models for user content such
+as proposals and comments which can be voted on, ranked and moderated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="http://docs.python.org/library/functions.html#id" title="(in Python v2.7)"><strong>id</strong></a> &#8211; Primary key for content subclasses</li>
+<li><strong>createdAt</strong> &#8211; DateTime of creation</li>
+<li><strong>lastModified</strong> &#8211; DateTime of last modification</li>
+<li><a class="reference external" href="http://docs.python.org/library/user.html#module-user" title="(in Python v2.7)"><strong>user</strong></a> &#8211; Creator of content</li>
+<li><strong>upVotes</strong> &#8211; Up vote count, set by save method of Vote model(only!)</li>
+<li><strong>downVotes</strong> &#8211; Down vote count, set by :meth:<a href="#id1"><span class="problematic" id="id2">``</span></a>votes.Vote.save``(only!)</li>
+<li><strong>isHidden</strong> &#8211; True if the content has been hidden, set by save                         method of HideAction (only!)</li>
+<li><strong>rank</strong> &#8211; Rank of the content for ordering by popularity, set by                         cron job</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="core.models.Content.get_voters">
+<tt class="descname">get_voters</tt><big>(</big><em>target='all'</em><big>)</big><a class="reference internal" href="_modules/core/models.html#Content.get_voters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.Content.get_voters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get users who have voted on this content.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> &#8211; <tt class="docutils literal"><span class="pre">&quot;all&quot;</span></tt> (default) for all users, <tt class="docutils literal"><span class="pre">&quot;up&quot;</span></tt> for voters for and <tt class="docutils literal"><span class="pre">&quot;down&quot;</span></tt> for voters against</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">QuerySet</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.models.Content.get_votes_count">
+<tt class="descname">get_votes_count</tt><big>(</big><em>isUp</em><big>)</big><a class="reference internal" href="_modules/core/models.html#Content.get_votes_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.Content.get_votes_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query vote table and return number of either up or down votes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.views">
+<span id="views"></span><h2>Views<a class="headerlink" href="#module-core.views" title="Permalink to this headline">¶</a></h2>
+<p>Core views</p>
+<dl class="function">
+<dt id="core.views.about">
+<tt class="descclassname">core.views.</tt><tt class="descname">about</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/core/views.html#about"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.views.about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responds with &#8216;about&#8217; page</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.templatetags.filters">
+<span id="filters"></span><h2>Filters<a class="headerlink" href="#module-core.templatetags.filters" title="Permalink to this headline">¶</a></h2>
+<p>The filters used in eusay templates</p>
+<dl class="function">
+<dt id="core.templatetags.filters.comment_replies">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">comment_replies</tt><big>(</big><em>comment</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#comment_replies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.comment_replies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the replies to <tt class="docutils literal"><span class="pre">comment</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Replies to <tt class="docutils literal"><span class="pre">comment</span></tt> sorted chronologically</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">QuerySet</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.templatetags.filters.comment_user_vote">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">comment_user_vote</tt><big>(</big><em>comment</em>, <em>user</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#comment_user_vote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.comment_user_vote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vote, or lack thereof, of <tt class="docutils literal"><span class="pre">user</span></tt> on <tt class="docutils literal"><span class="pre">comment</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The vote of <tt class="docutils literal"><span class="pre">user</span></tt> on <tt class="docutils literal"><span class="pre">comment</span></tt> as <tt class="docutils literal"><span class="pre">0</span></tt> for no vote, <tt class="docutils literal"><span class="pre">-1</span></tt> for down vote and <tt class="docutils literal"><span class="pre">1</span></tt> for up vote</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.templatetags.filters.humanize_timesince">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">humanize_timesince</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#humanize_timesince"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.humanize_timesince" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <tt class="docutils literal"><span class="pre">date</span></tt> to a human readable string describing the time since</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> &#8211; Date to convert</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Time since string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.templatetags.filters.my_markdown">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">my_markdown</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#my_markdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.my_markdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom markdown filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> &#8211; Text to render as markdown</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">text</span></tt> rendered to markdown</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.templatetags.filters.replace_bad_words">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">replace_bad_words</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#replace_bad_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.replace_bad_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace words in <tt class="docutils literal"><span class="pre">value</span></tt> found in <tt class="docutils literal"><span class="pre">settings.PROFANITIES_LIST</span></tt> with dashes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">value</span></tt> without profanities</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.templatetags.filters.smart_time">
+<tt class="descclassname">core.templatetags.filters.</tt><tt class="descname">smart_time</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="_modules/core/templatetags/filters.html#smart_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.templatetags.filters.smart_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates string describing <tt class="docutils literal"><span class="pre">date</span></tt> depending on relation to current time - hour and minute if <tt class="docutils literal"><span class="pre">date</span></tt> is today, day and month if <tt class="docutils literal"><span class="pre">date</span></tt> is this year and day, month and year if <tt class="docutils literal"><span class="pre">date</span></tt> was before this year.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.urls">
+<span id="urls"></span><h2>URLs<a class="headerlink" href="#module-core.urls" title="Permalink to this headline">¶</a></h2>
+<p>URL patterns for all apps</p>
+</div>
+<div class="section" id="module-core.tests">
+<span id="tests"></span><h2>Tests<a class="headerlink" href="#module-core.tests" title="Permalink to this headline">¶</a></h2>
+<p>Currently no tests for Core</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Core</a><ul>
+<li><a class="reference internal" href="#module-core.models">Models</a></li>
+<li><a class="reference internal" href="#module-core.views">Views</a></li>
+<li><a class="reference internal" href="#module-core.templatetags.filters">Filters</a></li>
+<li><a class="reference internal" href="#module-core.urls">URLs</a></li>
+<li><a class="reference internal" href="#module-core.tests">Tests</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to eusay&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/core.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to eusay’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">eusay 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Hugh McGrade and Tao Bojlen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

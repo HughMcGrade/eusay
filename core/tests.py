@@ -1,3 +1,4 @@
+"""Currently no tests for Core"""
 from django.test import TestCase
 
 from proposals.models import Proposal

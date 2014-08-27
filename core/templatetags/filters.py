@@ -1,3 +1,4 @@
+"""The filters used in eusay templates"""
 import re
 import markdown
 import bleach
@@ -16,6 +17,12 @@ register = template.Library()
 
 @register.filter
 def comment_user_vote(comment, user):
+    """Get the vote, or lack thereof, of ``user`` on ``comment``
+
+    :returns: The vote of ``user`` on ``comment`` as ``0`` for no vote, ``-1`` for down vote and ``1`` for up vote
+    :rtype: integer
+
+    """
     try:
         vote = comment.votes.get(user = user)
     except Exception:
@@ -30,11 +37,24 @@ def comment_user_vote(comment, user):
 
 @register.filter
 def comment_replies(comment):
+    """Get the replies to ``comment``
+
+    :returns: Replies to ``comment`` sorted chronologically
+    :rtype: QuerySet
+
+    """
     return comment.get_replies(sort="chronological")
 
 @register.filter
 @stringfilter
 def replace_bad_words(value):
+    """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with dashes
+
+    :type value: string 
+    :returns: ``value`` without profanities
+    :rtype: string
+
+    """
     #Replaces profanities in strings with safe words
     # For instance, "shit" becomes "s--t"
     words = re.sub("[^\w]", " ", value).split()
@@ -50,6 +70,13 @@ def replace_bad_words(value):
 @register.filter(is_safe=True)
 @stringfilter
 def my_markdown(text):
+    """Custom markdown filter
+
+    :param text: Text to render as markdown
+    :returns: ``text`` rendered to markdown
+    :rtype: string
+
+    """
     extensions = ["nl2br", ]
     html = markdown.markdown(text, extensions=extensions)
     linkified = bleach.linkify(html)
@@ -62,6 +89,13 @@ def my_markdown(text):
 
 @register.filter(name="timesince_human")
 def humanize_timesince(date):
+    """Converts ``date`` to a human readable string describing the time since
+
+    :param date: Date to convert
+    :returns: Time since string
+    :rtype: string
+
+    """
     delta = datetime.datetime.now() - date
 
     num_years = delta.days // 365
@@ -88,6 +122,11 @@ def humanize_timesince(date):
 
 @register.filter(name="smart_time")
 def smart_time(date):
+    """Creates string describing ``date`` depending on relation to current time - hour and minute if ``date`` is today, day and month if ``date`` is this year and day, month and year if ``date`` was before this year.
+
+    :rtype: string
+
+    """
     delta = datetime.datetime.now() - date
 
     num_years = delta.days // 365

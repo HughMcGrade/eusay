@@ -1,3 +1,5 @@
+"""Core utilities including slugify, swear check and testing utilities"""
+
 import re
 import random
 
@@ -6,6 +8,15 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 def better_slugify(text, **kwargs):
+            """
+            Create slug from text.
+
+            Improves upon Django's slugify function by making sure slug ends 
+            in full word. Slug can be up to 100 characters long.
+
+            :param text: Text to slugify
+            :return: Slugified text up to 100 characters long
+            """
             # Most of our SlugFields have a max length of 100 characters, so
             # we make sure it doesn't exceed that.
             slug = slugify(text)[:100]
@@ -152,6 +163,7 @@ def add_comments(amount):
 def to_queryset(searchqueryset):
     """
     This function converts a SearchQuerySet into a QuerySet.
+
     We don't use a generator here because pagination in the API requires
     that you can take the len() of a list, a generators don't have a len().
     """
