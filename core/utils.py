@@ -173,7 +173,4 @@ def to_queryset(searchqueryset):
 def contains_swear_words(text):
     words = re.sub("[^\w]", " ", text).split()
     bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
-    if bad_words:
-        return True
-    else:
-        return False
+    return bool(bad_words)
