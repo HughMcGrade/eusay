@@ -20,7 +20,9 @@ class Command(BaseCommand):
         for user in User.objects.all():
             notifications = Notification.objects.get_unread(user)\
                                                 .filter(has_been_emailed=False)
-            if notifications.exists() and user.email != "":
+            if notifications.exists() \
+                    and user.email != "" \
+                    and user.subscribed_to_notification_emails:
                 notifications_dict = Counter([(n.type, n.content)
                                               for n in notifications])
                 count = notifications.count()

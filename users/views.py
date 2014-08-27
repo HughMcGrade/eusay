@@ -73,8 +73,7 @@ def profile(request, slug):
         if request.method == "POST":
             # if the form as been submitted
             form = UserForm(request.POST,
-                                  instance=request.user,
-                                  current_user=request.user)
+                            instance=request.user)
             if form.is_valid():
                 form.save()
                 url = reverse("user",
@@ -91,7 +90,7 @@ def profile(request, slug):
                               "own_profile.html",
                               {"profile": user,
                                "form": form})
-        form = UserForm(current_user=request.user) # unbound form
+        form = UserForm(instance=request.user) # unbound form
         return render(request,
                       "own_profile.html",
                       {'profile': user,

@@ -6,23 +6,25 @@ from core.utils import better_slugify, contains_swear_words
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["username", "hasProfile"]
+        fields = ["username",
+                  "hasProfile",
+                  "subscribed_to_notification_emails"]
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("current_user")
         super(UserForm, self).__init__(*args, **kwargs)
+
         self.fields["username"] = \
             forms.CharField(required=False,
-                            initial=user.username,
                             widget=forms.TextInput(
                             attrs={"placeholder": "New username",
                                    "class": "form-control"}))
-        has_profile_attrs={"id": "hasProfileCheckbox"}
-        if user.hasProfile:
-            has_profile_attrs["checked"] = ""
-        self.fields['hasProfile'] = forms.BooleanField(required=False,
-                                    initial=False,
-                                    widget=forms.CheckboxInput(attrs=has_profile_attrs))
+
+        self.fields['hasProfile'] = \
+            forms.BooleanField(required=False)
+
+        self.fields['subscribed_to_notification_emails'] = \
+            forms.BooleanField(required=False)
+
 
     def clean_name(self):
         # TODO: is this necessary when using django's user system?

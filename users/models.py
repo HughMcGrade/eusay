@@ -36,6 +36,10 @@ class User(usermodels.AbstractUser):
     title = models.CharField(max_length=100, blank=True)
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
+    subscribed_to_notification_emails = models.BooleanField("subscribed to "
+                                                            "notification "
+                                                            "emails?",
+                                                            default=True)
 
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()
