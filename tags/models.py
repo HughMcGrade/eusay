@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.utils import better_slugify
+from slugify import slugify
 
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
@@ -9,7 +9,7 @@ class Tag(models.Model):
     description = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = better_slugify(self.name)
+        self.slug = slugify(self.name, max_length=100)
         super(Tag, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

@@ -1,4 +1,5 @@
 import json
+from slugify import slugify
 
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -7,7 +8,7 @@ from haystack.query import SearchQuerySet
 
 from proposals.models import Proposal
 from comments.models import Comment
-from core.utils import to_queryset, better_slugify
+from core.utils import to_queryset
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, \
     CommentDetailSerializer, CommentListSerializer
 
@@ -99,7 +100,7 @@ def autocomplete(request):
     for result in searchqueryset:
         title = result.title
         url = reverse("proposal",
-                      kwargs={"proposalId": result.pk, "slug": better_slugify(title)})
+                      kwargs={"proposalId": result.pk, "slug": result.slug})
         suggestions.append({"label": title, "link": url})
     data = json.dumps({
         "results": suggestions

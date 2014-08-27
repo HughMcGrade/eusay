@@ -1,8 +1,9 @@
+from slugify import slugify
+
 from django.db import models
 from django.contrib.auth import models as usermodels
 from django.contrib.contenttypes.models import ContentType
 
-from core.utils import better_slugify
 from proposals.models import Proposal
 from comments.models import Comment
 from votes.models import Vote
@@ -52,7 +53,7 @@ class User(usermodels.AbstractUser):
         return Comment.objects.all().filter(user=self)
 
     def save(self, *args, **kwargs):
-        self.slug = better_slugify(self.username, domain="User")
+        self.slug = slugify(self.username, max_length=100)
         super(User, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

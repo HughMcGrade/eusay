@@ -7,32 +7,6 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-def better_slugify(text, **kwargs):
-            """
-            Create slug from text.
-
-            Improves upon Django's slugify function by making sure slug ends 
-            in full word. Slug can be up to 100 characters long.
-
-            :param text: Text to slugify
-            :return: Slugified text up to 100 characters long
-            """
-            # Most of our SlugFields have a max length of 100 characters, so
-            # we make sure it doesn't exceed that.
-            slug = slugify(text)[:100]
-
-            def remove_last_word(value):
-                # If there's more than one word, make sure that the slug
-                # doesn't end in the middle of a word.
-                if len(value.split("-")) > 1:
-                    while (value[-1:] != "-") and (len(value) > 1):
-                        value = value[:-1]
-                    # Remove the final hyphen
-                    value = value[:-1]
-                return value
-
-            remove_last_word(slug)
-            return slug
 
 
 def add_users(amount):

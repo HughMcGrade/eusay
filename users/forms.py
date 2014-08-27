@@ -1,7 +1,9 @@
+from slugify import slugify
+
 from django import forms
 
 from users.models import User
-from core.utils import better_slugify, contains_swear_words
+from core.utils import contains_swear_words
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -35,7 +37,7 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError("Username cannot be blank.")
 
         # don't allow usernames where the slug already exists
-        slug = better_slugify(cleaned_name)
+        slug = slugify(cleaned_name, max_length=100)
         if User.objects.exclude(sid=self.instance.sid).filter(slug=slug).exists():
             raise forms.ValidationError("User slug already exists.")
 

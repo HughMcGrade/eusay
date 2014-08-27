@@ -1,4 +1,5 @@
 import random
+from slugify import slugify
 
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -9,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate as django_authenticate, \
     login as django_login, logout as django_logout
 
-from core.utils import better_slugify
 from users.models import User
 from users.forms import UserForm
 
@@ -44,7 +44,7 @@ def generate_new_user(request):
             new_sid_num = int(previous_sid_num) + 1
             sid = "s" + str(new_sid_num)
         user = User.objects.create_user(username=username, password="", sid=sid)
-        user.slug = better_slugify(user.username)
+        user.slug = slugify(user.username, max_length=100)
         user.save()
     user = django_authenticate(username=user.username, password="")
     if user is not None:
@@ -77,9 +77,7 @@ def profile(request, slug):
             if form.is_valid():
                 form.save()
                 url = reverse("user",
-                              kwargs={"slug": better_slugify(form.cleaned_data
-                                                             ["username"],
-                                                             domain="User")})
+                              kwargs={"slug": request.user.slug})
                 return HttpResponseRedirect(url)
             else:
                 messages.add_message(request,

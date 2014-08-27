@@ -1,7 +1,7 @@
 from django import forms
 
 from proposals.models import Proposal, Response
-from core.utils import better_slugify, contains_swear_words
+from core.utils import contains_swear_words
 from tags.models import Tag
 
 class ProposalForm (forms.ModelForm):

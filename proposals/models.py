@@ -1,10 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
+from slugify import slugify
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseRedirect
 
-from core.utils import better_slugify
 from core.models import Content
 from tags.models import Tag
 from votes.models import Vote
@@ -43,7 +43,7 @@ class Proposal(Content):
 
     def save(self, *args, **kwargs):
         is_initial = not self.pk
-        self.slug = better_slugify(self.title)
+        self.slug = slugify(self.title, max_length=100)
         super(Proposal, self).save(*args, **kwargs)
         # when the proposal is first created, add a vote by the proposer
         if is_initial:
