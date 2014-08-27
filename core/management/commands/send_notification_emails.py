@@ -16,8 +16,10 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         from_email = "noreply@eusay.eusa.ed.ac.uk"
         emails = []
+        notifications_to_be_emailed = []
         for user in User.objects.all():
-            notifications = Notification.objects.get_unread(user)
+            notifications = Notification.objects.get_unread(user)\
+                                                .filter(has_been_emailed=False)
             if notifications.exists() and user.email != "":
                 notifications_dict = Counter([(n.type, n.content)
                                               for n in notifications])
@@ -44,8 +46,13 @@ class Command(BaseCommand):
                 msg.attach_alternative(html_content, "text/html")
                 emails.append(msg)
 
+                notifications_to_be_emailed.extend(list(notifications))
+
         connection = get_connection()
         connection.send_messages(emails)
+
+        for notification in notifications_to_be_emailed:
+            notification.mark_as_emailed()
 
         self.stdout.write("{0}: Successfully sent {1} email{2}".format(
             datetime.now().isoformat(),

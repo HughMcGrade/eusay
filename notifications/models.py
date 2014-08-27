@@ -36,10 +36,15 @@ class Notification(models.Model):
     content_type = models.ForeignKey(ContentType)
     content = GenericForeignKey()
     unread = models.BooleanField(default=True)
+    has_been_emailed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = NotificationManager()
 
     def mark_as_read(self):
         self.unread = False
+        self.save()
+
+    def mark_as_emailed(self):
+        self.has_been_emailed = True
         self.save()
