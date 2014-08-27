@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 
 from comments.models import Comment
 from comments.forms import CommentForm
+from users.views import request_login
 
 def edit_comment(request, comment_id):
     if not request.user.is_authenticated():
