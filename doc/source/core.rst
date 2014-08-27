@@ -21,14 +21,14 @@ Filters
 .. automodule:: core.templatetags.filters
    :members:
 
+Utils
+-----
+
+.. automodule:: core.utils
+   :members:
+
 URLs
 ----
 
 .. automodule:: core.urls
-   :members:
-
-Tests
------
-
-.. automodule:: core.tests
    :members:
