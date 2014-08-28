@@ -123,8 +123,8 @@ def make_staff(request):
 
 def logout(request):
     if request.user.is_authenticated():
-        # TODO: delete cosign cookie(s)
-        django_logout(request)
+        response = django_logout(request)
+        response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk')
         messages.add_message(request,
                              messages.SUCCESS,
                              "You have been logged out.")
@@ -133,7 +133,7 @@ def logout(request):
                              messages.ERROR,
                              "You can't log out if you aren't logged "
                              "in first!")
-    return HttpResponseRedirect(reverse("frontpage"))
+        return HttpResponseRedirect(reverse("frontpage"))
 
 
 def login(request):
