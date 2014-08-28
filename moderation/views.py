@@ -19,7 +19,7 @@ def hide_comment(request, comment_id):
                              "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        comment = Comment.objects.all().get(id=comment_id)
+        comment = Comment.objects.get(id=comment_id)
         if request.method == "POST":
             form = HideActionForm(request.POST)
             if form.is_valid():
@@ -46,7 +46,7 @@ def hide_proposal(request, proposal_id):
                              "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        proposal = Proposal.objects.all().get(id=proposal_id)
+        proposal = Proposal.objects.get(id=proposal_id)
         if request.method == "POST":
             form = HideActionForm(request.POST)
             if form.is_valid():
@@ -78,7 +78,7 @@ def proposal_hides(request):
     return render(request, "hidden_proposal_list.html", {"hiddens" : hiddens})
 
 def report_comment(request, comment_id):
-    comment = Comment.objects.all().get(id=comment_id)
+    comment = Comment.objects.get(id=comment_id)
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():

@@ -7,9 +7,9 @@ from votes.models import Vote
 def do_vote(user, content, vote_request):
     try:
         content_type = ContentType.objects.get_for_model(content)
-        vote = Vote.objects.all().get(user=user,
-                                      object_id=content.id,
-                                      content_type=content_type)
+        vote = Vote.objects.get(user=user,
+                                object_id=content.id,
+                                content_type=content_type)
         # Test for cancel vote
         if (vote_request == "up" and vote.isVoteUp)\
            or (vote_request == "down" and not vote.isVoteUp):

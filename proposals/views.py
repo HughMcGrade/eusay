@@ -89,12 +89,12 @@ def proposal(request, proposalId, slug=None):
                 if vote_string[0:2] == 'up':
                     comment_id = int(vote_string[2:])
                     response_headers['Comment-Id'] = str(comment_id)
-                    comment = Comment.objects.all().get(id=comment_id)
+                    comment = Comment.objects.get(id=comment_id)
                     do_vote(request.user, comment, 'up')
                 elif vote_string[0:4] == 'down':
                     comment_id = int(vote_string[4:])
                     response_headers['Comment-Id'] = str(comment_id)
-                    comment = Comment.objects.all().get(id=comment_id)
+                    comment = Comment.objects.get(id=comment_id)
                     do_vote(request.user, comment, 'down')
                 else:
                     raise Exception('Unknown vote string ' + vote_string)
@@ -118,8 +118,8 @@ def proposal(request, proposalId, slug=None):
 
     hide = None
     if proposal.isHidden:
-        hide = HideAction.objects.all().get(object_id=proposal.id,\
-                                            content_type=Proposal.get_content_type())
+        hide = HideAction.objects.get(object_id=proposal.id,
+                                      content_type=Proposal.get_content_type())
 
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)
