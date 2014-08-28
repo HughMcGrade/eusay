@@ -7,7 +7,6 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-
 def smart_truncate(content, max_length=100, suffix='...'):
     # Thanks to http://stackoverflow.com/questions/250357/
     if len(content) <= max_length:
@@ -15,12 +14,12 @@ def smart_truncate(content, max_length=100, suffix='...'):
     else:
         return content[:max_length].rsplit(' ', 1)[0]+suffix
 
-
 def add_users(amount):
     """
     Add a bunch of users.
-    :param amount: number of users to be added
-    :return: True if successful, False otherwise
+
+    :param amount: Number of users to be added
+    :return:       True if successful, False otherwise
     """
 
     names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
@@ -56,8 +55,9 @@ def add_users(amount):
 def add_proposals(amount):
     """
     Add a bunch of (very!) generic proposals
-    :param amount: number of proposals to be added
-    :return: True if successful, False otherwise
+
+    :param amount: Number of proposals to be added
+    :return:       True if successful, False otherwise
     """
 
     from proposals.models import Proposal
@@ -101,9 +101,10 @@ def add_proposals(amount):
 def add_comments(amount):
     """
     Add a bunch of top-level and reply comments to the latest proposal
-    :param amount: number of comments to be added
-    :param proposal_id: proposal to add comments to
-    :return: True if successful, False otherwise
+
+    :param amount:      Number of comments to be added
+    :param proposal_id: Proposal to add comments to
+    :return:            True if successful, False otherwise
     """
     from proposals.models import Proposal
     from comments.models import Comment

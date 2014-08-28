@@ -5,9 +5,9 @@ from core.utils import contains_swear_words
 from tags.models import Tag
 
 class ProposalForm (forms.ModelForm):
-    class Meta:
-        model = Proposal
-        fields = ['title', 'text', 'tags']
+    """
+    Form for proposal submission including ``title``, ``text`` and ``tags`` fields.
+    """
 
     title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",
                                                           "id": "title",
@@ -23,6 +23,13 @@ class ProposalForm (forms.ModelForm):
         required=False)
 
     def clean_title(self):
+        """
+        Get the cleaned proposal title if it contains no swear words, otherwise raise an excption.
+        
+        :returns:  Cleaned ``title`` if it contains no swear words
+        :rtype:    string
+        :raises:   :mod:`django.forms.ValidationError`
+        """
         cleaned_title = self.cleaned_data["title"]
         # don't allow swear words
         if contains_swear_words(cleaned_title):
@@ -30,13 +37,28 @@ class ProposalForm (forms.ModelForm):
         return cleaned_title
 
     def clean_text(self):
+        """
+        Get the cleaned proposal text if it contains no swear words, otherwise raise an exception. 
+        
+        :returns:  Cleaned ``title`` if it contains no swear words
+        :rtype:    string
+        :raises:   :mod:`django.forms.ValidationError`
+        """
         cleaned_text = self.cleaned_data["text"]
         # don't allow swear words
         if contains_swear_words(cleaned_text):
             raise forms.ValidationError("Proposals cannot contain swear words.")
         return cleaned_text
+    
+    class Meta:
+        model = Proposal
+        fields = ['title', 'text', 'tags']
+
 
 class AmendmentForm (forms.Form):
+    """
+    Form for suggesting proposal amendments including ``title`` and ``text`` fields.
+    """
     title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",
                                                           "id": "title",
                                                           "maxlength": "100",
@@ -47,6 +69,14 @@ class AmendmentForm (forms.Form):
                                                         "onkeyup": "countChars(this, 6000)"}))
 
     def set_initial(self, proposal_title, proposal_text):
+        """
+        Set the initial value of form fields before rendering.
+        
+        :param proposal_title: Initial title in form
+        :type proposal_title:  string
+        :param proposal_text:  Initial text in form
+        :type proposal_text:   string
+        """
         self.initial['title'] = proposal_title
         self.initial['text'] = proposal_text
 

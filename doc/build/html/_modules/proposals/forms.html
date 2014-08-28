@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>proposals.forms &mdash; eusay 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="eusay 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for proposals.forms</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+
+<span class="kn">from</span> <span class="nn">proposals.models</span> <span class="kn">import</span> <span class="n">Proposal</span><span class="p">,</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">core.utils</span> <span class="kn">import</span> <span class="n">better_slugify</span><span class="p">,</span> <span class="n">contains_swear_words</span>
+<span class="kn">from</span> <span class="nn">tags.models</span> <span class="kn">import</span> <span class="n">Tag</span>
+
+<div class="viewcode-block" id="ProposalForm"><a class="viewcode-back" href="../../proposals.html#proposals.forms.ProposalForm">[docs]</a><span class="k">class</span> <span class="nc">ProposalForm</span> <span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Form for proposal submission including ``title``, ``text`` and ``tags`` fields.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;form-control&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;title&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;maxlength&quot;</span><span class="p">:</span> <span class="s">&quot;100&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s">&quot;Please be descriptive.&quot;</span><span class="p">}))</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;form-control&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;maxlength&quot;</span><span class="p">:</span> <span class="s">&quot;6000&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;text&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;onkeyup&quot;</span><span class="p">:</span> <span class="s">&quot;countChars(this, 6000)&quot;</span><span class="p">}))</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">ModelMultipleChoiceField</span><span class="p">(</span>
+        <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">CheckboxSelectMultiple</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;tag-list&quot;</span><span class="p">}),</span>
+        <span class="n">queryset</span><span class="o">=</span><span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ProposalForm.clean_title"><a class="viewcode-back" href="../../proposals.html#proposals.forms.ProposalForm.clean_title">[docs]</a>    <span class="k">def</span> <span class="nf">clean_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the cleaned proposal title if it contains no swear words, otherwise raise an excption.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns:  Cleaned ``title`` if it contains no swear words</span>
+<span class="sd">        :rtype:    string</span>
+<span class="sd">        :raises:   :mod:`django.forms.ValidationError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cleaned_title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">]</span>
+        <span class="c"># don&#39;t allow swear words</span>
+        <span class="k">if</span> <span class="n">contains_swear_words</span><span class="p">(</span><span class="n">cleaned_title</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">forms</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s">&quot;Proposals cannot contain swear words.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cleaned_title</span>
+</div>
+<div class="viewcode-block" id="ProposalForm.clean_text"><a class="viewcode-back" href="../../proposals.html#proposals.forms.ProposalForm.clean_text">[docs]</a>    <span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the cleaned proposal text if it contains no swear words, otherwise raise an exception. </span>
+<span class="sd">        </span>
+<span class="sd">        :returns:  Cleaned ``title`` if it contains no swear words</span>
+<span class="sd">        :rtype:    string</span>
+<span class="sd">        :raises:   :mod:`django.forms.ValidationError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s">&quot;text&quot;</span><span class="p">]</span>
+        <span class="c"># don&#39;t allow swear words</span>
+        <span class="k">if</span> <span class="n">contains_swear_words</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">forms</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s">&quot;Proposals cannot contain swear words.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cleaned_text</span>
+    </div>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Proposal</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;tags&#39;</span><span class="p">]</span>
+
+</div>
+<span class="k">class</span> <span class="nc">AmendmentForm</span> <span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;form-control&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;title&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;maxlength&quot;</span><span class="p">:</span> <span class="s">&quot;100&quot;</span><span class="p">,</span>
+                                                          <span class="s">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s">&quot;Please be descriptive.&quot;</span><span class="p">}))</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;form-control&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;maxlength&quot;</span><span class="p">:</span> <span class="s">&quot;6000&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;text&quot;</span><span class="p">,</span>
+                                                        <span class="s">&quot;onkeyup&quot;</span><span class="p">:</span> <span class="s">&quot;countChars(this, 6000)&quot;</span><span class="p">}))</span>
+
+    <span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal_title</span><span class="p">,</span> <span class="n">proposal_text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proposal_title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proposal_text</span>
+
+<span class="k">class</span> <span class="nc">ResponseForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span> <span class="s">&quot;form-control&quot;</span><span class="p">,</span>
+               <span class="s">&quot;rows&quot;</span><span class="p">:</span> <span class="s">&quot;3&quot;</span><span class="p">,</span>
+               <span class="s">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s">&quot;Enter your official response to &quot;</span>
+                              <span class="s">&quot;this proposal here.&quot;</span><span class="p">}))</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Response</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Hugh McGrade and Tao Bojlen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

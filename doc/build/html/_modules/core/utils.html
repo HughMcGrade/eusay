@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.utils &mdash; eusay 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="eusay 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.utils</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Core utilities including slugify, swear check and testing utilities&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">django.template.defaultfilters</span> <span class="kn">import</span> <span class="n">slugify</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+
+<div class="viewcode-block" id="better_slugify"><a class="viewcode-back" href="../../core.html#core.utils.better_slugify">[docs]</a><span class="k">def</span> <span class="nf">better_slugify</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Create slug from text.</span>
+
+<span class="sd">            Improves upon Django&#39;s slugify function by making sure slug ends </span>
+<span class="sd">            in full word. Slug can be up to 100 characters long.</span>
+
+<span class="sd">            :param text: Text to slugify</span>
+<span class="sd">            :return: Slugified text up to 100 characters long</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c"># Most of our SlugFields have a max length of 100 characters, so</span>
+            <span class="c"># we make sure it doesn&#39;t exceed that.</span>
+            <span class="n">slug</span> <span class="o">=</span> <span class="n">slugify</span><span class="p">(</span><span class="n">text</span><span class="p">)[:</span><span class="mi">100</span><span class="p">]</span>
+
+            <span class="k">def</span> <span class="nf">remove_last_word</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="c"># If there&#39;s more than one word, make sure that the slug</span>
+                <span class="c"># doesn&#39;t end in the middle of a word.</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="s">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="c"># Remove the final hyphen</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">value</span>
+
+            <span class="n">remove_last_word</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">slug</span>
+
+</div>
+<div class="viewcode-block" id="add_users"><a class="viewcode-back" href="../../core.html#core.utils.add_users">[docs]</a><span class="k">def</span> <span class="nf">add_users</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a bunch of users.</span>
+<span class="sd">    :param amount: number of users to be added</span>
+<span class="sd">    :return: True if successful, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Tonja&#39;</span><span class="p">,</span><span class="s">&#39;Kaley&#39;</span><span class="p">,</span><span class="s">&#39;Bo&#39;</span><span class="p">,</span><span class="s">&#39;Tobias&#39;</span><span class="p">,</span><span class="s">&#39;Jacqui&#39;</span><span class="p">,</span><span class="s">&#39;Lorena&#39;</span><span class="p">,</span><span class="s">&#39;Isaac&#39;</span><span class="p">,</span><span class="s">&#39;Adriene&#39;</span><span class="p">,</span><span class="s">&#39;Tuan&#39;</span><span class="p">,</span><span class="s">&#39;Shanon&#39;</span><span class="p">,</span><span class="s">&#39;Georgette&#39;</span><span class="p">,</span><span class="s">&#39;Chas&#39;</span><span class="p">,</span><span class="s">&#39;Yuonne&#39;</span><span class="p">,</span><span class="s">&#39;Michelina&#39;</span><span class="p">,</span><span class="s">&#39;Juliana&#39;</span><span class="p">,</span><span class="s">&#39;Odell&#39;</span><span class="p">,</span><span class="s">&#39;Juliet&#39;</span><span class="p">,</span><span class="s">&#39;Carli&#39;</span><span class="p">,</span><span class="s">&#39;Asha&#39;</span><span class="p">,</span><span class="s">&#39;Pearl&#39;</span><span class="p">,</span><span class="s">&#39;Kamala&#39;</span><span class="p">,</span><span class="s">&#39;Rubie&#39;</span><span class="p">,</span><span class="s">&#39;Elmer&#39;</span><span class="p">,</span><span class="s">&#39;Taren&#39;</span><span class="p">,</span><span class="s">&#39;Salley&#39;</span><span class="p">,</span><span class="s">&#39;Raymonde&#39;</span><span class="p">,</span><span class="s">&#39;Shelba&#39;</span><span class="p">,</span><span class="s">&#39;Alison&#39;</span><span class="p">,</span><span class="s">&#39;Wilburn&#39;</span><span class="p">,</span><span class="s">&#39;Katy&#39;</span><span class="p">,</span><span class="s">&#39;Denyse&#39;</span><span class="p">,</span><span class="s">&#39;Rosemary&#39;</span><span class="p">,</span><span class="s">&#39;Brooke&#39;</span><span class="p">,</span><span class="s">&#39;Carson&#39;</span><span class="p">,</span><span class="s">&#39;Tashina&#39;</span><span class="p">,</span><span class="s">&#39;Kristi&#39;</span><span class="p">,</span><span class="s">&#39;Aline&#39;</span><span class="p">,</span><span class="s">&#39;Yevette&#39;</span><span class="p">,</span><span class="s">&#39;Eden&#39;</span><span class="p">,</span><span class="s">&#39;Christoper&#39;</span><span class="p">,</span><span class="s">&#39;Juana&#39;</span><span class="p">,</span><span class="s">&#39;Marcie&#39;</span><span class="p">,</span><span class="s">&#39;Wendell&#39;</span><span class="p">,</span><span class="s">&#39;Vonda&#39;</span><span class="p">,</span><span class="s">&#39;Dania&#39;</span><span class="p">,</span><span class="s">&#39;Sheron&#39;</span><span class="p">,</span><span class="s">&#39;Meta&#39;</span><span class="p">,</span><span class="s">&#39;Frank&#39;</span><span class="p">,</span><span class="s">&#39;Thad&#39;</span><span class="p">,</span><span class="s">&#39;Cherise&#39;</span><span class="p">]</span>
+    <span class="n">generate_name</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">increment_sid</span><span class="p">():</span>
+        <span class="n">last_user</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="s">&quot;date_joined&quot;</span><span class="p">)</span>
+        <span class="n">last_sid_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_user</span><span class="o">.</span><span class="n">sid</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">new_sid_num</span> <span class="o">=</span> <span class="n">last_sid_num</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_sid</span> <span class="o">=</span> <span class="s">&quot;s{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_sid_num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_sid</span>
+
+    <span class="c"># If no users exist, add one</span>
+    <span class="k">if</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="s">&quot;s1&quot;</span><span class="p">,</span>
+                                   <span class="n">username</span><span class="o">=</span><span class="p">(</span><span class="n">generate_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;1&quot;</span><span class="p">))</span>
+        <span class="n">amount</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="n">start_num</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">start_num</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">start_num</span> <span class="o">+</span> <span class="n">amount</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">generate_name</span><span class="p">()</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">increment_sid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="n">sid</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="n">sid</span><span class="p">,</span>
+                                <span class="n">username</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="add_proposals"><a class="viewcode-back" href="../../core.html#core.utils.add_proposals">[docs]</a><span class="k">def</span> <span class="nf">add_proposals</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a bunch of (very!) generic proposals</span>
+<span class="sd">    :param amount: number of proposals to be added</span>
+<span class="sd">    :return: True if successful, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">proposals.models</span> <span class="kn">import</span> <span class="n">Proposal</span>
+    <span class="n">titles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;Praesent commodo. Cursus magna, vel scelerisque!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Donec ullamcorper nulla non metus auctor fringilla!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Maecenas sed diam eget risus varius blandit non magna.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Etiam porta sem malesuada magna mollis euismod.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Cras mattis consectetur purus sit amet fermentum!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Praesent commodo cursus magna, vel scelerisque et.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Maecenas sed diam eget risus varius non magna.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Integer posuere erat a ante venenatis dapibus.&quot;</span>
+        <span class="s">&quot;Ipsum Etiam Justo Lorem Ultricies&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Ridiculus Fringilla&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Ornare Fusce Euismod!&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">bodies</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Etiam porta sem malesuada magna mollis euismod. Vestibulum id ligula porta felis euismod semper. Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Cras mattis consectetur purus sit amet fermentum. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Etiam porta sem malesuada magna mollis euismod. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Donec id elit non mi porta gravida at eget metus. Donec sed odio dui.&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">get_title</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">titles</span><span class="p">)</span>
+    <span class="n">get_body</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">bodies</span><span class="p">)</span>
+
+    <span class="c"># If no users exist, add one</span>
+    <span class="k">if</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">add_users</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">start_num</span> <span class="o">=</span> <span class="n">Proposal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_num</span><span class="p">,</span> <span class="n">start_num</span> <span class="o">+</span> <span class="n">amount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="n">Proposal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">get_title</span><span class="p">(),</span>
+                                <span class="n">text</span><span class="o">=</span><span class="n">get_body</span><span class="p">(),</span>
+                                <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="add_comments"><a class="viewcode-back" href="../../core.html#core.utils.add_comments">[docs]</a><span class="k">def</span> <span class="nf">add_comments</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a bunch of top-level and reply comments to the latest proposal</span>
+<span class="sd">    :param amount: number of comments to be added</span>
+<span class="sd">    :param proposal_id: proposal to add comments to</span>
+<span class="sd">    :return: True if successful, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">proposals.models</span> <span class="kn">import</span> <span class="n">Proposal</span>
+    <span class="kn">from</span> <span class="nn">comments.models</span> <span class="kn">import</span> <span class="n">Comment</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;Praesent commodo. Cursus magna, vel scelerisque!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Donec ullamcorper nulla non metus auctor fringilla!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Maecenas sed diam eget risus varius blandit non magna.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Etiam porta sem malesuada magna mollis euismod.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Cras mattis consectetur purus sit amet fermentum!&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Praesent commodo cursus magna, vel scelerisque et.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Maecenas sed diam eget risus varius non magna.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Integer posuere erat a ante venenatis dapibus.&quot;</span>
+        <span class="s">&quot;Ipsum Etiam Justo Lorem Ultricies&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Ridiculus Fringilla&quot;</span><span class="p">,</span>
+        <span class="s">&quot;Ornare Fusce Euismod!&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">proposal</span> <span class="o">=</span> <span class="n">Proposal</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="s">&quot;createdAt&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">amount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="n">top_level_comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">,</span>
+                                                    <span class="n">replyTo</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">top_level_comments</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">reply_to</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">))</span>
+            <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">comments</span><span class="p">),</span>
+                                   <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+                                   <span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">,</span>
+                                   <span class="n">replyTo</span><span class="o">=</span><span class="n">reply_to</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">comments</span><span class="p">),</span>
+                                   <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+                                   <span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="to_queryset"><a class="viewcode-back" href="../../core.html#core.utils.to_queryset">[docs]</a><span class="k">def</span> <span class="nf">to_queryset</span><span class="p">(</span><span class="n">searchqueryset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function converts a SearchQuerySet into a QuerySet.</span>
+
+<span class="sd">    We don&#39;t use a generator here because pagination in the API requires</span>
+<span class="sd">    that you can take the len() of a list, a generators don&#39;t have a len().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">object</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">searchqueryset</span><span class="p">]</span>
+
+</div>
+<span class="k">def</span> <span class="nf">contains_swear_words</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;[^\w]&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">bad_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">PROFANITIES_LIST</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bad_words</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Hugh McGrade and Tao Bojlen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

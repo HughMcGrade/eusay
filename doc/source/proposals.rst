@@ -1,4 +1,4 @@
-Core
+Proposals
 ==========
 
 The Core app contains a few common features of the eusay app - the Content model and about page view, as well as the template filters and templates for all pages.
@@ -6,29 +6,17 @@ The Core app contains a few common features of the eusay app - the Content model
 Models
 ------
 
-.. automodule:: core.models
+.. automodule:: proposals.models
    :members:
 
 Views
 -----
 
-.. automodule:: core.views
+.. automodule:: proposals.views
    :members:
 
-Filters
+Forms
 -------
 
-.. automodule:: core.templatetags.filters
-   :members:
-
-Utils
------
-
-.. automodule:: core.utils
-   :members:
-
-URLs
-----
-
-.. automodule:: core.urls
+.. automodule:: proposals.forms
    :members:

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>proposals.models &mdash; eusay 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="eusay 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for proposals.models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">django.contrib.contenttypes.models</span> <span class="kn">import</span> <span class="n">ContentType</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span>
+
+<span class="kn">from</span> <span class="nn">core.utils</span> <span class="kn">import</span> <span class="n">better_slugify</span>
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">Content</span>
+<span class="kn">from</span> <span class="nn">tags.models</span> <span class="kn">import</span> <span class="n">Tag</span>
+<span class="kn">from</span> <span class="nn">votes.models</span> <span class="kn">import</span> <span class="n">Vote</span>
+<span class="kn">from</span> <span class="nn">comments.models</span> <span class="kn">import</span> <span class="n">Comment</span>
+
+<span class="k">class</span> <span class="nc">ProposalManager</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_visible_proposals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="s">&quot;popular&quot;</span><span class="p">):</span>
+        <span class="n">proposals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">tag</span><span class="p">:</span>
+            <span class="n">proposals</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sort</span> <span class="o">==</span> <span class="s">&quot;popular&quot;</span><span class="p">:</span>
+            <span class="n">proposals</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&quot;-rank&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sort</span> <span class="o">==</span> <span class="s">&quot;newest&quot;</span><span class="p">:</span>
+            <span class="n">proposals</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&quot;-createdAt&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">proposals</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">isHidden</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Proposal"><a class="viewcode-back" href="../../proposals.html#proposals.models.Proposal">[docs]</a><span class="k">class</span> <span class="nc">Proposal</span><span class="p">(</span><span class="n">Content</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&quot;slug&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Tag</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&quot;proposals&quot;</span><span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">ProposalManager</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="k">def</span> <span class="nf">get_content_type</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Proposal</span><span class="p">,</span> <span class="s">&#39;_content_type&#39;</span><span class="p">):</span>
+            <span class="n">Proposal</span><span class="o">.</span><span class="n">_content_type</span> <span class="o">=</span> <span class="n">ContentType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">app_label</span><span class="o">=</span><span class="s">&quot;proposals&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s">&quot;proposal&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Proposal</span><span class="o">.</span><span class="n">_content_type</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">is_initial</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">better_slugify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Proposal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c"># when the proposal is first created, add a vote by the proposer</span>
+        <span class="k">if</span> <span class="n">is_initial</span><span class="p">:</span>
+            <span class="n">Vote</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">isVoteUp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&quot;proposal&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;proposalId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                           <span class="s">&quot;slug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">get_votes_up_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">votes_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upVotes</span>
+        <span class="n">votes_total</span> <span class="o">=</span> <span class="n">votes_up</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">downVotes</span>
+        <span class="k">if</span> <span class="n">votes_total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">votes_up</span><span class="o">/</span><span class="n">votes_total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="k">def</span> <span class="nf">get_votes_down_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">votes_up_percentage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_votes_up_percentage</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">votes_up_percentage</span>
+
+    <span class="k">def</span> <span class="nf">_hours_since</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="n">utc_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="n">utc_event</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">utc_now</span> <span class="o">-</span> <span class="n">utc_event</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+
+    <span class="k">def</span> <span class="nf">_weight_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hour_age</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=</span><span class="mf">1.8</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">pow</span><span class="p">((</span><span class="n">hour_age</span><span class="o">+</span><span class="mi">2</span><span class="p">),</span> <span class="n">gravity</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_proximity_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">get_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c"># Take sum of weighted value for each comment</span>
+        <span class="n">comments</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">proposal</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">comments</span><span class="p">:</span>
+            <span class="n">rank</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_instance</span><span class="p">(</span><span class="n">hour_age</span><span class="o">=</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">_hours_since</span><span class="p">(</span>
+                                              <span class="n">comment</span><span class="o">.</span><span class="n">createdAt</span><span class="p">))</span> <span class="o">*</span> <span class="mi">4</span>
+
+        <span class="n">votes</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_votes</span><span class="p">()</span><span class="c">#Vote.get_votes(self)</span>
+        <span class="k">for</span> <span class="n">vote</span> <span class="ow">in</span> <span class="n">votes</span><span class="p">:</span>
+            <span class="n">hour_age</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hours_since</span><span class="p">(</span><span class="n">vote</span><span class="o">.</span><span class="n">createdAt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">vote</span><span class="o">.</span><span class="n">isVoteUp</span><span class="p">:</span>
+                <span class="n">rank</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_instance</span><span class="p">(</span><span class="n">hour_age</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rank</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_instance</span><span class="p">(</span><span class="n">hour_age</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">rank</span> <span class="o">*</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_proximity_coefficient</span><span class="p">()</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">upVotes</span> <span class="o">-</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">downVotes</span>
+
+    <span class="k">def</span> <span class="nf">get_visible_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reply_to</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="s">&quot;popularity&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_visible_comments</span>\
+            <span class="p">(</span><span class="n">proposal</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">reply_to</span><span class="o">=</span><span class="n">reply_to</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="n">sort</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Response"><a class="viewcode-back" href="../../proposals.html#proposals.models.Response">[docs]</a><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="n">Content</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">proposal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Proposal</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">userStatus</span> <span class="o">==</span> <span class="s">&quot;Staff&quot;</span> <span class="ow">or</span> \
+           <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">userStatus</span> <span class="o">==</span> <span class="s">&quot;Officeholder&quot;</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Response</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span>\
+                <span class="p">(</span><span class="s">&quot;Only staff and officerholders can respond to proposals!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">eusay 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Hugh McGrade and Tao Bojlen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

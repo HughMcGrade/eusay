@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    core
+   proposals
 
 Indices and tables
 ==================

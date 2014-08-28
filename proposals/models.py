@@ -11,8 +11,18 @@ from votes.models import Vote
 from comments.models import Comment
 
 class ProposalManager(models.Manager):
-
+    """Manager for Proposal model"""
     def get_visible_proposals(self, tag=None, sort="popular"):
+        """
+        Get visible proposals, optionally for a particular tag.
+
+        By default, proposals are sorted most popular first. To sort newest proposal first, pass ``"newest"`` as the ``sort`` argument.
+
+        :param tag:  Tag to get proposals for (None by default)
+        :param sort: Sort by either popularity (``"popular"``) or ``createdAt`` (``"newest"``)
+        :returns:    Sorted and filtered proposals with hidden proposals removed
+        :rtype:      QuerySet
+        """
         proposals = self.all()
         if tag:
             proposals = proposals.filter(tags=tag)
@@ -37,11 +47,18 @@ class Proposal(Content):
         return self.title
 
     def get_content_type():
+        """
+        Gets ContentType of Proposal model, caching result in ``_content_type`` when first retrieved.
+
+        :returns: ContentType of Proposal model
+        :rtype:   :mod:`django.contrib.contenttypes.models.ContentType`
+        """
         if not hasattr(Proposal, '_content_type'):
             Proposal._content_type = ContentType.objects.get(app_label="proposals", model="proposal")
         return Proposal._content_type
 
     def save(self, *args, **kwargs):
+        """Create slug, save proposal and for initial save add vote by proposer."""
         is_initial = not self.pk
         self.slug = slugify(self.title, max_length=100)
         super(Proposal, self).save(*args, **kwargs)
@@ -50,10 +67,16 @@ class Proposal(Content):
             Vote.objects.create(user=self.user, content=self, isVoteUp=True)
 
     def get_absolute_url(self):
+        """
+        Get the proposal's URL using :mod:`django.core.urlresolvers.reverse`
+        """
         return reverse("proposal", kwargs={"proposalId": self.id,
                                            "slug": self.slug})
 
     def get_votes_up_percentage(self):
+        """
+        Get percentage of votes which are up votes 
+        """
         votes_up = self.upVotes
         votes_total = votes_up + self.downVotes
         if votes_total == 0:
@@ -62,6 +85,9 @@ class Proposal(Content):
             return (votes_up/votes_total) * 100
 
     def get_votes_down_percentage(self):
+        """
+        Get percentage of votes which are down votes
+        """
         votes_up_percentage = self.get_votes_up_percentage()
         return 100 - votes_up_percentage
 
@@ -77,6 +103,9 @@ class Proposal(Content):
         return 1
 
     def get_rank(self):
+        """
+        
+        """
         rank = 0
 
         # Take sum of weighted value for each comment
