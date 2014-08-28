@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 from core.models import Content
+from votes.models import Vote
 
 class CommentManager(models.Manager):
 
@@ -32,6 +33,14 @@ class Comment(Content):
         if not hasattr(Comment, '_content_type'):
             Comment._content_type = ContentType.objects.get(app_label="comments", model="comment")
         return Comment._content_type
+
+    def save(self, *args, **kwargs):
+        is_initial = not self.pk
+        super(Comment, self).save(*args, **kwargs)
+        # when the comment is first created, add a vote by the commenter
+        if is_initial:
+            Vote.objects.create(user=self.user, content=self, isVoteUp=True)
+
 
     def is_new(self):
         """
