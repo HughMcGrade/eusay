@@ -32,6 +32,8 @@ urlpatterns = patterns('',
     # Proposals
     url(r'^$', proposal_views.index, name="frontpage"),  # Front page
     url(r'^submit/', proposal_views.submit, name="submit"),
+    # There are two patterns for proposal pages so that if you don't enter
+    # a slug in the URL, you still get to the proposal
     url(r'^proposal/(?P<proposalId>\d+)/$',
         proposal_views.proposal,
         name="proposal"),

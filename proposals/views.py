@@ -238,7 +238,8 @@ def amend_proposal(request, proposal_id):
             comment.save()
             return HttpResponseRedirect(reverse('proposal',
                                                 args=[proposal_id,
-                                                      proposal.slug]))
+                                                      proposal.slug])
+                                        + "#comment_" + str(comment.id))
         else:
             raise Exception('Unknown form action')
     else:
