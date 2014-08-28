@@ -25,6 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="eusay 0.1 documentation" href="index.html" />
+    <link rel="next" title="Proposals" href="proposals.html" />
     <link rel="prev" title="Welcome to eusay’s documentation!" href="index.html" /> 
   </head>
   <body>
@@ -37,6 +38,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="proposals.html" title="Proposals"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to eusay’s documentation!"
              accesskey="P">previous</a> |</li>
@@ -224,13 +228,64 @@ as proposals and comments which can be voted on, ranked and moderated.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-core.utils">
+<span id="utils"></span><h2>Utils<a class="headerlink" href="#module-core.utils" title="Permalink to this headline">¶</a></h2>
+<p>Core utilities including slugify, swear check and testing utilities</p>
+<dl class="function">
+<dt id="core.utils.add_comments">
+<tt class="descclassname">core.utils.</tt><tt class="descname">add_comments</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="_modules/core/utils.html#add_comments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.utils.add_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a bunch of top-level and reply comments to the latest proposal
+:param amount: number of comments to be added
+:param proposal_id: proposal to add comments to
+:return: True if successful, False otherwise</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.utils.add_proposals">
+<tt class="descclassname">core.utils.</tt><tt class="descname">add_proposals</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="_modules/core/utils.html#add_proposals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.utils.add_proposals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a bunch of (very!) generic proposals
+:param amount: number of proposals to be added
+:return: True if successful, False otherwise</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.utils.add_users">
+<tt class="descclassname">core.utils.</tt><tt class="descname">add_users</tt><big>(</big><em>amount</em><big>)</big><a class="reference internal" href="_modules/core/utils.html#add_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.utils.add_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a bunch of users.
+:param amount: number of users to be added
+:return: True if successful, False otherwise</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.utils.better_slugify">
+<tt class="descclassname">core.utils.</tt><tt class="descname">better_slugify</tt><big>(</big><em>text</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/core/utils.html#better_slugify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.utils.better_slugify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create slug from text.</p>
+<p>Improves upon Django&#8217;s slugify function by making sure slug ends 
+in full word. Slug can be up to 100 characters long.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> &#8211; Text to slugify</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Slugified text up to 100 characters long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.utils.to_queryset">
+<tt class="descclassname">core.utils.</tt><tt class="descname">to_queryset</tt><big>(</big><em>searchqueryset</em><big>)</big><a class="reference internal" href="_modules/core/utils.html#to_queryset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.utils.to_queryset" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function converts a SearchQuerySet into a QuerySet.</p>
+<p>We don&#8217;t use a generator here because pagination in the API requires
+that you can take the len() of a list, a generators don&#8217;t have a len().</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-core.urls">
 <span id="urls"></span><h2>URLs<a class="headerlink" href="#module-core.urls" title="Permalink to this headline">¶</a></h2>
 <p>URL patterns for all apps</p>
-</div>
-<div class="section" id="module-core.tests">
-<span id="tests"></span><h2>Tests<a class="headerlink" href="#module-core.tests" title="Permalink to this headline">¶</a></h2>
-<p>Currently no tests for Core</p>
 </div>
 </div>
 
@@ -246,8 +301,8 @@ as proposals and comments which can be voted on, ranked and moderated.</p>
 <li><a class="reference internal" href="#module-core.models">Models</a></li>
 <li><a class="reference internal" href="#module-core.views">Views</a></li>
 <li><a class="reference internal" href="#module-core.templatetags.filters">Filters</a></li>
+<li><a class="reference internal" href="#module-core.utils">Utils</a></li>
 <li><a class="reference internal" href="#module-core.urls">URLs</a></li>
-<li><a class="reference internal" href="#module-core.tests">Tests</a></li>
 </ul>
 </li>
 </ul>
@@ -255,6 +310,9 @@ as proposals and comments which can be voted on, ranked and moderated.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to eusay&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="proposals.html"
+                        title="next chapter">Proposals</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/core.txt"
@@ -286,6 +344,9 @@ as proposals and comments which can be voted on, ranked and moderated.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="proposals.html" title="Proposals"
+             >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to eusay’s documentation!"
              >previous</a> |</li>
