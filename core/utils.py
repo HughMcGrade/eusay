@@ -8,6 +8,13 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
+def smart_truncate(content, max_length=100, suffix='...'):
+    # Thanks to http://stackoverflow.com/questions/250357/
+    if len(content) <= max_length:
+        return content
+    else:
+        return content[:max_length].rsplit(' ', 1)[0]+suffix
+
 
 def add_users(amount):
     """

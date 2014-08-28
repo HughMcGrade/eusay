@@ -12,6 +12,7 @@ from django.conf import settings
 
 from votes.models import Vote
 from comments.forms import CommentForm
+from core.utils import smart_truncate as core_smart_truncate
 
 register = template.Library()
 
@@ -19,7 +20,8 @@ register = template.Library()
 def comment_user_vote(comment, user):
     """Get the vote, or lack thereof, of ``user`` on ``comment``
 
-    :returns: The vote of ``user`` on ``comment`` as ``0`` for no vote, ``-1`` for down vote and ``1`` for up vote
+    :returns: The vote of ``user`` on ``comment`` as ``0`` for no vote, ``-1``
+    for down vote and ``1`` for up vote
     :rtype: integer
 
     """
@@ -48,7 +50,8 @@ def comment_replies(comment):
 @register.filter
 @stringfilter
 def replace_bad_words(value):
-    """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with dashes
+    """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with
+    dashes
 
     :type value: string 
     :returns: ``value`` without profanities
@@ -120,9 +123,11 @@ def humanize_timesince(date):
     return u"a few seconds ago"
 
 
-@register.filter(name="smart_time")
+@register.filter
 def smart_time(date):
-    """Creates string describing ``date`` depending on relation to current time - hour and minute if ``date`` is today, day and month if ``date`` is this year and day, month and year if ``date`` was before this year.
+    """Creates string describing ``date`` depending on relation to current
+    time - hour and minute if ``date`` is today, day and month if ``date`` is
+    this year and day, month and year if ``date`` was before this year.
 
     :rtype: string
 
@@ -138,3 +143,13 @@ def smart_time(date):
 
     else:
         return date.strftime("%H:%M")
+
+
+@register.filter
+def smart_truncate(text):
+    """
+    Simply a filter for the smart_truncate function in core.utils
+    :param text: the text to be truncated
+    :rtype: string
+    """
+    return core_smart_truncate(text)

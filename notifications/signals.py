@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from proposals.models import Response, Proposal
 from comments.models import Comment
 from moderation.models import HideAction
+from votes.models import Vote
 from .models import Notification
 
 
@@ -77,6 +78,29 @@ def notify_commenter_of_reply_in_thread(created, **kwargs):
             Notification.objects.create(recipient=recipient,
                                         type=type,
                                         content=content)
+
+@receiver(post_save, sender=Vote)
+def notify_of_vote(created, **kwargs):
+    vote = kwargs.get("instance")
+    recipient = vote.content.user
+    if created and vote.user != recipient:
+        # Votes on proposals
+        if vote.content_type == Proposal.get_content_type():
+            if vote.isVoteUp:
+                type = "proposal_vote_up"
+            else:
+                type = "proposal_vote_down"
+
+        # Votes on comments
+        elif vote.content_type == Comment.get_content_type():
+            if vote.isVoteUp:
+                type = "comment_vote_up"
+            else:
+                type = "comment_vote_down"
+
+        Notification.objects.create(recipient=recipient,
+                                    type=type,
+                                    content=vote.content)
 
 
 @receiver(post_save, sender=HideAction)

@@ -16,15 +16,18 @@ class NotificationManager(models.Manager):
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
-        ("proposal_submitted", "new proposal in"),
-        ("proposal_response", "new response to"),
-        ("proposal_comment", "new comment on"),
-        ("proposal_amendment", "new suggested amendment to"),
-        ("comment_reply", "new reply to"),
-        ("student_council_soon", "student council coming up"),
-        ("comment_hidden", "comment hidden"),
-        ("proposal_hidden", "proposal hidden"),
-        # TODO: add notifications for votes?
+        ("proposal_submitted", ""),
+        ("proposal_response", ""),
+        ("proposal_comment", ""),
+        ("proposal_amendment", ""),
+        ("comment_reply", ""),
+        ("student_council_soon", ""),
+        ("comment_hidden", ""),
+        ("proposal_hidden", ""),
+        ("proposal_vote_up", ""),
+        ("proposal_vote_down", ""),
+        ("comment_vote_up", ""),
+        ("comment_vote_down", "")
     )
 
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL,
