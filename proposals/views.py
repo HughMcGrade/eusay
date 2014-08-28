@@ -165,46 +165,6 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
                   "respond_to_proposal_form.html",
                   {"proposal": proposal, "form": form})
 
-def amend_proposal(request, proposal_id):
-    if not request.user.is_authenticated():
-        return request_login(request)
-    proposal = Proposal.objects.get(id=proposal_id)
-    if request.method == 'POST':
-        if request.POST['action'] == 'view':
-            amended_title = request.POST['title']
-            amended_text = request.POST['text']
-
-            diff = ""
-            if amended_title != proposal.title:
-                title_diff = htmldiff(proposal.title, amended_title)
-                # Make title h1 with markdown
-                diff += '**Title: ' + title_diff + '**\n'
-            if amended_text != proposal.text:
-                text_diff = htmldiff(proposal.text, amended_text)
-                diff += text_diff
-
-            form = AmendmentForm()
-            form.set_initial(amended_title, amended_text)
-            return render(request, "amend_proposal.html",
-                          {'proposal' : proposal, 'form' : form,
-                           'diff' : diff})
-        elif request.POST['action'] == 'post':
-            comment = Comment()
-            comment.proposal = proposal
-            comment.user = request.user
-            comment.text = request.POST['text']
-            comment.isAmendment = True
-            comment.save()
-            return HttpResponseRedirect(reverse('proposal',
-                                                args=[proposal_id,
-                                                      proposal.slug]))
-        else:
-            raise Exception('Unknown form action')
-    else:
-        form = AmendmentForm()
-        form.set_initial(proposal.title, proposal.text)
-        return render(request, "amend_proposal.html",
-                      {'proposal' : proposal, 'form' : form})
 
 def amend_proposal(request, proposal_id):
     if not request.user.is_authenticated():
