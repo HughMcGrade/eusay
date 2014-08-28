@@ -26,10 +26,7 @@ urlpatterns = patterns('',
                 namespace="notifications")),
 
     # Authentication
-    url(r'^logout/$',
-        user_views.logout,
-        {"next_page": "https://www.ease.ed.ac.uk/logout.cgi"},
-        name="logout"),
+    url(r'^logout/$', user_views.logout, name="logout"),
     url(r'^login/$', user_views.login, name="login"),
 
     # Proposals

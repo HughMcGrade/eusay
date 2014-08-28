@@ -7,8 +7,9 @@ from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.contrib import messages
 
-from django.contrib.auth import authenticate as django_authenticate, \
-    login as django_login, logout as django_logout
+from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth.views import login as django_login, \
+    logout as django_logout
 
 from users.models import User
 from users.forms import UserForm
@@ -123,7 +124,9 @@ def make_staff(request):
 
 def logout(request):
     if request.user.is_authenticated():
-        response = django_logout(request)
+        response = django_logout(request,
+                                 next_page=
+                                 "https://www.ease.ed.ac.uk/logout.cgi")
         response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk')
         messages.add_message(request,
                              messages.SUCCESS,
