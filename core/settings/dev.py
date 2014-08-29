@@ -1,5 +1,6 @@
 from .base import *
 
+ENVIRONMENT = "dev"
 
 DEBUG = True
 TEMPLATE_DEBUG = True

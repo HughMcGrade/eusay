@@ -3,11 +3,12 @@ from slugify import slugify
 
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from django.conf import settings
 
-from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth import authenticate as django_authenticate, \
+    login as django_auth_login
 from django.contrib.auth.views import login as django_login, \
     logout as django_logout
 
@@ -48,11 +49,14 @@ def generate_new_user(request):
         user.slug = slugify(user.username, max_length=100)
         user.save()
     user = django_authenticate(username=user.username, password="")
-    if user is not None:
-        django_login(request, user)
+    if user is not None and settings.ENVIRONMENT == "dev":
+        # django.contrib.auth.login only works in development environments. In
+        # production, use django.contrib.auth.views.login.
+        django_auth_login(request, user)
         return user
     else:
-        raise Exception("User is None!")
+        raise Exception("User is None, or you tried to generate a new user "
+                        "in a production environment!")
 
 
 def add_user(request):
@@ -123,20 +127,34 @@ def make_staff(request):
     return HttpResponseRedirect(reverse('frontpage'))
 
 def logout(request):
-    if request.user.is_authenticated():
-        response = django_logout(request,
-                                 next_page=
-                                 "https://www.ease.ed.ac.uk/logout.cgi")
-        response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk')
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             "You have been logged out.")
-    else:
-        messages.add_message(request,
-                             messages.ERROR,
-                             "You can't log out if you aren't logged "
-                             "in first!")
+    if settings.ENVIRONMENT == "dev":
+        if request.user.is_authenticated():
+            django_logout(request)
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 "You have been logged out.")
+        else:
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 "You can't log out if you aren't logged "
+                                 "in first!")
         return HttpResponseRedirect(reverse("frontpage"))
+
+    elif settings.ENVIRONMENT == "production":
+        if request.user.is_authenticated():
+            response = django_logout(request,
+                                     next_page=
+                                     "https://www.ease.ed.ac.uk/logout.cgi")
+            response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk')
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 "You have been logged out.")
+        else:
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 "You can't log out if you aren't logged "
+                                 "in first!")
+            return HttpResponseRedirect(reverse("frontpage"))
 
 
 def login(request):

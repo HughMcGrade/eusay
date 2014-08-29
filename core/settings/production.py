@@ -1,6 +1,8 @@
 from .base import *
 
 
+ENVIRONMENT = "production"
+
 DEBUG = True
 TEMPLATE_DEBUG = True
 
