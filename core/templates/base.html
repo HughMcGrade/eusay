@@ -198,7 +198,7 @@
           <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+          {% comment %}<a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;{% endcomment %}
           <a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="{% url 'hidden_comments' %}">Hidden comments</a>
         </div>
