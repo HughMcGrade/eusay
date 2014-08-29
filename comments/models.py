@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericRelation
 
 from core.models import Content
 from votes.models import Vote
@@ -26,6 +27,7 @@ class Comment(Content):
                                  related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
     isAmendment = models.BooleanField(default=False)
+    votes = GenericRelation(Vote)
 
     objects = CommentManager()
 

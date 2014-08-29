@@ -126,13 +126,26 @@ def proposal(request, proposalId, slug=None):
 
     form = CommentForm()
     comments = proposal.get_visible_comments()
+    context = {"form": form,
+               "proposal": proposal,
+               "comments": comments,
+               "user_vote": user_vote,
+               "hide": hide}
+
+    comment_votes = {}
+    if request.user.is_authenticated():
+        comment_votes["comments_voted_for"] = \
+            Comment.objects.filter(votes__user=request.user,
+                                   votes__isVoteUp=True)
+        comment_votes["comments_voted_against"] = \
+            Comment.objects.filter(votes__user=request.user,
+                                   votes__isVoteUp=False)
+
+    context.update(comment_votes)
+
     response = render(request,
                       "proposal.html",
-                      {"form": form,
-                       "proposal": proposal,
-                       "comments": comments,
-                       "user_vote": user_vote,
-                       "hide": hide})
+                      context)
     for key in response_headers:
         response[key] = response_headers[key]
 

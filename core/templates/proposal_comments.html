@@ -55,10 +55,10 @@
 	    <form class="comment_vote_form" method="post">
 	      {% csrf_token %}
 	      <input type="hidden" name="request" value="comment_vote" />
-              <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-up">
+              <button name="vote" value="up{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-up{% if comment in comments_voted_for %} green{% endif %}">
                 <span class="glyphicon glyphicon-thumbs-up"></span> {{ comment.upVotes }}
               </button>
-              <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-down">
+              <button name="vote" value="down{{ comment.id }}" type="submit" class="btn btn-sm btn-default comment-votes-down{% if comment in comments_voted_against %} red{% endif %}">
                 <span class="glyphicon glyphicon-thumbs-down"></span> {{ comment.downVotes }}
               </button>
 	    </form>
@@ -116,10 +116,10 @@
               <form class="comment_vote_form" method="post">
 		{% csrf_token %}
 		<input type="hidden" name="request" value="comment_vote" />
-		<button name="vote" value="up{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-up">
+		<button name="vote" value="up{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-up{% if reply in comments_voted_for %} green{% endif %}">
                   <span class="glyphicon glyphicon-thumbs-up"></span> {{ reply.upVotes }}
                 </button>
-                <button name="vote" value="down{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-down">
+                <button name="vote" value="down{{ reply.id }}" type="submit" class="comment-vote-button btn btn-sm btn-default comment-votes-down{% if reply in comments_voted_against %} red{% endif %}">
                   <span class="glyphicon glyphicon-thumbs-down"></span> {{ reply.downVotes }}
                 </button>
 	      </form>
