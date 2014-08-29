@@ -30,3 +30,13 @@ class Vote(models.Model):
         self.content.downVotes = Vote.objects.get_votes_count(self.content,
                                                               False)
         self.content.save()
+
+    def delete(self, *args, **kwargs):
+        if self.isVoteUp:
+            self.content.upVotes = Vote.objects.get_votes_count(self.content,
+                                                                True) - 1
+        else:
+            self.content.downVotes = Vote.objects.get_votes_count(self.content,
+                                                                  False) - 1
+        self.content.save()
+        super(Vote, self).delete(*args, **kwargs)
