@@ -39,9 +39,44 @@
 
 	 // init tooltips
 	 $('*[data-toggle="tooltip"]').tooltip();
+
+   // start notification button
 	 prepareNotificationButton();
-       });
-     });
+
+   // on update_proposal_status page, make sure the student council dropdown isn't shown unless needed
+   if ($("#id_status option:selected").text() == "Going to Student Council") {
+     $('#proposal-student-council-form').show();
+   }
+   else if ($("#proposal-student-council-form").is(":visible")) {
+     $('#proposal-student-council-form').hide();
+   }
+
+   }); // end of $(document).ready()
+
+   // smooth scrolling to internal links
+   $('a[href^="#"]').on('click',function (e) {
+    e.preventDefault();
+
+    var target = this.hash,
+    $target = $(target);
+
+    $('html, body').stop().animate({
+        'scrollTop': $target.offset().top
+    }, 900, 'swing', function () {
+        window.location.hash = target;
+    });
+	  });
+
+   $('#proposal-status-form #id_status').change(function(){
+   if (($("#id_status option:selected").text() == "Going to Student Council") && ($("#proposal-student-council-form").is(":hidden"))) {
+     $('#proposal-student-council-form').show();
+   }
+   else if ($("#proposal-student-council-form").is(":visible")) {
+     $('#proposal-student-council-form').hide();
+   }
+   });
+
+   });
 
      function prepareNotificationButton() {
        var isVisible = false;

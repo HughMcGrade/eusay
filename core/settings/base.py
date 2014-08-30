@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'search',
     'core.settings',
     'notifications',
+    'student_councils',
 
     # Added
     'endless_pagination',

@@ -7,7 +7,8 @@ from django.contrib.auth import get_user_model
 
 from lxml.html.diff import htmldiff
 
-from proposals.forms import ProposalForm, ResponseForm, AmendmentForm
+from proposals.forms import ProposalForm, ResponseForm, AmendmentForm,\
+    ProposalStatusForm
 from comments.forms import CommentForm
 from proposals.models import Proposal, Response
 from comments.models import Comment
@@ -248,3 +249,26 @@ def delete_proposal(request, proposal_id):
                                                         proposal.slug}))
     else:
         return render(request, 'delete_proposal.html', {'proposal' : proposal})
+
+
+def update_proposal_status(request, proposal_id):
+    if not request.user.is_authenticated():
+        return request_login(request)
+    if not request.user.userStatus == "Staff" \
+        or request.user.userStatus == "Officeholder":
+        messages.add_message(request, messages.ERROR, "You don't have "
+                                                      "permission to do this.")
+        return HttpResponseRedirect(reverse("frontpage"))
+    proposal = Proposal.objects.get(id=proposal_id)
+
+    if request.method == "POST":
+        form = ProposalStatusForm(request.POST, instance=proposal)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(reverse("proposal",
+                                            kwargs={"proposalId": proposal.id,
+                                                    "slug": proposal.slug}))
+    else:
+        form = ProposalStatusForm(instance=proposal)
+        return render(request, "update_proposal_status.html",
+                      {"form": form, "proposal": proposal})

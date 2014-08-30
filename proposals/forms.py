@@ -1,8 +1,12 @@
+from datetime import datetime
+
 from django import forms
 
 from proposals.models import Proposal, Response
 from core.utils import contains_swear_words
 from tags.models import Tag
+from student_councils.models import StudentCouncil
+
 
 class ProposalForm (forms.ModelForm):
     """
@@ -90,3 +94,19 @@ class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = ['text']
+
+
+class ProposalStatusForm(forms.ModelForm):
+    """
+    Form for changing the status of a proposal.
+    """
+    status = forms.ChoiceField(choices=Proposal.PROPOSAL_STATUS_CHOICES,
+                               widget=forms.Select(attrs=
+                                                   {"class": "form-control"}))
+    student_council = forms.ModelChoiceField(
+        StudentCouncil.objects.filter(datetime__gt=datetime.now()),
+        widget=forms.Select(attrs={"class": "form-control"}))
+
+    class Meta:
+        model = Proposal
+        fields = ["status", "student_council"]

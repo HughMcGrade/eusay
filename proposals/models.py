@@ -9,6 +9,7 @@ from core.models import Content
 from tags.models import Tag
 from votes.models import Vote
 from comments.models import Comment
+from student_councils.models import StudentCouncil
 
 class ProposalManager(models.Manager):
     """Manager for Proposal model"""
@@ -36,10 +37,20 @@ class ProposalManager(models.Manager):
 
 
 class Proposal(Content):
+    PROPOSAL_STATUS_CHOICES = (
+        (1, "Open for discussion"),
+        (2, "Work in progress"),
+        (3, "Going to Student Council"),
+        (4, "Resolved")
+    )
     title = models.CharField(max_length=100)
     text = models.TextField()
     slug = models.SlugField(default="slug", max_length=100)
     tags = models.ManyToManyField(Tag, related_name="proposals")
+    status = models.IntegerField(choices=PROPOSAL_STATUS_CHOICES, default=1)
+    student_council = models.ForeignKey(StudentCouncil,
+                                        related_name="proposals",
+                                        null=True)
 
     objects = ProposalManager()
 
@@ -115,7 +126,7 @@ class Proposal(Content):
                                           self._hours_since(
                                               comment.createdAt)) * 4
 
-        votes = user.get_votes()#Vote.get_votes(self)
+        votes = self.user.get_votes()#Vote.get_votes(self)
         for vote in votes:
             hour_age = self._hours_since(vote.createdAt)
             if vote.isVoteUp:

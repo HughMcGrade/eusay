@@ -26,7 +26,7 @@ body {
 	color: #ed174e !important;
 }
 body {
-	background: #fff url("/static/img/cream_dust.png");
+	background: #fff url("/static/img/shattered.png");
 }
 .navbar {
     margin-bottom: 0;
@@ -276,6 +276,7 @@ body {
     overflow: visible;
 }
 .proposal-page {
+    background-color: #f6f6f6;
 	margin-bottom: 15px;
 	padding: 15px;
 }
@@ -297,14 +298,48 @@ body {
     margin-top: 10px;
     font-size: 0.9em;
 }
-.proposal-response {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #fff url("/static/img/light_grey.png");
-}
 .proposal-metainfo {
     margin-top: 15px;
 }
+#proposal-response {
+    background: #f0f0f0;
+}
+#proposal-response:target {
+    -webkit-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+    -webkit-transition: all 0.9s linear;
+    -o-transition: all 0.9s linear;
+    -moz-transition: all 0.9s linear;
+    -ms-transition: all 0.9s linear;
+    -kthtml-transition: all 0.9s linear;
+    transition: all 0.9s linear;
+}
+#proposal-vote-form-top {
+    margin-top: 40px;
+}
+hr.fancy-hr {
+  height: 3px;
+  border: 0;
+  background-color: #c3c3c3;
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#f7f6f4), to(#f7f6f4), color-stop(50%, #fff));
+  background-image: -webkit-linear-gradient(left, #f7f6f4, #fff, #f7f6f4);
+  background-image: -moz-linear-gradient(left, #f7f6f4, #fff, #f7f6f4);
+  background-image: -ms-linear-gradient(left, #f7f6f4, #fff, #f7f6f4);
+  background-image: -o-linear-gradient(left, #f7f6f4, #fff, #f7f6f4);
+}
+hr.fancy-hr::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background-color: #f7f6f4;
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#f7f6f4), to(#f7f6f4), color-stop(50%, #c3c3c3));
+  background-image: -webkit-linear-gradient(left, #f7f6f4, #c3c3c3, #f7f6f4);
+  background-image: -moz-linear-gradient(left, #f7f6f4, #c3c3c3, #f7f6f4);
+  background-image: -ms-linear-gradient(left, #f7f6f4, #c3c3c3, #f7f6f4);
+  background-image: -o-linear-gradient(left, #f7f6f4, #c3c3c3, #f7f6f4);
+}
+
 
 /* Comments */
 .comments {
@@ -317,6 +352,11 @@ body {
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.02);
+}
+.comment:target {
+    -webkit-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	-moz-box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
+	box-shadow: 0 0 10px rgba(237, 23, 78, 0.60), inset 0 0 50px rgba(0, 0, 0, 0.02);
 }
 .comment-meta {
     display: inline;
@@ -331,7 +371,7 @@ body {
     font-size: 0.9em;
 }
 .comment-user-status {
-    color: #F4CC11;
+    color: goldenrod;
 }
 .comment-votes {
     position: absolute;

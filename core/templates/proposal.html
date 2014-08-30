@@ -153,50 +153,33 @@
 </div>
 {% endif %}
 
-{% if proposal.response %}
-<div class="row">
-  <div class="col-xs-12 col-md-6 col-md-offset-3">
-    <div class="page-shadow proposal-response">
-
-      <div class="row">
-        <div class="col-xs-12">
-          <h4 class="text-center">
-            <span class="glyphicon glyphicon-star comment-user-status"></span>
-            {{ proposal.response.user.username }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
-          </h4>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-12">
-          {{ proposal.response.text }}
-        </div>
-      </div>
-      <hr />
-
-      <div class="row">
-        <div class="col-xs-6">
-          <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <div class="row">
   <div class="col-xs-12 col-md-8 col-md-offset-2">
     <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
+
       <div class="row">
         <div class="col-xs-12">
           <h2 id="proposal-title" class="text-center">{{ proposal.title }}</h2>
-          <p id="proposal-user" class="text-center">
-          by
-          {% if proposal.user.hasProfile %}
-              <a href="{% url 'user' proposal.user.slug %}">{{ proposal.user.username }}</a>
-          {% else %}
-              {{ proposal.user.username }}
-          {% endif %}
+          <p class="text-center">
+            {% if proposal.get_status_display == "Open for discussion" %}
+              <span data-toggle="tooltip" title="EUSA has not yet responded to this proposal."><span class="glyphicon glyphicon-play-circle"></span> {{ proposal.get_status_display }}</span>
+            {% elif proposal.get_status_display == "Work in progress" %}
+              <span data-toggle="tooltip" title="EUSA is working on this proposal."><span class="glyphicon glyphicon-time"></span> {{ proposal.get_status_display }}</span>
+            {% elif proposal.get_status_display == "Going to Student Council" %}
+              <span class="green"><span class="glyphicon glyphicon-time"></span> {{ proposal.get_status_display }} on {{ proposal.student_council }}</span>
+            {% elif proposal.get_status_display == "Resolved" %}
+              <a class="green" href="#proposal-response"><span class="glyphicon glyphicon-ok-circle"></span> {{ proposal.get_status_display }} ▾</a>
+            {% endif %}
+
+            <br />
+
+            <span id="proposal-user">by
+            {% if proposal.user.hasProfile %}
+                <a href="{% url 'user' proposal.user.slug %}">{{ proposal.user.username }}</a>
+            {% else %}
+                {{ proposal.user.username }}
+            {% endif %}
+            </span>
           </p>
         </div>
       </div>
@@ -211,7 +194,23 @@
           {{ proposal.text | my_markdown }}
         </div>
       </div>
-      <hr />
+
+          {% if proposal.response %}
+          <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+              <div class="well" id="proposal-response">
+                <h4 class="text-center">
+                  <span class="glyphicon glyphicon-star comment-user-status"></span>
+                  {{ proposal.response.user.username }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
+                </h4>
+                <p>{{ proposal.response.text }}</p>
+                <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+      <hr id="proposal-vote-form-top" class="fancy-hr" />
 
       <form id="proposal_vote_form" method="post">
         <input type="hidden" name="request" value="proposal_vote" />
@@ -249,11 +248,12 @@
             {% endif %}
             <a type="button" class="btn btn-default btn-xs" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
             {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'update_proposal_status' proposal.id %}">Update proposal status</a>
             <a type="button" class="btn btn-default btn-xs" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
             {% endif %}
-	    {% if proposal.user = user %}
-	    <a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
-	    {% endif %}
+            {% if proposal.user = user %}
+            <a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
+            {% endif %}
           </div>
           {% endif %}
         </div>

@@ -26,8 +26,8 @@
       {% for comment in comments %}
       {% if not comment.replyTo %}
       <!-- comment -->
-      <div id="comment_{{ comment.id }}" class="row">
-        <div class="col-xs-12 comment{% if comment.isAmendment %} proposal-amendment{% endif %}">
+      <div class="row">
+        <div id="comment_{{ comment.id }}" class="col-xs-12 comment{% if comment.isAmendment %} proposal-amendment{% endif %}">
           <p>
             {% if comment.user.userStatus != "User" %}
             <span class="glyphicon glyphicon-star comment-user-status" data-toggle="tooltip" title="{{ comment.user.get_userStatus_display }}"></span>
@@ -93,8 +93,8 @@
         {% if comment|comment_replies %}
 	{% for reply in comment|comment_replies %}
         <!-- comment reply -->
-        <div id="comment_{{ reply.id }}" class="row">
-          <div class="col-xs-11 col-xs-offset-1 comment">
+        <div class="row">
+          <div id="comment_{{ reply.id }}" class="col-xs-11 col-xs-offset-1 comment">
             <p>
               <span class="glyphicon glyphicon-share-alt"></span>
               {% if reply.user.userStatus != "User" %}
