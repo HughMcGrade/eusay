@@ -30,13 +30,24 @@ def hide_comment(request, comment_id):
                 messages.add_message(request, messages.INFO,\
                                      ("The comment has been hidden "\
                                       "and hide action logged"))
-                return HttpResponseRedirect(reverse('frontpage'))
+                return HttpResponseRedirect(reverse('proposal',
+                                                    kwargs={"proposalId" :
+                                                            comment.proposal.id,
+                                                            "slug":
+                                                            comment.proposal\
+                                                            .slug}))
             else:
                 messages.add_message(request, messages.ERROR,\
                                      "Invalid hide comment form")
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
         form = HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
-                                                          "form": form})
+                                                          "form": form,
+                                                          "extend_template" : \
+                                                          extend_template});
 
 def hide_proposal(request, proposal_id):
     if not request.user.is_authenticated():
@@ -62,10 +73,14 @@ def hide_proposal(request, proposal_id):
                 messages.add_message(request, messages.ERROR,
                                      "Invalid hide proposal form")
         form = HideActionForm()
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
         return render(request,
                       "hide_proposal_form.html",
-                      {"proposal": proposal,
-                       "form": form})
+                      {"proposal": proposal, "form": form,
+                       "extend_template" : extend_template})
 
 def comment_hides(request):
     hiddens = HideAction.objects.all()\
@@ -95,9 +110,14 @@ def report_comment(request, comment_id):
             messages.add_message(request, messages.ERROR,
                                  "Invalid report comment form")
     else:
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
         form = ReportForm()
         return render(request, "report_comment_form.html",
-                      {"comment" : comment, "form" : form})
+                      {"comment" : comment, "form" : form,
+                       "extend_template" : extend_template})
 
 def report_proposal(request, proposal_id):
     proposal = Proposal.objects.all()\
@@ -118,9 +138,14 @@ def report_proposal(request, proposal_id):
             messages.add_message(request, messages.ERROR,
                                  "Invalid report proposal form")
     else:
-        form = ReportForm()
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
+        form = ReportForm()        
         return render(request, "report_proposal_form.html",
-                      {"proposal" : proposal, "form" : form})
+                      {"proposal" : proposal, "form" : form,
+                       "extend_template" : extend_template})
 
 def moderator_panel(request):
     if not request.user.is_authenticated():

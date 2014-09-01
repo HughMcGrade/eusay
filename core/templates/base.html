@@ -16,67 +16,67 @@
     <script src="{% static "js/jquery-ui.min.js" %}"></script>
     <script src="{% static "js/endless-pagination.js" %}"></script>
     <script>
-     jQuery(function($) {
-       $(document).ready(function() {
-	 // init autocomplete search
-	 $("#search-field").autocomplete({
-	   source: function(request, response) {
-	     $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
-	       response(data.results, function(value) {
-		 return {
-		   label: value
-		 };
-	       });
+
+     function initPage() {
+       // init autocomplete search
+       $("#search-field").autocomplete({
+	 source: function(request, response) {
+	   $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
+	     response(data.results, function(value) {
+	       return {
+		 label: value
+	       };
 	     });
-	   },
-	   select: function(event, ui) {
-	     window.location.href = ui.item.link;
-	   }
+	   });
+	 },
+	 select: function(event, ui) {
+	   window.location.href = ui.item.link;
+	 }
+       });
+
+       // hide formatting help
+       $(".submit-formatting-help").hide(0);
+
+       // init tooltips
+       $('*[data-toggle="tooltip"]').tooltip();
+
+       // start notification button
+       prepareNotificationButton();
+
+       // on update_proposal_status page, make sure the student council dropdown isn't shown unless needed
+       if ($("#id_status option:selected").text() == "Going to Student Council") {
+	 $('#proposal-student-council-form').show();
+       }
+       else if ($("#proposal-student-council-form").is(":visible")) {
+	 $('#proposal-student-council-form').hide();
+       }
+
+       // smooth scrolling to internal links
+       $('a[href^="#"]').on('click',function (e) {
+	 e.preventDefault();
+
+	 var target = this.hash,
+	 $target = $(target);
+
+	 $('html, body').stop().animate({
+           'scrollTop': $target.offset().top
+	 }, 900, 'swing', function () {
+           window.location.hash = target;
 	 });
+       });
 
-	 // hide formatting help
-	 $(".submit-formatting-help").hide(0);
+       $('#proposal-status-form #id_status').change(function(){
+	 if (($("#id_status option:selected").text() == "Going to Student Council") && ($("#proposal-student-council-form").is(":hidden"))) {
+	   $('#proposal-student-council-form').show();
+	 }
+	 else if ($("#proposal-student-council-form").is(":visible")) {
+	   $('#proposal-student-council-form').hide();
+	 }
+       });
 
-	 // init tooltips
-	 $('*[data-toggle="tooltip"]').tooltip();
+     } // end of initPage
 
-   // start notification button
-	 prepareNotificationButton();
-
-   // on update_proposal_status page, make sure the student council dropdown isn't shown unless needed
-   if ($("#id_status option:selected").text() == "Going to Student Council") {
-     $('#proposal-student-council-form').show();
-   }
-   else if ($("#proposal-student-council-form").is(":visible")) {
-     $('#proposal-student-council-form').hide();
-   }
-
-   }); // end of $(document).ready()
-
-   // smooth scrolling to internal links
-   $('a[href^="#"]').on('click',function (e) {
-    e.preventDefault();
-
-    var target = this.hash,
-    $target = $(target);
-
-    $('html, body').stop().animate({
-        'scrollTop': $target.offset().top
-    }, 900, 'swing', function () {
-        window.location.hash = target;
-    });
-	  });
-
-   $('#proposal-status-form #id_status').change(function(){
-   if (($("#id_status option:selected").text() == "Going to Student Council") && ($("#proposal-student-council-form").is(":hidden"))) {
-     $('#proposal-student-council-form').show();
-   }
-   else if ($("#proposal-student-council-form").is(":visible")) {
-     $('#proposal-student-council-form').hide();
-   }
-   });
-
-   });
+     $(document).ready(initPage);
 
      function prepareNotificationButton() {
        var isVisible = false;
@@ -112,10 +112,12 @@
 	     $(this).popover('hide');
 	     isVisible = false;
 	   }
-	   });
+	 });
        });
 
      }
+
+
 
      // show formatting help
      function showFormattingHelp(div) {
@@ -132,14 +134,71 @@
 	 $(val).next().text(len + "/" + maxLen);
        }
      };
+
+     function prepareAmendForm() {
+       $('#view_amendments').ajaxForm({
+	 success : function(response) {
+	   var html = $.parseHTML(response);
+	   var changes = $(html).find('#changes');
+	   console.log($('#changes'));
+	   $('#changes').html(changes);
+	 }
+       });
+     }
+
+     function putNewMessagesFromResponse(response) {
+       var html = $.parseHTML(response);
+       var selector = '#message_container';
+       var messages = $(html).find(selector).children();
+       if (messages.length != 0) {
+	 // New messages
+	 $(selector).html(messages);
+	 $('html').animate({scrollTop:0}, 'slow');
+	 return true;
+       }
+       else {
+	 return false;
+       }
+     }
+
+
+     // for displaying modal
+     function displayModal(url, onLoadBody, applyAjaxForm) {
+       console.log("Display modal");
+       $.get( url, function(response) {
+	 if (putNewMessagesFromResponse(response)) {
+	   return;2
+	 }
+	 var html = $.parseHTML(response);
+	 var title = $(html).find('#form_title').text();
+	 var body = $(html).find('#form_body').children();
+	 $('#modal_title').html(title);
+	 $('#modal_body').html(body);
+	 if (onLoadBody) {
+	   onLoadBody();
+	 }
+	 $('#modal').modal();
+	 var q = typeof(applyAjaxForm) == "undefined";
+	 if (typeof(applyAjaxForm) == "undefined" || applyAjaxForm == true) {
+	   $('#modal_form').ajaxForm({ beforeSend: function() {
+	     $('#modal_submit_button').attr('disabled', true);
+	   }, success : function(response) {
+	     $('#modal').modal('hide');
+	     putNewMessagesFromResponse(response);
+	   }});
+	 }
+       });
+       return false;
+     };
+     
     </script>
     {% block js %}
     {% endblock %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-	<![endif]-->
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
 
     <!-- CSS -->
@@ -149,12 +208,25 @@
     <link href="{% static "css/jquery-ui.structure.min.css" %}" rel="stylesheet">
     <link href="{% static "css/jquery-ui.theme.min.css" %}" rel="stylesheet">
     <style type="text/css">
-      {% block style %}
-      {% endblock %}
+     {% block style %}
+     {% endblock %}
     </style>
   </head>
-
   <body>
+
+    <div id="modal" role="dialog" tabindex="-1" class="modal fade" aria-hidden="true">
+      <div class="modal-dialog">
+	<div class="modal-content">
+	  <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 id="modal_title" class="modal-title">Modal title</h4>
+	  </div>
+	  <div id="modal_body" class="modal-body">
+            <p>One fine body&hellip;</p>
+	  </div>
+	</div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     <nav class="navbar navbar-inverse" role="navigation">
       <div class="container-fluid">
 	<!-- Brand and toggle get grouped for better mobile display -->
@@ -182,27 +254,27 @@
             </div>
 	  </form>
 	  {% if user.is_authenticated %}
-          <ul class="nav navbar-nav navbar-right">
+	  <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
             <li class="notifier"><a id="notifications_button" data-container="body" data-toggle="popover" title="Notifications" data-placement="bottom" data-poload="{% url 'notifications:all' %}" href="{% url 'notifications:all' %}"><span class="glyphicon glyphicon-inbox{% if user.has_unread_notifications %} pink{% endif %}"></span></a></li>
             {% endif %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}: {{ user.sid }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="{% url 'user' user.slug %}">Profile</a></li>
-                <li><a href="#" onclick="createNewUser()">New User</a></li>
-                <li><a href="/get_users">See all users</a></li>
-                <li><a href="/make_mod">Make mod</a></li>
-                <li><a href="/make_staff">Make staff</a></li>
-                <li><a href="/admin">Django admin</a></li>
-                <li><a href="{% url 'logout' %}">Log out</a></li>
+		<li><a href="{% url 'user' user.slug %}">Profile</a></li>
+		<li><a href="#" onclick="createNewUser()">New User</a></li>
+		<li><a href="/get_users">See all users</a></li>
+		<li><a href="/make_mod">Make mod</a></li>
+		<li><a href="/make_staff">Make staff</a></li>
+		<li><a href="/admin">Django admin</a></li>
+		<li><a href="{% url 'logout' %}">Log out</a></li>
               </ul>
             </li>
-          </ul>
+	  </ul>
 	  {% else %}
-          <a href="{% url 'login' %}" class="btn btn-primary btn-sm navbar-btn navbar-right" role="button">
+	  <a href="{% url 'login' %}" class="btn btn-primary btn-sm navbar-btn navbar-right" role="button">
             Login with EASE
-          </a>
+	  </a>
 	  {% endif %}
 	</div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -228,16 +300,15 @@
 
     </div> <!-- ./mainContainer -->
 
-      <div class="footer">
-        <div class="container text-center">
-          <a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          {% comment %}<a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;{% endcomment %}
-          <a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="{% url 'hidden_comments' %}">Hidden comments</a>
-        </div>
+    <div class="footer">
+      <div class="container text-center">
+	<a href="{% url 'frontpage' %}">eu<span class="pink">say</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	<a href="{% url 'about' %}">About</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	<a>Contact</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	<a href="{% url 'api_v1:proposals' %}">API</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	<a href="{% url 'hidden_proposals' %}">Hidden proposals</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	<a href="{% url 'hidden_comments' %}">Hidden comments</a>
       </div>
-
+    </div>
   </body>
 </html>

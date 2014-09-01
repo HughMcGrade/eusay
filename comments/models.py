@@ -53,10 +53,10 @@ class Comment(Content):
 
     def get_replies(self, sort="popularity"):
         if sort == "popularity":
-            return Comment.objects.filter(replyTo=self)\
+            return Comment.objects.filter(replyTo=self).filter(isHidden=False)\
                 .select_related('user').order_by("rank")
         elif sort == "chronological":
-            return Comment.objects.filter(replyTo=self)\
+            return Comment.objects.filter(replyTo=self).filter(isHidden=False)\
                 .select_related('user').order_by("createdAt")
 
     def get_score(self):

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends extend_template %}
 
 {% block title %}
 | Hide proposal
@@ -9,18 +9,20 @@
 <div class="row">
   <div class="col-xs-2"></div>
   <div class="col-xs-8">
-    <h1>Hide Proposal</h1>
-    <div>
-      <h3>Proposal Title: "{{ proposal.title }}"</h3>
-    </div>
-    <hr />
-    <form id="hide_form" method="post" action="">
-      {% csrf_token %}
-      <div class="form-group">
-	{{ form.reason }}
+    <h1 id="form_title">Hide Proposal</h1>
+    <div id="form_body">
+      <div>
+	<h3>Proposal Title: "{{ proposal.title }}"</h3>
       </div>
-      <button type="post" class="btn btn-default">Submit</button>
-    </form>
+      <hr />
+      <form id="modal_form" method="post" action="{% url 'hide_proposal' proposal.id %}">
+	{% csrf_token %}
+	<div class="form-group">
+	  {{ form.reason }}
+	</div>
+	<button id="form_submit_button" type="post" class="btn btn-default">Submit</button>
+      </form>
+    </div>
   </div>
   <div class="col-xs-2"></div>
 </div>

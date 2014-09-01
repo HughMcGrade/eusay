@@ -22,16 +22,14 @@
    });
  }
 
- function putNewMessages(response) {
+ function reloadAllCommentsFromResponse(response) {
    var html = $.parseHTML(response);
-   var selector = '#message_container';
-   var messages = $(html).find(selector).children();
-   if (messages.length != 0) {
-     // New messages
-     $(selector).html(messages);
-     $('html').animate({scrollTop:0}, 'slow');
+   var selector = '#proposal_comments';
+   var comments = $(html).find(selector).children();
+   if (comments.length != 0) {
+     $(selector).html(comments);
    }
- }
+  }
 
  function initForms() {
    $('.proposal-comment-form').ajaxForm(
@@ -51,16 +49,11 @@
 	  $(selector).html(comment);
 	}
 	else {
-	  var html = $.parseHTML(response);
-	  var selector = '#proposal_comments';
-	  var comments = $(html).find(selector).children();
-	  if (comments.length != 0) {
-	    $(selector).html(comments);
-	  }
+	  reloadAllCommentsFromResponse(response);
 	}
 	initForms();
 	hideReplyForms();
-	putNewMessages(response);
+	putNewMessagesFromResponse(response);
       }
      });
    $('#proposal_vote_form').ajaxForm(
@@ -83,7 +76,7 @@
 	 }
 
 	 // Reload messages
-	 putNewMessages(response);
+	 putNewMessagesFromResponse(response);
        }
      });
    $('.comment_vote_form').ajaxForm(
@@ -99,7 +92,7 @@
 	  $(selector).html(comment);
 	}
 	initForms();
-	putNewMessages(response);
+	putNewMessagesFromResponse(response);
      }});
  };
  $(document).ready(function() {
@@ -242,17 +235,17 @@
           {% if not hide %}
           <div class="btn-group">
             {% if user.isModerator and not hide %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
+            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'hide_proposal' proposal.id %}', null, false);" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
             {% else %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'report_proposal' proposal.id %}">Report</a>
+            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a>
             {% endif %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
+            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
             {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
             <a type="button" class="btn btn-default btn-xs" href="{% url 'update_proposal_status' proposal.id %}">Update proposal status</a>
             <a type="button" class="btn btn-default btn-xs" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
             {% endif %}
             {% if proposal.user = user %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
+	    <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
             {% endif %}
           </div>
           {% endif %}

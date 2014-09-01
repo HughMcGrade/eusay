@@ -32,7 +32,7 @@ def edit_comment(request, comment_id):
                                          "Comment edited.")
                     return HttpResponseRedirect(reverse("proposal", args=[
                         str(comment.proposal.id), comment.proposal.slug
-                    ]))
+                    ]) + "#comment_" + str(comment.id))
                 else:
                     messages.add_message(request,
                                          messages.ERROR,
@@ -44,10 +44,15 @@ def edit_comment(request, comment_id):
                                      "first 5 minutes.")
         form = CommentForm(instance=comment)
         if comment.is_new():
+            if request.is_ajax():
+                extend_template = "ajax_base.html"
+            else:
+                extend_template = "base.html"
             return render(request,
                           "edit_comment_form.html",
                           {"form": form,
-                           "comment": comment})
+                           "comment": comment,
+                           "extend_template" : extend_template})
         else:
             messages.add_message(request,
                                  messages.ERROR,
@@ -55,7 +60,7 @@ def edit_comment(request, comment_id):
                                  "first 5 minutes.")
             return HttpResponseRedirect(reverse("proposal", args=[
                 str(comment.proposal.id), comment.proposal.slug
-            ]))
+            ]) + "#comment_" + str(comment.id))
 
 def delete_comment(request, comment_id):
     if not request.user.is_authenticated():
@@ -82,6 +87,11 @@ def delete_comment(request, comment_id):
                                                 kwargs={"proposalId" :
                                                         comment.proposal.id,
                                                         "slug":
-                                                        comment.proposal.slug}))
+                                                        comment.proposal.slug})
+                                        + "#comment_" + str(comment.id))
     else:
-        return render(request, 'delete_comment.html', {'comment': comment})
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
+        return render(request, 'delete_comment.html', {'comment': comment, "extend_template" : extend_template})

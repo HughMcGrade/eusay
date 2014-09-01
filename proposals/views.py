@@ -184,6 +184,10 @@ def amend_proposal(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
     proposal = Proposal.objects.get(id=proposal_id)
+    if request.is_ajax():
+        extend_template = "ajax_base.html"
+    else:
+        extend_template = "base.html"
     if request.method == 'POST':
         if request.POST['action'] == 'view':
             amended_title = request.POST['title']
@@ -202,7 +206,7 @@ def amend_proposal(request, proposal_id):
             form.set_initial(amended_title, amended_text)
             return render(request, "amend_proposal.html",
                           {'proposal' : proposal, 'form' : form,
-                           'diff' : diff})
+                           'diff' : diff, 'extend_template' : extend_template})
         elif request.POST['action'] == 'post':
             comment = Comment()
             comment.proposal = proposal
@@ -220,12 +224,17 @@ def amend_proposal(request, proposal_id):
         form = AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html",
-                      {'proposal' : proposal, 'form' : form})
+                      {'proposal' : proposal, 'form' : form,
+                       'extend_template' : extend_template})
 
 
 def delete_proposal(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
+    if request.is_ajax():
+        extend_template = "ajax_base.html"
+    else:
+        extend_template = "base.html"
     proposal = Proposal.objects.get(id=proposal_id)
     if proposal.user != request.user:
         messages.add_message(request, messages.ERROR, ("You may only delete"
@@ -248,7 +257,7 @@ def delete_proposal(request, proposal_id):
                                                         proposal.id, "slug":
                                                         proposal.slug}))
     else:
-        return render(request, 'delete_proposal.html', {'proposal' : proposal})
+        return render(request, 'delete_proposal.html', {'proposal' : proposal, "extend_template" : extend_template})
 
 
 def update_proposal_status(request, proposal_id):

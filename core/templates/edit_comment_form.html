@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends extend_template %}
 
 {% block title %}
 | Edit comment
@@ -7,8 +7,9 @@
 
 {%  block content %}
 <div class="row">
-  <div class="col-xs-12 col-sm-8 col-sm-offset-2">
-    <form method="post" action="">
+  <h1 id="form_title">Edit comment</h1>
+  <div id="form_body" class="col-xs-12 col-sm-8 col-sm-offset-2">
+    <form id="modal_form" method="post" action="{% url 'edit_comment' comment.id %}">
       {%  csrf_token %}
       <div class="form-group">
         <label>Edit comment</label>
@@ -17,7 +18,7 @@
         <div class="charNum">0/6000</div>
       </div>
       <button type="post" class="btn btn-success">Submit</button>
-      <a class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
+      <a id="form_submit_button" class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
     </form>
   </div>
 </div>

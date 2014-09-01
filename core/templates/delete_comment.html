@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends extend_template %}
 
 {% block title %}
 | Report proposal
@@ -8,18 +8,20 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-8 col-sm-offset-2">
-    <h1>Delete Comment</h1>
-    <div>
-      <h3>{{ comment.text }}</h3>
+    <h1 id="form_title">Delete Comment</h1>
+    <div id="form_body">
+      <div>
+	<h3>Comment text: {{ comment.text }}</h3>
+      </div>
+      Are you sure you want to delete this comment? The text and user will be deleted. Users will see a blank comment with replies and votes.
+      <hr />
+      <form id="modal_form" method="post" action="{% url 'delete_comment' comment.id %}">
+	{% csrf_token %}
+	<input type="hidden" name="action" value="delete" />
+	<button type="post" class="btn btn-danger" class="btn btn-md btn-danger">Yes, delete my comment.</button>
+	<a id="form_submit_button" class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
+      </form>
     </div>
-    Are you sure you want to delete this comment? The text and user will be deleted. Users will see a blank comment with replies and votes.
-    <hr />
-    <form method="post" action="">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="delete" />
-      <button type="post" class="btn btn-danger" class="btn btn-md btn-danger">Yes, delete my comment.</button>
-      <a class="btn btn-md btn-default" href="{% url 'proposal' comment.proposal.id comment.proposal.slug %}">Cancel</a>
-    </form>
   </div>
   <div class="col-xs-2"></div>
 </div>

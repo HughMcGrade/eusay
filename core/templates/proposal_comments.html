@@ -71,17 +71,17 @@
             {{ comment.createdAt|timesince_human }}
             &nbsp;&nbsp;|&nbsp;&nbsp;
             {% if user.isModerator %}
-            <a href="{% url 'hide_comment'  comment.id %}">hide comment</a>
+            <a onclick="javascript:return displayModal('{% url 'hide_comment'  comment.id %}', null, false);" href="{% url 'hide_comment'  comment.id %}">hide comment</a>
             {% else %}
-            <a href="{% url 'report_comment'  comment.id %}">report</a>
+            <a onclick="javascript:return displayModal('{% url 'report_comment'  comment.id %}');" href="{% url 'report_comment'  comment.id %}">report</a>
             {% endif %}
             {% if user == comment.user %}
             {% if comment.is_new %}
             &nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'edit_comment' comment.id %}">edit</a>
+            <a onclick="javascript:return displayModal('{% url 'edit_comment' comment.id %}', null, false);" href="{% url 'edit_comment' comment.id %}">edit</a>
             {% endif %}
             &nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{% url 'delete_comment' comment.id %}">delete</a>
+            <a onclick="javascript:return displayModal('{% url 'delete_comment' comment.id %}', null, false);" href="{% url 'delete_comment' comment.id %}">delete</a>
             {% endif %}
             {% if not hide %}
             <a class="comment-reply-link pull-right" onclick="showReplyForm({{ comment.id }})"><span class="glyphicon glyphicon-share-alt"></span>&nbsp;reply</a>
@@ -131,17 +131,17 @@
               {{ reply.createdAt|timesince_human }}
               &nbsp;&nbsp;|&nbsp;&nbsp;
               {% if user.isModerator %}
-              <a href="{% url 'hide_comment' reply.id %}">hide comment</a>
+              <a onclick="javascript:return displayModal('{% url 'hide_comment'  reply.id %}', null, false);" href="{% url 'hide_comment' reply.id %}">hide comment</a>
               {% else %}
-              <a href="{% url 'report_comment' reply.id %}">report</a>
+              <a onclick="javascript:return displayModal('{% url 'report_comment'  reply.id %}');" href="{% url 'report_comment' reply.id %}">report</a>
               {% endif %}
               {% if user == reply.user %}
               {% if reply.is_new %}
               &nbsp;&nbsp;|&nbsp;&nbsp;
-              <a href="{% url 'edit_comment' reply.id %}">edit</a>
+              <a onclick="javascript:return displayModal('{% url 'edit_comment' reply.id %}', null, false);" href="{% url 'edit_comment' reply.id %}">edit</a>
               {% endif %}
               &nbsp;&nbsp;|&nbsp;&nbsp;
-              <a href="{% url 'delete_comment' reply.id %}">delete</a>
+              <a onclick="javascript:return displayModal('{% url 'delete_comment' reply.id %}', null, false);" href="{% url 'delete_comment' reply.id %}">delete</a>
               {% endif %}
             </div>
           </div>
