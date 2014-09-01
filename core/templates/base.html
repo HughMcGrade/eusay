@@ -178,7 +178,6 @@
 	   onLoadBody();
 	 }
 	 $('#modal').modal();
-	 var q = typeof(applyAjaxForm) == "undefined";
 	 if (typeof(applyAjaxForm) == "undefined" || applyAjaxForm == true) {
 	   $('#modal_form').ajaxForm({ beforeSend: function() {
 	     $('#modal_submit_button').attr('disabled', true);
