@@ -142,14 +142,13 @@ def logout(request):
 
     elif settings.ENVIRONMENT == "production":
         if request.user.is_authenticated():
-            response = django_logout(request,
-                                     next_page=
-                                     "https://www.ease.ed.ac.uk/logout.cgi")
+            response = django_logout(request)
             response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
                                    domain="eusay.eusa.ed.ac.uk")
             messages.add_message(request,
                                  messages.SUCCESS,
                                  "You have been logged out.")
+            return HttpResponseRedirect("https://www.ease.ed.ac.uk/logout.cgi")
         else:
             messages.add_message(request,
                                  messages.ERROR,
