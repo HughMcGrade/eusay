@@ -147,9 +147,6 @@ def logout(request):
                                      next_page=post_logout_url)
             response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
                                    domain="eusay.eusa.ed.ac.uk")
-            messages.add_message(request,
-                                 messages.SUCCESS,
-                                 "You have been logged out.")
             return response
         else:
             messages.add_message(request,
