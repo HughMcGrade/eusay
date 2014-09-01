@@ -89,7 +89,8 @@
 	   isVisible = false;
 	 }
 	 else {
-	   e.popover({html: true, content:'Loading...', trigger: 'manual'}).popover('show');
+	   var loadingContent = 'Loading...<div id="notifications-view-more"><hr /><p class="text-center"><a href="{% url 'notifications:all' %}">View All<span></span></a></p></div>';
+	   e.popover({html: true, content:loadingContent, trigger: 'manual'}).popover('show');
 	   isVisible = true;
 	   if (typeof notificationsContent == 'undefined') {
 	     $.get(e.data('poload'),function(d) {
