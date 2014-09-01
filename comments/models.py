@@ -7,6 +7,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from core.models import Content
 from votes.models import Vote
 
+
 class CommentManager(models.Manager):
 
     def get_visible_comments(self, proposal, reply_to=None, sort="popularity"):
@@ -18,12 +19,13 @@ class CommentManager(models.Manager):
         elif sort == "newest":
             return sorted(comments, key=lambda c: c.createdAt)
 
+
 class Comment(Content):
     # The maximum length of 'text' is 6100 because a proposal can have 6000
     # characters in its body and 100 in its title. Because amendments are
     # stored as Comments, they must be at least as long as Proposals.
     text = models.CharField(max_length=6100)
-    proposal = models.ForeignKey('proposals.Proposal', null=False,\
+    proposal = models.ForeignKey('proposals.Proposal', null=False,
                                  related_name="comments")
     replyTo = models.ForeignKey("self", null=True)
     isAmendment = models.BooleanField(default=False)
@@ -33,7 +35,8 @@ class Comment(Content):
 
     def get_content_type():
         if not hasattr(Comment, '_content_type'):
-            Comment._content_type = ContentType.objects.get(app_label="comments", model="comment")
+            Comment._content_type = ContentType.objects.get(
+                app_label="comments", model="comment")
         return Comment._content_type
 
     def save(self, *args, **kwargs):
@@ -42,7 +45,6 @@ class Comment(Content):
         # when the comment is first created, add a vote by the commenter
         if is_initial:
             Vote.objects.create(user=self.user, content=self, isVoteUp=True)
-
 
     def is_new(self):
         """
