@@ -145,7 +145,8 @@ def logout(request):
             response = django_logout(request,
                                      next_page=
                                      "https://www.ease.ed.ac.uk/logout.cgi")
-            response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk')
+            response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
+                                   domain="eusay.eusa.ed.ac.uk")
             messages.add_message(request,
                                  messages.SUCCESS,
                                  "You have been logged out.")
