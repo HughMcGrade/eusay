@@ -46,6 +46,7 @@ TEMPLATE_DIRS = os.path.join(BASE_DIR, "core/templates")
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
+    'bootstrap_admin',  # Added
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
