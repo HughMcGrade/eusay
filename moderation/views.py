@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+    HttpResponseForbidden, HttpResponseNotFound
 from django.core.urlresolvers import reverse
 
 from users.views import request_login
@@ -9,6 +9,7 @@ from moderation.forms import HideActionForm, ReportForm
 from proposals.models import Proposal
 from comments.models import Comment
 from moderation.models import HideAction, Report
+
 
 def hide_comment(request, comment_id):
     if not request.user.is_authenticated():
@@ -27,17 +28,14 @@ def hide_comment(request, comment_id):
                 hide_action.moderator = request.user
                 hide_action.content = comment
                 hide_action.save()
-                messages.add_message(request, messages.INFO,\
-                                     ("The comment has been hidden "\
+                messages.add_message(request, messages.INFO,
+                                     ("The comment has been hidden "
                                       "and hide action logged"))
-                return HttpResponseRedirect(reverse('proposal',
-                                                    kwargs={"proposalId" :
-                                                            comment.proposal.id,
-                                                            "slug":
-                                                            comment.proposal\
-                                                            .slug}))
+                return HttpResponseRedirect(reverse(
+                    'proposal', kwargs={"proposalId": comment.proposal.id,
+                                        "slug": comment.proposal.slug}))
             else:
-                messages.add_message(request, messages.ERROR,\
+                messages.add_message(request, messages.ERROR,
                                      "Invalid hide comment form")
         if request.is_ajax():
             extend_template = "ajax_base.html"
@@ -46,8 +44,9 @@ def hide_comment(request, comment_id):
         form = HideActionForm()
         return render(request, "hide_comment_form.html", {"comment": comment,
                                                           "form": form,
-                                                          "extend_template" : \
-                                                          extend_template});
+                                                          "extend_template":
+                                                          extend_template})
+
 
 def hide_proposal(request, proposal_id):
     if not request.user.is_authenticated():
@@ -66,7 +65,7 @@ def hide_proposal(request, proposal_id):
                 hide_action.content = proposal
                 hide_action.save()
                 messages.add_message(request, messages.INFO,
-                                     ("The proposal has been hidden and "\
+                                     ("The proposal has been hidden and "
                                       "hide action logged"))
                 return HttpResponseRedirect(reverse('frontpage'))
             else:
@@ -80,17 +79,22 @@ def hide_proposal(request, proposal_id):
         return render(request,
                       "hide_proposal_form.html",
                       {"proposal": proposal, "form": form,
-                       "extend_template" : extend_template})
+                       "extend_template": extend_template})
+
 
 def comment_hides(request):
     hiddens = HideAction.objects.all()\
-                                .filter(content_type=Comment.get_content_type())
-    return render(request, "hidden_comment_list.html", {"hiddens" : hiddens})
+                                .filter(
+                                    content_type=Comment.get_content_type())
+    return render(request, "hidden_comment_list.html", {"hiddens": hiddens})
+
 
 def proposal_hides(request):
     hiddens = HideAction.objects.all()\
-                                .filter(content_type=Proposal.get_content_type())
-    return render(request, "hidden_proposal_list.html", {"hiddens" : hiddens})
+                                .filter(
+                                    content_type=Proposal.get_content_type())
+    return render(request, "hidden_proposal_list.html", {"hiddens": hiddens})
+
 
 def report_comment(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
@@ -103,7 +107,7 @@ def report_comment(request, comment_id):
             report.content = comment
             report.save()
             messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted "\
+                                 ("Your report has been submitted "
                                   "to the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
@@ -116,8 +120,9 @@ def report_comment(request, comment_id):
             extend_template = "base.html"
         form = ReportForm()
         return render(request, "report_comment_form.html",
-                      {"comment" : comment, "form" : form,
-                       "extend_template" : extend_template})
+                      {"comment": comment, "form": form,
+                       "extend_template": extend_template})
+
 
 def report_proposal(request, proposal_id):
     proposal = Proposal.objects.all()\
@@ -131,7 +136,7 @@ def report_proposal(request, proposal_id):
             report.content = proposal
             report.save()
             messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted to "\
+                                 ("Your report has been submitted to "
                                   "the moderators."))
             return HttpResponseRedirect(reverse('frontpage'))
         else:
@@ -142,10 +147,11 @@ def report_proposal(request, proposal_id):
             extend_template = "ajax_base.html"
         else:
             extend_template = "base.html"
-        form = ReportForm()        
+        form = ReportForm()
         return render(request, "report_proposal_form.html",
-                      {"proposal" : proposal, "form" : form,
-                       "extend_template" : extend_template})
+                      {"proposal": proposal, "form": form,
+                       "extend_template": extend_template})
+
 
 def moderator_panel(request):
     if not request.user.is_authenticated():
@@ -162,7 +168,7 @@ def moderator_panel(request):
         report_id = request.POST.get("report")
         report = Report.objects.get(id=report_id)
         action = request.POST.get("action")
-        ajaxResponseType = HttpResponse
+        ajax_response_type = HttpResponse
         if action == "Hide":
             try:
                 hide_action = HideAction()
@@ -175,7 +181,7 @@ def moderator_panel(request):
             except Report.DoesNotExist:
                 messages.add_message(request, messages.ERROR,
                                      "Report not found")
-                ajaxResponseType = HttpResponseNotFound
+                ajax_response_type = HttpResponseNotFound
         elif action == "Ignore":
             try:
                 report.delete()
@@ -184,16 +190,18 @@ def moderator_panel(request):
             except Report.DoesNotExist:
                 messages.add_message(request, messages.ERROR,
                                      "Report not found")
-                ajaxResponseType = HttpResponseNotFound
+                ajax_response_type = HttpResponseNotFound
         else:
-            messages.add_message("Moderation action type not found")
-            ajaxResponseType = HttpResponseNotFound
+            messages.add_message(request, messages.ERROR,
+                                 "Moderation action type not found")
+            ajax_response_type = HttpResponseNotFound
         if request.is_ajax():
-            return ajaxResponseType("")
+            return ajax_response_type("")
 
-    comment_reports = Report.objects.filter(content_type=Comment.get_content_type())
-    proposal_reports = Report.objects.filter\
-                       (content_type=Proposal.get_content_type())
+    comment_reports = Report.objects.filter(
+        content_type=Comment.get_content_type())
+    proposal_reports = Report.objects.filter(
+        content_type=Proposal.get_content_type())
     return render(request, "moderator_panel.html",
-                  {"comment_reports" : comment_reports,
-                   "proposal_reports" : proposal_reports})
+                  {"comment_reports": comment_reports,
+                   "proposal_reports": proposal_reports})

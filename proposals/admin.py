@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from proposals.models import Proposal
 
+
 class ProposalAdmin(admin.ModelAdmin):
     exclude = ("id",)
     readonly_fields = ("title",
