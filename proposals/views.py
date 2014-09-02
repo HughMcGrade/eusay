@@ -17,9 +17,10 @@ from users.views import request_login
 from moderation.models import HideAction
 from votes.views import do_vote
 
+
 def index(request):
-    template = "index.html" # main HTML
-    proposals_template = "proposal_list.html" # just the proposals
+    template = "index.html"  # main HTML
+    proposals_template = "proposal_list.html"  # just the proposals
 
     # sort by popularity by default
     proposals = Proposal.objects.get_visible_proposals(sort="popular")
@@ -31,7 +32,7 @@ def index(request):
 
     context = {
         "proposals": proposals,
-        "type" : "proposal",
+        "type": "proposal",
         "proposals_template": proposals_template,
         "sort": sort,
     }
@@ -41,6 +42,7 @@ def index(request):
         template = proposals_template
 
     return render(request, template, context)
+
 
 def submit(request):
     if not request.user.is_authenticated():
@@ -56,19 +58,20 @@ def submit(request):
             return HttpResponseRedirect(
                 reverse("proposal",
                         kwargs={"proposalId": proposal.id,
-                                "slug": proposal.slug})) # Redirect after POST
+                                "slug": proposal.slug}))  # Redirect after POST
         else:
             errors = form.errors
             return render(request, "submit.html", {"form": form,
                                                    "tags": tags,
                                                    "errors": errors})
     else:
-        form = ProposalForm() # An unbound form
+        form = ProposalForm()  # An unbound form
         return render(request, 'submit.html', {'form': form,
                                                "tags": tags})
 
-def proposal(request, proposalId, slug=None):
-    proposal = Proposal.objects.get(id=proposalId)
+
+def proposal(request, proposal_id, slug=None):
+    proposal = Proposal.objects.get(id=proposal_id)
 
     response_headers = dict()
 
@@ -77,7 +80,7 @@ def proposal(request, proposalId, slug=None):
         return HttpResponsePermanentRedirect(proposal.get_absolute_url())
 
     user_vote = None
-    if request.method == 'POST': # If the form has been submitted...
+    if request.method == 'POST':  # If the form has been submitted...
         if not request.user.is_authenticated():
             return request_login(request)
         if 'request' in request.POST:
@@ -100,9 +103,9 @@ def proposal(request, proposalId, slug=None):
                 else:
                     raise Exception('Unknown vote string ' + vote_string)
             else:
-                raise Exception('Unknown POST request '\
+                raise Exception('Unknown POST request '
                                 + request.POST['request'])
-            proposal = Proposal.objects.get(id=proposalId)
+            proposal = Proposal.objects.get(id=proposal_id)
         else:
             form = CommentForm(request.POST)
             comment = form.save(commit=False)
@@ -111,7 +114,7 @@ def proposal(request, proposalId, slug=None):
                 comment.replyTo = Comment.objects\
                                          .get(id=request.POST['reply_to'])
                 response_headers['Comment-Id'] = request.POST['reply_to']
-            if form.is_valid(): # All validation rules pass
+            if form.is_valid():  # All validation rules pass
                 # Process the data in form.cleaned_data
                 comment.user = request.user
                 comment.proposal = proposal
@@ -152,7 +155,8 @@ def proposal(request, proposalId, slug=None):
 
     return response
 
-def respond_to_proposal(request, proposalId, *args, **kwargs):
+
+def respond_to_proposal(request, proposal_id, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
     if request.user.userStatus != "Staff"\
@@ -160,7 +164,7 @@ def respond_to_proposal(request, proposalId, *args, **kwargs):
         messages.add_message(request, messages.ERROR,
                              "Regular users cannot respond to proposals.")
         return HttpResponseRedirect(reverse('frontpage'))
-    proposal = Proposal.objects.get(id=proposalId)
+    proposal = Proposal.objects.get(id=proposal_id)
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         if form.is_valid():
@@ -205,8 +209,8 @@ def amend_proposal(request, proposal_id):
             form = AmendmentForm()
             form.set_initial(amended_title, amended_text)
             return render(request, "amend_proposal.html",
-                          {'proposal' : proposal, 'form' : form,
-                           'diff' : diff, 'extend_template' : extend_template})
+                          {'proposal': proposal, 'form': form,
+                           'diff': diff, 'extend_template': extend_template})
         elif request.POST['action'] == 'post':
             comment = Comment()
             comment.proposal = proposal
@@ -224,8 +228,8 @@ def amend_proposal(request, proposal_id):
         form = AmendmentForm()
         form.set_initial(proposal.title, proposal.text)
         return render(request, "amend_proposal.html",
-                      {'proposal' : proposal, 'form' : form,
-                       'extend_template' : extend_template})
+                      {'proposal': proposal, 'form': form,
+                       'extend_template': extend_template})
 
 
 def delete_proposal(request, proposal_id):
@@ -253,18 +257,20 @@ def delete_proposal(request, proposal_id):
             proposal.save()
             messages.add_message(request, messages.INFO, "Proposal deleted")
             return HttpResponseRedirect(reverse("proposal",
-                                                kwargs={"proposalId" :
+                                                kwargs={"proposalId":
                                                         proposal.id, "slug":
                                                         proposal.slug}))
     else:
-        return render(request, 'delete_proposal.html', {'proposal' : proposal, "extend_template" : extend_template})
+        return render(request, 'delete_proposal.html',
+                      {'proposal': proposal,
+                       "extend_template": extend_template})
 
 
 def update_proposal_status(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
-    if not request.user.userStatus == "Staff" \
-        or request.user.userStatus == "Officeholder":
+    if not request.user.userStatus == "Staff"\
+       or request.user.userStatus == "Officeholder":
         messages.add_message(request, messages.ERROR, "You don't have "
                                                       "permission to do this.")
         return HttpResponseRedirect(reverse("frontpage"))

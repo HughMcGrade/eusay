@@ -6,7 +6,8 @@ from comments.models import Comment
 from proposals.models import Proposal
 from moderation.models import Report, HideAction
 
-class HideTest (TestCase):
+
+class HideTest(TestCase):
 
     def setUp(self):
         addObjects(self)
@@ -19,21 +20,22 @@ class HideTest (TestCase):
         self.assertEqual(response.status_code, 302)
 
         # Submit hide anonymously
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.comment = Comment.objects.get(id=self.comment.id)
         self.assertFalse(self.comment.isHidden)
 
         # Log in as non-moderator
-        self.assertTrue(self.client.login(username=self.user.username, password=""))
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=""))
 
         # View form as non-moderator
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
         # Submit hide as non-moderator
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.comment = Comment.objects.get(id=self.comment.id)
@@ -51,7 +53,7 @@ class HideTest (TestCase):
         self.assertEqual(response.context['comment'], self.comment)
 
         # Submit hide as moderator
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.comment = Comment.objects.get(id=self.comment.id)
@@ -65,21 +67,22 @@ class HideTest (TestCase):
         self.assertEqual(response.status_code, 302)
 
         # Submit hide anonymously
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.proposal = Proposal.objects.get(id=self.proposal.id)
         self.assertFalse(self.proposal.isHidden)
 
         # Log in as non-moderator
-        self.assertTrue(self.client.login(username=self.user.username, password=""))
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=""))
 
         # View form as non-moderator
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
         # Submit hide as non-moderator
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.proposal = Proposal.objects.get(id=self.proposal.id)
@@ -97,7 +100,7 @@ class HideTest (TestCase):
         self.assertEqual(response.context['proposal'], self.proposal)
 
         # Submit hide as moderator
-        post = {'reason' : 'I want to hide'}
+        post = {'reason': 'I want to hide'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.proposal = Proposal.objects.get(id=self.proposal.id)
@@ -115,7 +118,8 @@ class HideTest (TestCase):
         self.assertIn('hiddens', response.context)
         self.assertIn(self.proposal_hide, response.context['hiddens'])
 
-class ReportTest (TestCase):
+
+class ReportTest(TestCase):
 
     def setUp(self):
         addObjects(self)
@@ -127,14 +131,16 @@ class ReportTest (TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Report anonymously
-        post = {'reason' : 'Unacceptable'}
+        post = {'reason': 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=Comment.get_content_type(), object_id=self.comment.id))
+        self.assertTrue(Report.objects.filter(
+            content_type=Comment.get_content_type(),
+            object_id=self.comment.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
-        
+
         # View form
         url = reverse('report_comment', args=[self.comment.id])
         response = self.client.get(url)
@@ -144,10 +150,12 @@ class ReportTest (TestCase):
         self.assertEqual(self.comment, response.context['comment'])
 
         # Report
-        post = {'reason' : 'Unacceptable'}
+        post = {'reason': 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=Comment.get_content_type(), object_id=self.comment.id))
+        self.assertTrue(Report.objects.filter(
+            content_type=Comment.get_content_type(),
+            object_id=self.comment.id))
 
     def testReportProposal(self):
         # View form anonymously
@@ -156,14 +164,16 @@ class ReportTest (TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Report anonymously
-        post = {'reason' : 'Unacceptable'}
+        post = {'reason': 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=Proposal.get_content_type(), object_id=self.proposal.id))
+        self.assertTrue(Report.objects.filter(
+            content_type=Proposal.get_content_type(),
+            object_id=self.proposal.id))
 
         # Log in
         self.client.login(username=self.eusa_staff.username, password="")
-        
+
         # View form
         url = reverse('report_proposal', args=[self.proposal.id])
         response = self.client.get(url)
@@ -173,10 +183,12 @@ class ReportTest (TestCase):
         self.assertEqual(self.proposal, response.context['proposal'])
 
         # Report
-        post = {'reason' : 'Unacceptable'}
+        post = {'reason': 'Unacceptable'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Report.objects.filter(content_type=Proposal.get_content_type(), object_id=self.proposal.id))
+        self.assertTrue(Report.objects.filter(
+            content_type=Proposal.get_content_type(),
+            object_id=self.proposal.id))
 
     def testModeratorPanel(self):
         url = reverse('moderator_panel')
@@ -184,59 +196,75 @@ class ReportTest (TestCase):
         # View moderator panel anonymously
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        
+
         # Hide from comment report anonymously
-        post = {'action' : 'Hide', 'report' : self.comment_report.id}
+        post = {'action': 'Hide', 'report': self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_comment.id, content_type=Comment.get_content_type())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get,
+                          object_id=self.reported_comment.id,
+                          content_type=Comment.get_content_type())
         self.assertTrue(Report.objects.get(id=self.comment_report.id))
 
         # Hide from proposal report anonymously
-        post = {'action' : 'Hide', 'report' : self.proposal_report.id}
+        post = {'action': 'Hide', 'report': self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_proposal.id, content_type=Proposal.get_content_type())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get,
+                          object_id=self.reported_proposal.id,
+                          content_type=Proposal.get_content_type())
         self.assertTrue(Report.objects.get(id=self.proposal_report.id))
 
         # Login as non-moderator
-        self.assertTrue(self.client.login(username=self.user.username, password=''))
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password=''))
 
         # View moderator panel as non-moderator
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        
+
         # Hide from comment report as non-moderator
-        post = {'action' : 'Hide', 'report' : self.comment_report.id}
+        post = {'action': 'Hide', 'report': self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_comment.id, content_type=Comment.get_content_type())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get,
+                          object_id=self.reported_comment.id,
+                          content_type=Comment.get_content_type())
         self.assertTrue(Report.objects.get(id=self.comment_report.id))
 
         # Hide from proposal report as non-moderator
-        post = {'action' : 'Hide', 'report' : self.proposal_report.id}
+        post = {'action': 'Hide', 'report': self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get, object_id=self.reported_proposal.id, content_type=Proposal.get_content_type())
+        self.assertRaises(HideAction.DoesNotExist, HideAction.objects.get,
+                          object_id=self.reported_proposal.id,
+                          content_type=Proposal.get_content_type())
         self.assertTrue(Report.objects.get(id=self.proposal_report.id))
 
         # Login as moderator
-        self.assertTrue(self.client.login(username=self.eusa_staff.username, password=''))
+        self.assertTrue(self.client.login(username=self.eusa_staff.username,
+                                          password=''))
 
         # View moderator panel as moderator
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        
+
         # Hide from comment report as moderator
-        post = {'action' : 'Hide', 'report' : self.comment_report.id}
+        post = {'action': 'Hide', 'report': self.comment_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(HideAction.objects.get(object_id=self.reported_comment.id, content_type=Comment.get_content_type()))
-        self.assertRaises(Report.DoesNotExist, Report.objects.get, id=self.comment_report.id)
+        self.assertTrue(HideAction.objects.get(
+            object_id=self.reported_comment.id,
+            content_type=Comment.get_content_type()))
+        self.assertRaises(Report.DoesNotExist, Report.objects.get,
+                          id=self.comment_report.id)
 
         # Hide from proposal report as moderator
-        post = {'action' : 'Hide', 'report' : self.proposal_report.id}
+        post = {'action': 'Hide', 'report': self.proposal_report.id}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(HideAction.objects.get(object_id=self.reported_proposal.id, content_type=Proposal.get_content_type()))
-        self.assertRaises(Report.DoesNotExist, Report.objects.get, id=self.proposal_report.id)
+        self.assertTrue(HideAction.objects.get(
+            object_id=self.reported_proposal.id,
+            content_type=Proposal.get_content_type()))
+        self.assertRaises(Report.DoesNotExist, Report.objects.get,
+                          id=self.proposal_report.id)

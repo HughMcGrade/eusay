@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
@@ -11,17 +12,21 @@ from votes.models import Vote
 from comments.models import Comment
 from student_councils.models import StudentCouncil
 
+
 class ProposalManager(models.Manager):
     """Manager for Proposal model"""
     def get_visible_proposals(self, tag=None, sort="popular"):
         """
         Get visible proposals, optionally for a particular tag.
 
-        By default, proposals are sorted most popular first. To sort newest proposal first, pass ``"newest"`` as the ``sort`` argument.
+        By default, proposals are sorted most popular first. To sort newest
+        proposal first, pass ``"newest"`` as the ``sort`` argument.
 
         :param tag:  Tag to get proposals for (None by default)
-        :param sort: Sort by either popularity (``"popular"``) or ``createdAt`` (``"newest"``)
-        :returns:    Sorted and filtered proposals with hidden proposals removed
+        :param sort: Sort by either popularity (``"popular"``) or ``createdAt``
+        (``"newest"``)
+        :returns:    Sorted and filtered proposals with hidden proposals
+                     removed
         :rtype:      QuerySet
         """
         proposals = self.all()
@@ -59,17 +64,22 @@ class Proposal(Content):
 
     def get_content_type():
         """
-        Gets ContentType of Proposal model, caching result in ``_content_type`` when first retrieved.
+        Gets ContentType of Proposal model, caching result in ``_content_type``
+        when first retrieved.
 
         :returns: ContentType of Proposal model
         :rtype:   :mod:`django.contrib.contenttypes.models.ContentType`
         """
         if not hasattr(Proposal, '_content_type'):
-            Proposal._content_type = ContentType.objects.get(app_label="proposals", model="proposal")
+            Proposal._content_type = ContentType.objects.get(
+                app_label="proposals", model="proposal")
         return Proposal._content_type
 
     def save(self, *args, **kwargs):
-        """Create slug, save proposal and for initial save add vote by proposer."""
+        """
+        Create slug, save proposal and for initial save add
+        vote by proposer.
+        """
         is_initial = not self.pk
         self.slug = slugify(self.title, max_length=100)
         super(Proposal, self).save(*args, **kwargs)
@@ -86,7 +96,7 @@ class Proposal(Content):
 
     def get_votes_up_percentage(self):
         """
-        Get percentage of votes which are up votes 
+        Get percentage of votes which are up votes
         """
         votes_up = self.upVotes
         votes_total = votes_up + self.downVotes
@@ -102,46 +112,46 @@ class Proposal(Content):
         votes_up_percentage = self.get_votes_up_percentage()
         return 100 - votes_up_percentage
 
-    def _hours_since(self, date):
+    @staticmethod
+    def _hours_since(date):
         utc_now = datetime.datetime.utcnow()
         utc_event = datetime.datetime.utcfromtimestamp(date.timestamp())
         return (utc_now - utc_event).total_seconds() / 3600.0
 
-    def _weight_instance(self, hour_age, gravity=1.8):
+    @staticmethod
+    def _weight_instance(hour_age, gravity=1.8):
         return 1 / pow((hour_age+2), gravity)
 
-    def _proximity_coefficient(self):
+    @staticmethod
+    def _proximity_coefficient():
         return 1
 
     def get_rank(self):
-        """
-        
-        """
         rank = 0
 
         # Take sum of weighted value for each comment
         comments = Comment.objects.all().filter(proposal=self)
         for comment in comments:
-            rank += self._weight_instance(hour_age=
-                                          self._hours_since(
-                                              comment.createdAt)) * 4
+            rank += _weight_instance(
+                hour_age=_hours_since(comment.createdAt)) * 4
 
-        votes = self.user.get_votes()#Vote.get_votes(self)
+        votes = self.user.get_votes()
+        # Vote.get_votes(self)
         for vote in votes:
-            hour_age = self._hours_since(vote.createdAt)
+            hour_age = _hours_since(vote.createdAt)
             if vote.isVoteUp:
-                rank += self._weight_instance(hour_age) * 2
+                rank += _weight_instance(hour_age) * 2
             else:
-                rank += self._weight_instance(hour_age) * 1
+                rank += _weight_instance(hour_age) * 1
 
         return rank * \
-            self._proximity_coefficient() + \
+            _proximity_coefficient() + \
             self.upVotes - \
             self.downVotes
 
     def get_visible_comments(self, reply_to=None, sort="popularity"):
-        return Comment.objects.get_visible_comments\
-            (proposal=self, reply_to=reply_to, sort=sort)
+        return Comment.objects.get_visible_comments(
+            proposal=self, reply_to=reply_to, sort=sort)
 
 
 class Response(Content):
@@ -153,8 +163,8 @@ class Response(Content):
            self.user.userStatus == "Officeholder":
             super(Response, self).save(*args, **kwargs)
         else:
-            raise Exception\
-                ("Only staff and officerholders can respond to proposals!")
+            raise Exception("Only staff and officerholders"
+                            "can respond to proposals!")
 
     def __unicode__(self):
         return "%s" % self.text
