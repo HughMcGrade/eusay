@@ -3,8 +3,8 @@ from .base import *
 
 ENVIRONMENT = "production"
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
                   ".eusay.eusa.ed.ac.uk"]  # Period matches any subdomains
