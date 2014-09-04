@@ -141,10 +141,12 @@ def logout(request):
         return HttpResponseRedirect(reverse("frontpage"))
 
     elif settings.ENVIRONMENT == "production":
-
+        post_logout_url = "https://www.ease.ed.ac.uk/logout.cgi"
         if request.user.is_authenticated():
             response = django_logout(request,
-                                     next_page=reverse("logout2"))
+                                     next_page=post_logout_url)
+            response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
+                                   domain="eusay.eusa.ed.ac.uk")
             return response
         else:
             messages.add_message(request,
@@ -152,18 +154,6 @@ def logout(request):
                                  "You can't log out if you aren't logged "
                                  "in first!")
             return HttpResponseRedirect(reverse("frontpage"))
-
-
-def logout2(request):
-    if settings.ENVIRONMENT == "dev":
-        return HttpResponseRedirect(reverse("frontpage"))
-
-    elif settings.ENVIRONMENT == "production":
-        post_logout_url = "https://www.ease.ed.ac.uk/logout.cgi"
-        response = HttpResponseRedirect(post_logout_url)
-        response.delete_cookie("cosign-eucsCosign-eusay.eusa.ed.ac.uk",
-                               domain="eusay.eusa.ed.ac.uk")
-        return response
 
 
 def login(request):

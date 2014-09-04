@@ -27,7 +27,6 @@ urlpatterns = patterns('',
 
     # Authentication
     url(r'^logout/$', user_views.logout, name="logout"),
-    url(r'^logout2/$', user_views.logout2, name="logout2"),
     url(r'^login/$', user_views.login, name="login"),
 
     # Proposals
