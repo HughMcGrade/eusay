@@ -1,15 +1,24 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>Search</h2>
+{% block js %}
+<script>
+ $(document).ready(function() {
+   $.endlessPaginate();
+ });
+</script>
+{% endblock %}
 
-{% if results %}
-{% for result in results %}
-<p>
-  <a href="{% url 'proposal' result.object.id result.object.slug %}">{{ result.object.title }}</a>
-</p>
-{% endfor %}
+{% block content %}
+{% if query %}
+  <h2>{{ proposals|length }} results for "{{ query }}"</h2>
 {% else %}
-Nothing found!
+  <h2>Search</h2>
+{% endif %}
+<hr />
+
+{% if proposals %}
+  {% include proposals_template %}
+{% else %}
+  <p>No results found.</p>
 {% endif %}
 {% endblock %}
