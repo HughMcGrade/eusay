@@ -279,6 +279,7 @@ body {
     background-color: #f6f6f6;
 	margin-bottom: 15px;
 	padding: 15px;
+    margin-top: 40px;
 }
 #proposal-action-menu-open {
     position: absolute;
@@ -340,6 +341,13 @@ body {
 }
 #proposal-vote-form-top {
     margin-top: 40px;
+}
+#proposal-similar-page-links {
+    text-align: center;
+}
+#proposal-similar-page-links a {
+    color: grey;
+    font-size: 2em;
 }
 hr.fancy-hr {
   height: 3px;

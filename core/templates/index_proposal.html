@@ -1,0 +1,50 @@
+{% load filters %}
+
+<div class="page-shadow index-proposal" id="proposal_{{ proposal.id }}">
+  {% if proposal.response %}
+    <div class="ribbon">
+      <a><span class="glyphicon glyphicon-star"></span></a>
+    </div>
+  {% endif %}
+  <div class="index-proposal-top">
+    <h4 class="index-proposal-title"><a class="pink"
+                                        href="{% url 'proposal' proposal.id proposal.slug %}">
+      {{ proposal.title }}
+      <span></span>
+    </a></h4>
+
+    <div class="index-proposal-user">
+      by {{ proposal.user.username }}
+    </div>
+    <div class="index-proposal-tags">
+      {{ proposal.tags.all | join:", " }}
+    </div>
+  </div>
+  <div class="index-proposal-bottom">
+    {% if user.isModerator %}
+      <div>Rank: {{ proposal.rank }}</div>
+    {% endif %}
+    <hr/>
+    <div class="row">
+      <div class="col-xs-6">
+        <a role="button" class="btn btn-sm btn-block btn-success"><span
+            class="glyphicon glyphicon-thumbs-up"></span> {{ proposal.upVotes }}
+          For</a>
+      </div>
+      <div class="col-xs-6">
+        <a role="button" class="btn btn-sm btn-block btn-danger"><span
+            class="glyphicon glyphicon-thumbs-down"></span> {{ proposal.downVotes }}
+          Against</a>
+      </div>
+    </div>
+    <div class="index-proposal-meta">
+          <span class="pull-left">
+            {{ proposal.createdAt | smart_time }}
+          </span>
+          <span class="pull-right">
+              <span
+                  class="glyphicon glyphicon-bullhorn"></span> {{ proposal.comments.count }} comment{{ proposal.comments.count|pluralize }}
+          </span>
+    </div>
+  </div>
+</div><!-- /.proposal -->

@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from haystack.query import SearchQuerySet
 
 from lxml.html.diff import htmldiff
 
@@ -16,6 +17,7 @@ from tags.models import Tag
 from users.views import request_login
 from moderation.models import HideAction
 from votes.views import do_vote
+from core.utils import to_queryset
 
 
 def index(request):
@@ -128,13 +130,20 @@ def proposal(request, proposal_id, slug=None):
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)
 
+    similar_proposals = to_queryset(SearchQuerySet().more_like_this(proposal))
+
     form = CommentForm()
     comments = proposal.get_visible_comments()
     context = {"form": form,
                "proposal": proposal,
                "comments": comments,
                "user_vote": user_vote,
-               "hide": hide}
+               "hide": hide,
+               "similar_proposals": similar_proposals}
+
+    template = "proposal.html"
+    if request.is_ajax() and "page" in request.GET:
+        template = "proposal_similar.html"
 
     comment_votes = {}
     if request.user.is_authenticated():
@@ -148,7 +157,7 @@ def proposal(request, proposal_id, slug=None):
     context.update(comment_votes)
 
     response = render(request,
-                      "proposal.html",
+                      template,
                       context)
     for key in response_headers:
         response[key] = response_headers[key]

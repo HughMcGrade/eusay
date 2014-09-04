@@ -97,23 +97,9 @@
  };
  $(document).ready(function() {
    initForms();
-   // find similar proposals
-   $.getJSON("{% url "api_v1:similarproposals" proposal.id %}", function(data) {
-     var output = "<ul>";
-     for (var i in data.results) {
-       output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
-     }
-     output += "</ul>";
-     if (data.count > 0) {
-       $("#similarList").html(output);
-       $("#similar").fadeIn();
-     }
-   });
-
    hideReplyForms();
-
    $("#proposal-action-menu").hide(0);
-
+   $.endlessPaginate();
  });
 
  function showReplyForm(id) {
@@ -156,7 +142,7 @@ function hideProposalActionMenu() {
 {% endif %}
 
 <div class="row">
-  <div class="col-xs-12 col-md-8 col-md-offset-2">
+  <div class="col-xs-12 col-md-8">
     <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
 
     <div id="proposal-action-menu-open">
@@ -270,19 +256,21 @@ function hideProposalActionMenu() {
         </div>
       </div>
     </div> <!-- /.proposal-page -->
+
+    <div class="comments{% if hide %} proposal-hidden{% endif %}">
+    {% include "proposal_comments.html" %}
+    </div>
+
   </div> <!-- /.col -->
+
+  {% if similar_proposals %}
+    <div class="col-xs-12 col-md-4" id="similar-proposals">
+      <h4 class="text-center">Similar proposals</h4>
+      <div class="endless_page_template">
+        {% include "proposal_similar.html" %}
+      </div>
+    </div>
+  {% endif %}
 </div> <!-- /.row -->
-
-<div class="comments{% if hide %} proposal-hidden{% endif %}">
-  {% include "proposal_comments.html" %}
-</div>
-
-<!--<div class="row" id="similar">
-<div class="col-xs-12">
-<h3>Similar proposals:</h3>
-<div id="similarList">
-</div>
-</div>
-</div>-->
 
 {% endblock %}
