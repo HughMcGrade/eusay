@@ -3,9 +3,9 @@
 import re
 import random
 
-from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
+
 
 def smart_truncate(content, max_length=100, suffix='...'):
     # Thanks to http://stackoverflow.com/questions/250357/
@@ -13,6 +13,7 @@ def smart_truncate(content, max_length=100, suffix='...'):
         return content
     else:
         return content[:max_length].rsplit(' ', 1)[0]+suffix
+
 
 def add_users(amount):
     """
@@ -22,7 +23,14 @@ def add_users(amount):
     :return:       True if successful, False otherwise
     """
 
-    names = ['Tonja','Kaley','Bo','Tobias','Jacqui','Lorena','Isaac','Adriene','Tuan','Shanon','Georgette','Chas','Yuonne','Michelina','Juliana','Odell','Juliet','Carli','Asha','Pearl','Kamala','Rubie','Elmer','Taren','Salley','Raymonde','Shelba','Alison','Wilburn','Katy','Denyse','Rosemary','Brooke','Carson','Tashina','Kristi','Aline','Yevette','Eden','Christoper','Juana','Marcie','Wendell','Vonda','Dania','Sheron','Meta','Frank','Thad','Cherise']
+    names = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',
+             'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne',
+             'Michelina', 'Juliana', 'Odell', 'Juliet', 'Carli', 'Asha',
+             'Pearl', 'Kamala', 'Rubie', 'Elmer', 'Taren', 'Salley',
+             'Raymonde', 'Shelba', 'Alison', 'Wilburn', 'Katy', 'Denyse',
+             'Rosemary', 'Brooke', 'Carson', 'Tashina', 'Kristi', 'Aline',
+             'Yevette', 'Eden', 'Christoper', 'Juana', 'Marcie', 'Wendell',
+             'Vonda', 'Dania', 'Sheron', 'Meta', 'Frank', 'Thad', 'Cherise']
     generate_name = lambda: random.choice(names)
 
     def increment_sid():
@@ -35,7 +43,8 @@ def add_users(amount):
     # If no users exist, add one
     if get_user_model().objects.all().count() == 0:
         get_user_model().objects.get_or_create(sid="s1",
-                                   username=(generate_name() + "1"))
+                                               username=(generate_name()
+                                                         + "1"))
         amount -= 1
 
     start_num = get_user_model().objects.all().count() + 1
@@ -46,7 +55,7 @@ def add_users(amount):
         sid = increment_sid()
         if not get_user_model().objects.filter(sid=sid).exists():
             get_user_model().objects.create(sid=sid,
-                                username=name)
+                                            username=name)
             i += 1
 
     return True
@@ -76,9 +85,26 @@ def add_proposals(amount):
     ]
 
     bodies = [
-        "Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Etiam porta sem malesuada magna mollis euismod. Vestibulum id ligula porta felis euismod semper. Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.",
-        "Cras mattis consectetur purus sit amet fermentum. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nullam quis risus eget urna mollis ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui.",
-        "Etiam porta sem malesuada magna mollis euismod. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Donec id elit non mi porta gravida at eget metus. Donec sed odio dui."
+        "Duis mollis, est non commodo luctus, nisi "
+        "erat porttitor ligula, eget lacinia odio sem "
+        "nec elit. Etiam porta sem malesuada magna mollis euismod. "
+        "Vestibulum id ligula porta felis euismod semper. Etiam porta sem "
+        "malesuada magna mollis euismod. Cras mattis consectetur purus sit "
+        "amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas "
+        "eget quam.",
+        "Cras mattis consectetur purus sit amet fermentum. Aenean eu leo "
+        "quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. "
+        "Duis mollis, est non commodo luctus, nisi erat porttitor ligula, "
+        "eget lacinia odio sem nec elit. Nullam quis risus eget urna mollis "
+        "ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas "
+        "eget quam. Cras mattis consectetur purus sit amet fermentum. Donec "
+        "sed odio dui.",
+        "Etiam porta sem malesuada magna mollis euismod. Morbi leo risus, "
+        "porta ac consectetur ac, vestibulum at eros. Nulla vitae elit "
+        "libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare "
+        "sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh "
+        "ultricies vehicula ut id elit. Donec id elit non mi porta gravida "
+        "at eget metus. Donec sed odio dui."
     ]
 
     get_title = lambda: random.choice(titles)
@@ -153,6 +179,6 @@ def to_queryset(searchqueryset):
 
 
 def contains_swear_words(text):
-    words = re.sub("[^\w]", " ", text).split()
+    words = re.sub(r"[^\w]", " ", text).split()
     bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
     return bool(bad_words)

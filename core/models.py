@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 
+
 class Content(models.Model):
     """
     Abstract model for website content.
@@ -17,11 +18,12 @@ class Content(models.Model):
     :ivar lastModified:  DateTime of last modification
     :ivar user:          Creator of content
     :ivar upVotes:       Up vote count, set by save method of Vote model(only!)
-    :ivar downVotes:     Down vote count, set by :meth:``votes.Vote.save``(only!)
+    :ivar downVotes:     Down vote count, set by :meth:``votes.Vote.save``\
+                         (only!)
     :ivar isHidden:      True if the content has been hidden, set by save\
                          method of HideAction (only!)
-    :ivar rank:          Rank of the content for ordering by popularity, set by\
-                         cron job
+    :ivar rank:          Rank of the content for ordering by popularity, set\
+                         by cron job
 
     """
     id = models.AutoField(primary_key=True)
@@ -45,7 +47,8 @@ class Content(models.Model):
         """
         Get users who have voted on this content.
 
-        :param target: ``"all"`` (default) for all users, ``"up"`` for voters for and ``"down"`` for voters against
+        :param target: ``"all"`` (default) for all users, ``"up"``\
+                       for voters for and ``"down"`` for voters against
         :rtype: QuerySet
         """
         content_type = ContentType.objects.get_for_model(self)
