@@ -1,5 +1,4 @@
 import json
-from slugify import slugify
 
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse

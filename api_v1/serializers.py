@@ -21,29 +21,22 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 
 class ProposalDetailSerializer(serializers.ModelSerializer):
-    votesUp = serializers.IntegerField(source="get_votes_up_count",
-                                       read_only=True)
-    votesDown = serializers.IntegerField(source="get_votes_down_count",
-                                         read_only=True)
     comments = CommentListSerializer(many=True)
 
     class Meta:
         model = Proposal
         lookup_field = 'id'
-        fields = ("id", "title", "votesUp", "votesDown", "text", "user",
-                  "createdAt", "lastModified", "comments")
+        fields = ("id", "title", "text", "user",
+                  "createdAt", "lastModified", "comments", "upVotes",
+                  "downVotes")
 
 
 class ProposalListSerializer(serializers.ModelSerializer):
     # again, there are two proposal serializers because you don't need to see
     # the description fields or comments when viewing a list of proposals
-    votesUp = serializers.IntegerField(source="get_votes_up_count",
-                                       read_only=True)
-    votesDown = serializers.IntegerField(source="get_votes_down_count",
-                                         read_only=True)
 
     class Meta:
         model = Proposal
         lookup_field = 'id'
-        fields = ("id", "title", "votesUp", "votesDown", "user",
-                  "createdAt", "lastModified")
+        fields = ("id", "title", "user", "createdAt", "lastModified",
+                  "upVotes", "downVotes")
