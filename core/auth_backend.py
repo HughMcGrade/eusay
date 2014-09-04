@@ -12,20 +12,23 @@ class CustomUserModelBackend(RemoteUserBackend):
         except with a way to specify our extended User model.
         The idea for the self.user_class property comes
         from Scott Barnham.
+
+        Also, we've changed instances of `username` to `sid` since that's
+        what CoSign supplies us with.
         """
         if not remote_user:
             return
         user = None
-        username = self.clean_username(remote_user)
+        sid = self.clean_username(remote_user)
 
         if self.create_unknown_user:
             user, created = \
-                self.user_class.objects.get_or_create(username=username)
+                self.user_class.objects.get_or_create(sid=sid)
             if created:
                 user = self.configure_user(user)
         else:
             try:
-                user = self.user_class.objects.get(username=username)
+                user = self.user_class.objects.get(sid=sid)
             except self.user_class.DoesNotExist:
                 pass
         return user
