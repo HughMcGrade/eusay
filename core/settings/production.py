@@ -32,7 +32,7 @@ MIDDLEWARE_CLASSES = \
 
 # But add RemoteUserMiddleware last, because it must come after
 # AuthenticationMiddleware
-MIDDLEWARE_CLASSES += 'django.contrib.auth.middleware.RemoteUserMiddleware'
+MIDDLEWARE_CLASSES += ('django.contrib.auth.middleware.RemoteUserMiddleware',)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.RemoteUserBackend',
