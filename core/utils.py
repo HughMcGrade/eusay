@@ -182,3 +182,8 @@ def contains_swear_words(text):
     words = re.sub(r"[^\w]", " ", text).split()
     bad_words = [w for w in words if w.lower() in settings.PROFANITIES_LIST]
     return bool(bad_words)
+
+
+def sqs_to_qs(sqs):
+    for item in sqs:
+        yield item.object
