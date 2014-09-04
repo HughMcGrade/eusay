@@ -92,6 +92,7 @@ def add_proposals(amount):
         "malesuada magna mollis euismod. Cras mattis consectetur purus sit "
         "amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas "
         "eget quam.",
+
         "Cras mattis consectetur purus sit amet fermentum. Aenean eu leo "
         "quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. "
         "Duis mollis, est non commodo luctus, nisi erat porttitor ligula, "
@@ -99,6 +100,7 @@ def add_proposals(amount):
         "ornare vel eu leo. Cras justo odio, dapibus ac facilisis in, egestas "
         "eget quam. Cras mattis consectetur purus sit amet fermentum. Donec "
         "sed odio dui.",
+
         "Etiam porta sem malesuada magna mollis euismod. Morbi leo risus, "
         "porta ac consectetur ac, vestibulum at eros. Nulla vitae elit "
         "libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare "
