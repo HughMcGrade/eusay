@@ -91,7 +91,7 @@ class Proposal(Content):
         """
         Get the proposal's URL using :mod:`django.core.urlresolvers.reverse`
         """
-        return reverse("proposal", kwargs={"proposalId": self.id,
+        return reverse("proposal", kwargs={"proposal_id": self.id,
                                            "slug": self.slug})
 
     def get_votes_up_percentage(self):

@@ -32,7 +32,7 @@ def hide_comment(request, comment_id):
                                      ("The comment has been hidden "
                                       "and hide action logged"))
                 return HttpResponseRedirect(reverse(
-                    'proposal', kwargs={"proposalId": comment.proposal.id,
+                    'proposal', kwargs={"proposal_id": comment.proposal.id,
                                         "slug": comment.proposal.slug}))
             else:
                 messages.add_message(request, messages.ERROR,

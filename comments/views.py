@@ -86,7 +86,7 @@ def delete_comment(request, comment_id):
             comment.save()
             messages.add_message(request, messages.SUCCESS, "Comment deleted")
             return HttpResponseRedirect(reverse("proposal",
-                                                kwargs={"proposalId":
+                                                kwargs={"proposal_id":
                                                         comment.proposal.id,
                                                         "slug":
                                                         comment.proposal.slug})

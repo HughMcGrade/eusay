@@ -41,8 +41,8 @@ class CommentList(generics.ListAPIView):
         This view should return a list of all the comments
         for a particular proposal.
         """
-        proposalId = self.kwargs['id']  # kwarg from URL
-        return Comment.objects.filter(proposal__id=proposalId)
+        proposal_id = self.kwargs['id']  # kwarg from URL
+        return Comment.objects.filter(proposal__id=proposal_id)
 
 
 class CommentDetail(generics.RetrieveAPIView):
@@ -100,7 +100,7 @@ def autocomplete(request):
     for result in searchqueryset:
         title = result.title
         url = reverse("proposal",
-                      kwargs={"proposalId": result.pk, "slug": result.slug})
+                      kwargs={"proposal_id": result.pk, "slug": result.slug})
         suggestions.append({"label": title, "link": url})
     data = json.dumps({
         "results": suggestions

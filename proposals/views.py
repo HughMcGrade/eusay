@@ -57,7 +57,7 @@ def submit(request):
             form.save_m2m()  # save tags
             return HttpResponseRedirect(
                 reverse("proposal",
-                        kwargs={"proposalId": proposal.id,
+                        kwargs={"proposal_id": proposal.id,
                                 "slug": proposal.slug}))  # Redirect after POST
         else:
             errors = form.errors
@@ -257,7 +257,7 @@ def delete_proposal(request, proposal_id):
             proposal.save()
             messages.add_message(request, messages.INFO, "Proposal deleted")
             return HttpResponseRedirect(reverse("proposal",
-                                                kwargs={"proposalId":
+                                                kwargs={"proposal_id":
                                                         proposal.id, "slug":
                                                         proposal.slug}))
     else:
@@ -281,7 +281,7 @@ def update_proposal_status(request, proposal_id):
         if form.is_valid():
             form.save()
         return HttpResponseRedirect(reverse("proposal",
-                                            kwargs={"proposalId": proposal.id,
+                                            kwargs={"proposal_id": proposal.id,
                                                     "slug": proposal.slug}))
     else:
         form = ProposalStatusForm(instance=proposal)
