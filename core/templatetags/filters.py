@@ -11,10 +11,10 @@ from django import template
 from django.conf import settings
 
 from votes.models import Vote
-from comments.forms import CommentForm
 from core.utils import smart_truncate as core_smart_truncate
 
 register = template.Library()
+
 
 @register.filter
 def comment_user_vote(comment, user):
@@ -26,8 +26,8 @@ def comment_user_vote(comment, user):
 
     """
     try:
-        vote = comment.votes.get(user = user)
-    except Exception:
+        vote = comment.votes.get(user=user)
+    except Vote.DoesNotExist:
         vote = None
     if not vote:
         user_vote = 0
@@ -35,7 +35,9 @@ def comment_user_vote(comment, user):
         user_vote = 1
     else:
         user_vote = -1
-    return render_to_string('comment_votes.html', { 'comment' : comment, 'user_vote' : user_vote })
+    return render_to_string('comment_votes.html', {'comment': comment,
+                                                   'user_vote': user_vote})
+
 
 @register.filter
 def comment_replies(comment):
@@ -47,28 +49,31 @@ def comment_replies(comment):
     """
     return comment.get_replies(sort="chronological")
 
+
 @register.filter
 @stringfilter
 def replace_bad_words(value):
     """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with
     dashes
 
-    :type value: string 
+    :type value: string
     :returns: ``value`` without profanities
     :rtype: string
 
     """
-    #Replaces profanities in strings with safe words
+    # Replaces profanities in strings with safe words
     # For instance, "shit" becomes "s--t"
-    words = re.sub("[^\w]", " ", value).split()
+    words = re.sub(r"[^\w]", " ", value).split()
     bad_words_seen = []
     for word in words:
         if word.lower() in settings.PROFANITIES_LIST:
             bad_words_seen.append(word)
     if bad_words_seen:
         for word in bad_words_seen:
-            value = value.replace(word, "%s%s%s" % (word[0], '-'*(len(word)-2), word[-1]))
+            value = value.replace(word, "%s%s%s" %
+                                  (word[0], '-'*(len(word)-2), word[-1]))
     return value
+
 
 @register.filter(is_safe=True)
 @stringfilter
@@ -86,7 +91,8 @@ def my_markdown(text):
     allowed_tags = bleach.ALLOWED_TAGS
     allowed_tags.append("ins")
     allowed_tags.append("del")
-    cleaned_text = bleach.clean(linkified, strip_comments=False, tags=allowed_tags)
+    cleaned_text = bleach.clean(linkified, strip_comments=False,
+                                tags=allowed_tags)
     return mark_safe(cleaned_text)
 
 

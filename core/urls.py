@@ -5,7 +5,6 @@ from django.contrib import admin
 from core import views as core_views
 from proposals import views as proposal_views
 from comments import views as comment_views
-from votes import views as vote_views
 from moderation import views as moderation_views
 from users import views as user_views
 from tags import views as tag_views
@@ -48,15 +47,17 @@ urlpatterns = patterns('',
     url(r'^user/(?P<slug>[\w-]+)', user_views.profile, name="user"),
 
     # Moderation
-    url(r'^comment_hides', moderation_views.comment_hides, name="hidden_comments"),
+    url(r'^comment_hides', moderation_views.comment_hides,
+        name="hidden_comments"),
     url(r'^proposal_hides', moderation_views.proposal_hides,
         name="hidden_proposals"),
-                       url(r'^moderator_panel', moderation_views.moderator_panel, name="moderator_panel"),
+    url(r'^moderator_panel', moderation_views.moderator_panel,
+        name="moderator_panel"),
     url(r'^search/', search_views.search),
 
     # Action URLs
-    url(r'^add_user/', user_views.add_user), # TODO: remove this, maybe?
-    url(r'^get_users/', user_views.get_users),  # TODO: remove this, since it's for debugging
+    url(r'^add_user/', user_views.add_user),  # TODO: remove this, maybe?
+    url(r'^get_users/', user_views.get_users),   # TODO: remove this
     url(r'^report_comment/(?P<comment_id>\d+)',
         moderation_views.report_comment,
         name="report_comment"),
@@ -65,7 +66,7 @@ urlpatterns = patterns('',
         name="report_proposal"),
     url(r'^make_mod', user_views.make_mod),
     url(r'^make_staff', user_views.make_staff),
-    #url(r'^get_messages/', _views.get_messages),
+    # url(r'^get_messages/', _views.get_messages),
     url(r'^hide_comment/(?P<comment_id>\d+)',
         moderation_views.hide_comment,
         name="hide_comment"),
