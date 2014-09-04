@@ -27,9 +27,12 @@ DATABASES = {
 
 # Make AppEnlight be the first value in MIDDLEWARE_CLASSES
 MIDDLEWARE_CLASSES = \
-    ('appenlight_client.django_middleware.AppenlightMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware') + \
+    ('appenlight_client.django_middleware.AppenlightMiddleware',) + \
     MIDDLEWARE_CLASSES
+
+# But add RemoteUserMiddleware last, because it must come after
+# AuthenticationMiddleware
+MIDDLEWARE_CLASSES += 'django.contrib.auth.middleware.RemoteUserMiddleware'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.RemoteUserBackend',
