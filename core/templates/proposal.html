@@ -31,6 +31,27 @@
    }
   }
 
+ function askForComment() {
+   var addCommentTarget = $('#add_comment_row').find('#id_text');
+   var proposalVoteTarget = $('.proposal-vote-button');
+
+   // Check direction of vote
+   if (proposalVoteTarget.is('.btn-success') && proposalVoteTarget.is('.btn-danger')) {
+     // No vote
+     addCommentTarget.attr('placeholder', '');
+   }
+   else if (proposalVoteTarget.is('.btn-success')) {
+     // Up vote
+     addCommentTarget.attr('placeholder', 'Why do you agree with this proposal?');
+     $('html').animate({scrollTop:addCommentTarget.offset().top}, 'slow');
+   }
+   else if (proposalVoteTarget.is('.btn-danger')) {
+     // Down vote
+     addCommentTarget.attr('placeholder', 'Why do you disagree with this proposal?');
+     $('html').animate({scrollTop:addCommentTarget.offset().top}, 'slow');
+   }
+ }
+
  function initForms() {
    $('.proposal-comment-form').ajaxForm(
      { clearForm : true,
@@ -75,8 +96,10 @@
 	   $('#proposal_progress_bar').html(progressBar);
 	 }
 
-	 // Reload messages
-	 putNewMessagesFromResponse(response);
+	 // Reload messages and ask for comment if none
+	 if (!putNewMessagesFromResponse(response)) {
+	   askForComment();
+	 }
        }
      });
    $('.comment_vote_form').ajaxForm(
