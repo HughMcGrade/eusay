@@ -62,7 +62,7 @@
       success: function(response, statusText, xhr) {
 	$('.submit-comment-button').attr('disabled', false);
 	$('.submit-comment-button').text('Submit');
-	if (xhr.getResponseHeader('Comment-Id') != null) {
+	if (xhr.getResponseHeader('Is-Reply') != null) {
           // Reply posted
 	  var html = $.parseHTML(response);
           var selector = '#comment_replies_' + xhr.getResponseHeader("Comment-Id");
@@ -75,6 +75,8 @@
 	initForms();
 	hideReplyForms();
 	putNewMessagesFromResponse(response);
+	var selector = '#comment_' + xhr.getResponseHeader('Comment-Id')
+	$('html').animate({scrollTop:$(selector).offset().top}, 'slow');
       }
      });
    $('#proposal_vote_form').ajaxForm(

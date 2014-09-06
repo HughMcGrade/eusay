@@ -116,11 +116,14 @@ def proposal(request, proposal_id, slug=None):
                 comment.replyTo = Comment.objects\
                                          .get(id=request.POST['reply_to'])
                 response_headers['Comment-Id'] = request.POST['reply_to']
+                response_headers['Is-Reply'] = 'True'
             if form.is_valid():  # All validation rules pass
                 # Process the data in form.cleaned_data
                 comment.user = request.user
                 comment.proposal = proposal
                 comment.save()
+                if not 'Is-Reply' in response_headers:
+                    response_headers['Comment-Id'] = str(comment.id)
 
     hide = None
     if proposal.isHidden:
