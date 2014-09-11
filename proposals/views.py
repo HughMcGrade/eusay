@@ -185,8 +185,9 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
             response.proposal = proposal
             response.save()
             return HttpResponseRedirect(reverse('proposal',
-                                                args=[str(proposal.id),
-                                                      proposal.slug]))
+                                                kwargs={"proposal_id":
+                                                        proposal.id, "slug":
+                                                proposal.slug}))
         else:
             messages.add_message(request, messages.ERROR,
                                  "Invalid response form")
