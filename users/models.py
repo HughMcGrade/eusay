@@ -3,11 +3,13 @@ from slugify import slugify
 from django.db import models
 from django.contrib.auth import models as usermodels
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 
 from proposals.models import Proposal
 from comments.models import Comment
 from votes.models import Vote
 from notifications.models import Notification
+
 
 class UserManager(usermodels.UserManager):
 
@@ -15,8 +17,9 @@ class UserManager(usermodels.UserManager):
         try:
             return self.get(username='Deleted Content')
         except User.DoesNotExist:
-            return self.create(sid='Deleted Content',\
+            return self.create(sid='Deleted Content',
                                username='Deleted Content', userStatus='User')
+
 
 class User(usermodels.AbstractUser):
 
@@ -48,7 +51,6 @@ class User(usermodels.AbstractUser):
     def proposed(self):
         return Proposal.objects.all().filter(user=self)
 
-
     def comments(self):
         return Comment.objects.all().filter(user=self)
 
@@ -62,7 +64,7 @@ class User(usermodels.AbstractUser):
     def get_vote_on(self, content):
         content_type = ContentType.objects.get_for_model(content)
         try:
-            vote = Vote.objects.get(user=self, content_type=content_type,\
+            vote = Vote.objects.get(user=self, content_type=content_type,
                                     object_id=content.id)
             if vote.isVoteUp:
                 return 1
@@ -77,7 +79,8 @@ class User(usermodels.AbstractUser):
         has voted for.
         """
         user_votes = Vote.objects.filter(user=self)\
-                                 .filter(content_type=Proposal.get_content_type())\
+                                 .filter(content_type=Proposal
+                                         .get_content_type())\
                                  .filter(isVoteUp=True)
         return [vote.content for vote in user_votes]
 
@@ -87,7 +90,8 @@ class User(usermodels.AbstractUser):
         the user has voted against.
         """
         user_votes = Vote.objects.filter(user=self)\
-                                 .filter(content_type=Proposal.get_content_type())\
+                                 .filter(content_type=Proposal
+                                         .get_content_type())\
                                  .filter(isVoteUp=False)
         return [vote.content for vote in user_votes]
 

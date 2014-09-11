@@ -9,25 +9,29 @@ from django.conf import settings
 
 from django.contrib.auth import authenticate as django_authenticate, \
     login as django_auth_login
-from django.contrib.auth.views import login as django_login, \
-    logout as django_logout
+from django.contrib.auth.views import logout as django_logout
 
 from users.models import User
 from users.forms import UserForm
 
-RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',\
-'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne', 'Michelina',\
-'Juliana', 'Odell', 'Juliet', 'Carli', 'Asha', 'Pearl', 'Kamala', 'Rubie',\
-'Elmer', 'Taren', 'Salley', 'Raymonde', 'Shelba', 'Alison', 'Wilburn', 'Katy',\
-'Denyse', 'Rosemary', 'Brooke', 'Carson', 'Tashina', 'Kristi', 'Aline',\
-'Yevette', 'Eden', 'Christoper', 'Juana', 'Marcie', 'Wendell', 'Vonda',\
-'Dania', 'Sheron', 'Meta', 'Frank', 'Thad', 'Cherise']
+RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',
+              'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne',
+              'Michelina', 'Juliana', 'Odell', 'Juliet', 'Carli', 'Asha',
+              'Pearl', 'Kamala', 'Rubie', 'Elmer', 'Taren', 'Salley',
+              'Raymonde', 'Shelba', 'Alison', 'Wilburn', 'Katy',
+              'Denyse', 'Rosemary', 'Brooke', 'Carson', 'Tashina', 'Kristi',
+              'Aline', 'Yevette', 'Eden', 'Christoper', 'Juana', 'Marcie',
+              'Wendell', 'Vonda', 'Dania', 'Sheron', 'Meta', 'Frank', 'Thad',
+              'Cherise']
+
 get_rand_name = lambda: random.choice(RAND_NAMES)
 
+
 def request_login(request):
-    messages.add_message(request, messages.INFO,\
+    messages.add_message(request, messages.INFO,
                          "You must be logged in to do this")
     return HttpResponseRedirect(reverse('frontpage'))
+
 
 def generate_new_user(request):
     username = get_rand_name()
@@ -45,7 +49,8 @@ def generate_new_user(request):
             previous_sid_num = previous_sid[1:]
             new_sid_num = int(previous_sid_num) + 1
             sid = "s" + str(new_sid_num)
-        user = User.objects.create_user(username=username, password="", sid=sid)
+        user = User.objects.create_user(username=username, password="",
+                                        sid=sid)
         user.slug = slugify(user.username, max_length=100)
         user.save()
     user = django_authenticate(username=user.username, password="")
@@ -63,6 +68,7 @@ def add_user(request):
     user = generate_new_user(request)
     return HttpResponse(user.username)
 
+
 # TODO: remove this, since it's for debugging
 def get_users(request):
     users = User.objects.all()
@@ -70,6 +76,7 @@ def get_users(request):
     for user in users:
         s = s + user.username + ", "
     return HttpResponse(s)
+
 
 def profile(request, slug):
     user = User.objects.get(slug=slug)
@@ -93,7 +100,7 @@ def profile(request, slug):
                               "own_profile.html",
                               {"profile": user,
                                "form": form})
-        form = UserForm(instance=request.user) # unbound form
+        form = UserForm(instance=request.user)
         return render(request,
                       "own_profile.html",
                       {'profile': user,
@@ -108,6 +115,7 @@ def profile(request, slug):
                       "no_profile.html",
                       {"profile": user})
 
+
 # Temporary for debugging
 # TODO: remove this when users + mods are implemented
 def make_mod(request):
@@ -118,6 +126,7 @@ def make_mod(request):
     messages.add_message(request, messages.INFO, "You are now a moderator")
     return HttpResponseRedirect(reverse('frontpage'))
 
+
 def make_staff(request):
     if not request.user.is_authenticated():
         return request_login(request)
@@ -125,6 +134,7 @@ def make_staff(request):
     request.user.save()
     messages.add_message(request, messages.INFO, "You are now EUSA Staff")
     return HttpResponseRedirect(reverse('frontpage'))
+
 
 def logout(request):
     if settings.ENVIRONMENT == "dev":
