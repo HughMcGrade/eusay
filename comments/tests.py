@@ -1,14 +1,10 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from comments import models
-from core.tests import addObjects
+from core.tests import BaseTestCase
 
 
-class DeleteTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class DeleteTest(BaseTestCase):
 
     def testDeleteComment(self):
         url = reverse('delete_comment', args=[self.comment.id])

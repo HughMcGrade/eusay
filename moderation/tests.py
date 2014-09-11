@@ -1,16 +1,12 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from core.tests import addObjects
+from core.tests import BaseTestCase
 from comments.models import Comment
 from proposals.models import Proposal
 from moderation.models import Report, HideAction
 
 
-class HideTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class HideTest(BaseTestCase):
 
     def testHideComment(self):
         url = reverse('hide_comment', args=[self.comment.id])
@@ -119,10 +115,7 @@ class HideTest(TestCase):
         self.assertIn(self.proposal_hide, response.context['hiddens'])
 
 
-class ReportTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class ReportTest(BaseTestCase):
 
     def testReportComment(self):
         # View form anonymously

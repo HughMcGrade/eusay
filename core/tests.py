@@ -6,9 +6,21 @@ from users.models import User
 from tags.models import Tag
 from moderation.models import HideAction, Report
 from comments.models import Comment
+import haystack
+from django.test.utils import override_settings
+from django.core.management import call_command
+import os
 
 
-def addObjects(self):
+TEST_INDEX = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'test_index'),
+    },
+}
+
+
+def add_objects(self):
     self.user = User.objects.create_user(sid="s1234567", userStatus="User",
                                          username="Urquell", hasProfile=True,
                                          password="")
@@ -90,3 +102,15 @@ def addObjects(self):
     self.proposal_report = Report.objects.create(content=self.reported_proposal,
                                                  reason="Daft",
                                                  reporter=self.user)
+
+
+@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
+class BaseTestCase(TestCase):
+
+    def setUp(self):
+        add_objects(self)
+        haystack.connections.reload('default')
+        super(BaseTestCase, self).setUp()
+
+    def tearDown(self):
+        call_command('clear_index', interactive=False, verbosity=0)

@@ -1,15 +1,11 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from proposals.models import Proposal, Response
 from comments.models import Comment
-from core.tests import addObjects
+from core.tests import BaseTestCase
+from proposals.models import Proposal, Response
 
 
-class IndexTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class IndexTest(BaseTestCase):
 
     def testViewIndex(self):
         url = reverse('frontpage')
@@ -19,10 +15,7 @@ class IndexTest(TestCase):
         self.assertIn(self.proposal, response.context['proposals'])
 
 
-class ProposalTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class ProposalTest(BaseTestCase):
 
     def testSubmit(self):
         # Test load submit page anonymously
@@ -56,7 +49,8 @@ class ProposalTest(TestCase):
                                              user=self.user))
 
     def testView(self):
-        url = reverse('proposal', args=[self.proposal.id, self.proposal.slug])
+        url = reverse('proposal', kwargs={"proposal_id": self.proposal.id,
+                                           "slug": self.proposal.slug})
 
         # View proposal anonymously
         response = self.client.get(url)
@@ -112,10 +106,7 @@ class ProposalTest(TestCase):
                          "This proposal has been deleted by its proposer.")
 
 
-class AmendTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class AmendTest(BaseTestCase):
 
     def testAmendProposal(self):
         self.assertTrue(self.client.login(username=self.user.username,
@@ -136,10 +127,7 @@ class AmendTest(TestCase):
         self.assertTrue(Comment.objects.get(isAmendment=True))
 
 
-class ResponseTest(TestCase):
-
-    def setUp(self):
-        addObjects(self)
+class ResponseTest(BaseTestCase):
 
     def testRespond(self):
         url = reverse('respond', args=[self.proposal.id, self.proposal.slug])
@@ -182,7 +170,8 @@ class ResponseTest(TestCase):
         self.assertTrue(Response.objects.get(proposal=self.proposal.id))
 
         # View new response
-        url = reverse('proposal', args=[self.proposal.id, self.proposal.slug])
+        url = reverse('proposal', kwargs={"proposal_id": self.proposal.id,
+                                           "slug": self.proposal.slug})
         response = self.client.get(url)
         self.assertIn('proposal', response.context)
         self.assertEqual(response.context['proposal'].response,

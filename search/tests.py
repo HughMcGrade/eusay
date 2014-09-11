@@ -1,51 +1,35 @@
-from django.test import TestCase
+import random
 
-from proposals.models import Proposal
-from users.models import User
-from tags.models import Tag
+from core.tests import BaseTestCase
 
-class SearchTest(TestCase):
-
-    def setUp(self):
-        """
-        Create a user, tag and proposal for these tests
-        """
-        test_user = User.objects.create(sid="s1", username="Test User")
-        test_tag = Tag.objects.create(name="Test tag")
-        test_proposal = Proposal.objects.create(title="Test Proposal",
-                                                text="Test text",
-                                                user=test_user)
-        test_proposal.tags.add(test_tag)
+class SearchTest(BaseTestCase):
 
     def test_search_in_title(self):
         """
         See if search works in the title of proposals
         """
-        test_proposal = Proposal.objects.get(title="Test Proposal")
-        response = self.client.get('/search/?q=proposal')
+        response = self.client.get('/search/?q=Cascada')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('results', response.context)
-        self.assertIn(test_proposal,
-                      [p.object for p in response.context['results'] if p])
+        self.assertIn('proposals', response.context)
+        self.assertIn(self.proposal, response.context['proposals'])
 
     def test_search_in_text(self):
         """
         See if search works in the text of proposals
         """
-        test_proposal = Proposal.objects.get(title="Test Proposal")
-        response = self.client.get('/search/?q=text')
+        response = self.client.get('/search/?q=principal')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(test_proposal,
-                      [p.object for p in response.context['results']])
+        self.assertIn('proposals', response.context)
+        self.assertIn(self.proposal, response.context['proposals'])
 
 '''
     def test_search_in_tags(self):
         """
         See if search works in the tags of proposals
         """
-        test_proposal = Proposal.objects.get(title="Test Proposal")
+        self.proposal = Proposal.objects.get(title="Test Proposal")
         response = self.client.get('/search/?q=tag')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(test_proposal,
+        self.assertIn(self.proposal,
                       [p.object for p in response.context['results']])
 '''

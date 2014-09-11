@@ -1,13 +1,10 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 
-from core.tests import addObjects
+from core.tests import BaseTestCase
 
-class ProfileTest (TestCase):
 
-    def setUp(self):
-        addObjects(self)
+class ProfileTest(BaseTestCase):
 
     def testViewAsSelf(self):
         self.client.login(username=self.user.username, password="")
@@ -33,12 +30,12 @@ class ProfileTest (TestCase):
 
     def testChangeUsername(self):
         url = reverse('user', args=[self.user.slug])
-        
+
         # Log in as another user
         self.client.login(username=self.eusa_staff.username, password="")
 
         # Change other user's username
-        post = {'username' : 'Brendan', 'hasProfile' : self.user.hasProfile}
+        post = {'username': 'Brendan', 'hasProfile': self.user.hasProfile}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
         previous_name = self.user.username
@@ -49,20 +46,21 @@ class ProfileTest (TestCase):
         self.client.login(username=self.user.username, password="")
 
         # Change own username
-        post = {'username' : 'Brendan', 'hasProfile' : self.user.hasProfile}
+        post = {'username': 'Brendan', 'hasProfile': self.user.hasProfile}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.username, 'Brendan')
-        
+
     def testChangeHasProfile(self):
         url = reverse('user', args=[self.user.slug])
-        
+
         # Log in as another user
         self.client.login(username=self.eusa_staff.username, password="")
 
         # Change other user's hasProfile value
-        post = {'username':self.user.username, 'hasProfile' : not self.user.hasProfile}
+        post = {'username': self.user.username,
+                'hasProfile': not self.user.hasProfile}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
         self.user = get_user_model().objects.get(id=self.user.id)
@@ -72,7 +70,7 @@ class ProfileTest (TestCase):
         self.client.login(username=self.user.username, password="")
 
         # Change own hasProfile value
-        post = {'username':'Brendan', 'hasProfile' : not self.user.hasProfile}
+        post = {'username': 'Brendan', 'hasProfile': not self.user.hasProfile}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
         self.user = get_user_model().objects.get(id=self.user.id)

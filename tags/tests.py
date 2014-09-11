@@ -1,13 +1,10 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from tags.models import Tag
-from core.tests import addObjects
+from core.tests import BaseTestCase
 
-class TagTest (TestCase):
-    
-    def setUp(self):
-        addObjects(self)
+
+class TagTest (BaseTestCase):
 
     def testView(self):
         url = reverse('tag', args=[self.tag.id, self.tag.slug])
