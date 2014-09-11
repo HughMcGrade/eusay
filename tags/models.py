@@ -1,6 +1,8 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from slugify import slugify
+
 
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
