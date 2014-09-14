@@ -91,6 +91,9 @@ urlpatterns = patterns('',
     url(r'^edit_comment/(?P<comment_id>\d+)/$',
         comment_views.edit_comment,
         name="edit_comment"),
+    url(r'^edit_response/(?P<response_id>\d+)',
+        proposal_views.edit_response,
+        name="edit_response"),
 
     # Other
     url(r'^about/', core_views.about, name="about"),

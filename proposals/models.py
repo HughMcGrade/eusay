@@ -156,7 +156,7 @@ class Proposal(Content):
 
 class Response(Content):
     text = models.TextField()
-    proposal = models.OneToOneField(Proposal, related_name="response")
+    proposal = models.ForeignKey(Proposal, related_name="responses")
 
     def save(self, *args, **kwargs):
         if self.user.userStatus == "Staff" or \

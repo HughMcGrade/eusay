@@ -167,7 +167,6 @@ def proposal(request, proposal_id, slug=None):
 
     return response
 
-
 def respond_to_proposal(request, proposal_id, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
@@ -195,6 +194,42 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
     return render(request,
                   "respond_to_proposal_form.html",
                   {"proposal": proposal, "form": form})
+
+def edit_response(request, response_id):
+    if not request.user.is_authenticated():
+        return request_login(request)
+    response = Response.objects.get(id=response_id)
+    if not response.user == request.user:
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You can only edit your own responses.")
+        return HttpResponseRedirect(reverse("proposal",
+                                            args=[str(response.proposal.id)]))
+    else:
+        if request.method == "POST":
+            form = ResponseForm(request.POST, instance=response)
+            if form.is_valid():
+                form.save()
+                messages.add_message(request,
+                                     messages.SUCCESS,
+                                     "Response edited.")
+                return HttpResponseRedirect(reverse("proposal", args=[
+                    str(response.proposal.id)]))
+            else:
+                messages.add_message(request,
+                                     messages.ERROR,
+                                     "Invalid response")
+        form = ResponseForm(instance=response)
+        if request.is_ajax():
+            extend_template = "ajax_base.html"
+        else:
+            extend_template = "base.html"
+        return render(request,
+                      "edit_response_form.html",
+                      { "form": form,
+                        "response": response,
+                        "extend_template": extend_template })
+
 
 
 def amend_proposal(request, proposal_id):

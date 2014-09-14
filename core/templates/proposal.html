@@ -212,20 +212,23 @@ function hideProposalActionMenu() {
         </div>
       </div>
 
-          {% if proposal.response %}
+          {% for response in proposal.responses.all %}
           <div class="row">
             <div class="col-xs-10 col-xs-offset-1">
               <div class="well" id="proposal-response">
                 <h4 class="text-center">
                   <span class="glyphicon glyphicon-star comment-user-status"></span>
-                  {{ proposal.response.user.username }} ({{ proposal.response.user.get_userStatus_display }}) responded to this proposal:
+                  {{ response.user.username }} ({{ response.user.get_userStatus_display }}) responded to this proposal:
                 </h4>
-                <p>{{ proposal.response.text }}</p>
-                <span class="text-muted">{{ proposal.response.createdAt | date:"j M Y, f a" }}</span>
+                <p>{{ response.text }}</p>
+                <span class="text-muted">{{ response.createdAt | date:"j M Y, f a" }}</span>
+		{% if response.user == user %}
+		<a onclick="javascript:return displayModal('{% url 'edit_response' response.id %}', null, false);" href="{% url 'edit_response' response.id %}">Edit Response</a>
+		{% endif %}
               </div>
             </div>
           </div>
-        {% endif %}
+	  {% endfor %}
 
       <hr id="proposal-vote-form-top" class="fancy-hr" />
 
