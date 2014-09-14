@@ -37,7 +37,7 @@ def edit_comment(request, comment_id):
                 else:
                     messages.add_message(request,
                                          messages.ERROR,
-                                         "Invalid comment.")
+                                         "Invalid comment")
             else:
                 messages.add_message(request,
                                      messages.ERROR,
