@@ -11,6 +11,7 @@ from core.utils import to_queryset
 from .serializers import ProposalListSerializer, ProposalDetailSerializer, \
     CommentDetailSerializer, CommentListSerializer
 
+
 class ProposalList(generics.ListAPIView):
     """
     View a list of proposals.
@@ -18,6 +19,7 @@ class ProposalList(generics.ListAPIView):
     queryset = Proposal.objects.all()
     serializer_class = ProposalListSerializer
     paginate_by = 5
+
 
 class ProposalDetail(generics.RetrieveAPIView):
     """
@@ -52,12 +54,14 @@ class CommentDetail(generics.RetrieveAPIView):
     queryset = Comment.objects.all()
     lookup_field = 'id'  # comment id
 
+
 class SearchResults(generics.ListAPIView):
     """
     View search results.
     """
     serializer_class = ProposalListSerializer
     paginate_by = 5
+
     def get_queryset(self):
         """
         Return a QuerySet of results.
@@ -75,6 +79,7 @@ class SimilarProposals(SearchResults):
     View proposals similar to the input, using Haystack's more_like_this.
     """
     lookup_field = 'id'  # proposal id
+
     def get_queryset(self):
         """
         Return search results.
@@ -95,7 +100,7 @@ def autocomplete(request):
     """
     query = request.GET.get("term", "")
     searchqueryset = SearchQuerySet().autocomplete(title_auto=query)
-    suggestions= []
+    suggestions = []
     for result in searchqueryset:
         title = result.title
         url = reverse("proposal",
