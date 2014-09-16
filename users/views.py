@@ -161,7 +161,7 @@ def login(request):
         messages.add_message(request,
                              messages.ERROR,
                              "You are already logged in.")
-    else:
+    elif settings.ENVIRONMENT == "dev":
         generate_new_user(request)
         messages.add_message(request,
                              messages.SUCCESS,
