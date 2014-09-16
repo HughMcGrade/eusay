@@ -157,13 +157,16 @@ def logout(request):
 
 
 def login(request):
-    if request.user.is_authenticated():
+    if settings.ENVIRONMENT == "dev" and request.user.is_authenticated():
         messages.add_message(request,
-                             messages.ERROR,
-                             "You are already logged in.")
-    elif settings.ENVIRONMENT == "dev":
+                     messages.ERROR,
+                     "You are already logged in.")
+    elif settings.ENVIRONMENT == "dev" and not request.user.is_authenticated():
         generate_new_user(request)
         messages.add_message(request,
                              messages.SUCCESS,
                              "You are now logged in.")
+    # If settings.ENVIRONMENT is "production", /login/ will automatically
+    # use EASE to login (as long as it's configured to be CosignProtected
+    # in Apache).
     return HttpResponseRedirect(reverse("frontpage"))
