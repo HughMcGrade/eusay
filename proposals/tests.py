@@ -174,5 +174,6 @@ class ResponseTest(BaseTestCase):
                                            "slug": self.proposal.slug})
         response = self.client.get(url)
         self.assertIn('proposal', response.context)
-        self.assertEqual(response.context['proposal'].response,
-                         proposal_response)
+        self.assertIn(proposal_response,
+                      response.context['proposal'].responses.all())
+
