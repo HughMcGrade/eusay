@@ -5,8 +5,8 @@ import appenlight_client.client as e_client
 
 ENVIRONMENT = "production"
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
                   ".eusay.eusa.ed.ac.uk"]  # Period matches any subdomains
@@ -29,6 +29,10 @@ DATABASES = {
 MIDDLEWARE_CLASSES = \
     ('appenlight_client.django_middleware.AppenlightMiddleware',) + \
     MIDDLEWARE_CLASSES
+
+# But add RemoteUserMiddleware last, because it must come after
+# AuthenticationMiddleware
+MIDDLEWARE_CLASSES += ('django.contrib.auth.middleware.RemoteUserMiddleware',)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.RemoteUserBackend',
