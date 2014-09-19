@@ -24,9 +24,11 @@ urlpatterns = patterns('',
         include("notifications.urls",
                 namespace="notifications")),
 
-    # Authentication
+    # Users
     url(r'^logout/$', user_views.logout, name="logout"),
     url(r'^login/$', user_views.login, name="login"),
+    url(r'^user/(?P<slug>[\w-]+)', user_views.profile, name="user"),
+    url(r'^welcome', user_views.setusername, name="setusername"),
 
     # Proposals
     url(r'^$', proposal_views.index, name="frontpage"),  # Front page
@@ -42,9 +44,6 @@ urlpatterns = patterns('',
 
     # Tags
     url(r'^tag/(?P<tagId>\d+)/(?P<slug>[\w-]*)', tag_views.tag, name="tag"),
-
-    # Profiles
-    url(r'^user/(?P<slug>[\w-]+)', user_views.profile, name="user"),
 
     # Moderation
     url(r'^comment_hides', moderation_views.comment_hides,

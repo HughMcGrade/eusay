@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+| Welcome!
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <h1 id="form_title">Welcome to eusay!</h1>
+    <p>
+      It looks like you haven't set a username yet. We recommend using your
+      real name, but you don't have to. Your username will still be tied to your
+      student ID number, but it won't be publicly visible.
+    </p>
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.username }}
+    </div>
+    <button id="form_submit_button" type="post" class="btn btn-default">Submit</button>
+  </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate as django_authenticate, \
 from django.contrib.auth.views import logout as django_logout
 
 from users.models import User
-from users.forms import UserForm
+from users.forms import UserForm, UsernameForm
 
 RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',
               'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne',
@@ -179,4 +179,29 @@ def login(request):
     # If settings.ENVIRONMENT is "production", /login/ will automatically
     # use EASE to login (as long as it's configured to be CosignProtected
     # in Apache).
-    return HttpResponseRedirect(reverse("frontpage"))
+    if request.user.username == "":  # Default username is blank
+        return HttpResponseRedirect(reverse("setusername"))
+    else:
+        return HttpResponseRedirect(reverse("frontpage"))
+
+
+def setusername(request):
+    #if request.user.username != "":
+     #   return HttpResponseRedirect(reverse("frontpage"))
+    if request.method == "POST":
+        form = UsernameForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request,
+                                 messages.SUCCESS,
+                                 "You've set your username. "
+                                 "Welcome to eusay!")
+            return HttpResponseRedirect(reverse("frontpage"))
+        else:
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 "That username is unavailable. "
+                                 "Please try another one.")
+            return HttpResponseRedirect(reverse("setusername"))
+    form = UsernameForm(instance=request.user)
+    return render(request, "setusername.html", {"form": form})
