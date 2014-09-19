@@ -8,7 +8,7 @@
 {% if error_msg %}
 <div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
 {% endif %}
-<h2>{{ profile.username }} <small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
+<h2>{{ profile.username }} <small>{{ profile.sid }}</small><small id="editUserText"><a onclick="$('#editUserForm').toggle();">edit</a></small></h2>
 <div class="row">
   <div class="col-md-3 col-sm-4 col-xs-12">
     <form id="editUserForm" method="post" action="">
