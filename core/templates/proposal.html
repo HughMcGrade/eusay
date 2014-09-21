@@ -2,6 +2,14 @@
 {% load static %}
 {% load filters %}
 
+{% block meta %}
+<meta property="fb:app_id"          content="833467823344747" />
+<meta property="og:url"             content="{{ request.build_absolute_uri }}" /> 
+<meta property="og:title"           content="{{ proposal.title }}" /> 
+<meta property="og:type"            content="eusay_app:proposal" />
+<meta property="og:image"           content="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Jens_Voigt_03.jpg/133px-Jens_Voigt_03.jpg" /> 
+{% endblock %}
+
 {% block title %}
 {% if not hide %}
 | {{ proposal.title }}
@@ -14,6 +22,51 @@
 <script src="{% static "js/jquery.form.js" %}"></script>
 <script src="{% static "js/jquery.cookie.js" %}"></script>
 <script>
+
+ function shareSubmission() {
+    FB.ui({
+      method: 'share_open_graph',
+      action_type: 'eusay_app:submit',
+      object_type: 'eusay_app:proposal',
+      action_properties: JSON.stringify({
+	proposal:'{{ request.build_absolute_uri }}',
+      })
+    }, function(response){});
+ }
+
+ function shareProposal() {
+   FB.ui({
+     method: 'share_open_graph',
+     action_type: 'share',
+     object_type: 'eusay_app:proposal',
+     action_properties: JSON.stringify({
+       object:'{{ request.build_absolute_uri }}',
+     })
+   }, function(response){});
+ }
+
+ function shareUpVote() {
+   FB.ui({
+     method: 'share_open_graph',
+     action_type: 'eusay_app:vote_for',
+     object_type: 'eusay_app:proposal',
+     action_properties: JSON.stringify({
+       proposal:'{{ request.build_absolute_uri }}',
+     })
+   }, function(response){});
+ }
+
+ function shareDownVote() {
+   FB.ui({
+     method: 'share_open_graph',
+     action_type: 'eusay_app:vote_against',
+     object_type: 'eusay_app:proposal',
+     action_properties: JSON.stringify({
+       proposal:'{{ request.build_absolute_uri }}',
+     })
+   }, function(response){});
+ }
+
 
  function hideReplyForms() {
    // hide comment reply forms
@@ -145,12 +198,35 @@ function hideProposalActionMenu() {
 }
 </script>
 
+<script type="text/javascript">
+window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
+</script>
+
 {% endblock %}
 
 {% block progressbar %}
 {% endblock %}
 
 {% block content %}
+
+<script>
+  window.fbAsyncInit = function() {
+  FB.init({
+  appId      : '833467823344747',
+  xfbml      : true,
+  version    : 'v2.1'
+  });
+  };
+
+  (function(d, s, id){
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
 {% if hide %}
 <div class="row">
   <div class="col-xs-12 col-md-8 col-md-offset-2">
@@ -207,6 +283,12 @@ function hideProposalActionMenu() {
         </div>
       </div>
       <div class="row proposal-text">
+	<a class="twitter-share-button"
+	   href="https://twitter.com/share"
+	   data-text="A proposal on eusay"
+	   data-url="{{ request.build_absolute_uri }}">
+	  Tweet
+	</a>
         <div class="col-xs-10 col-xs-offset-1">
           {{ proposal.text | my_markdown }}
         </div>
