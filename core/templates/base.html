@@ -193,8 +193,59 @@
        });
        return false;
      };
+
+     function shareSubmission() {
+       FB.ui({
+	 method: 'share_open_graph',
+	 action_type: 'eusay_app:submit',
+	 object_type: 'eusay_app:proposal',
+	 action_properties: JSON.stringify({
+	   proposal:'{{ request.build_absolute_uri }}',
+	 })
+       }, function(response){});
+     }
+
+     function shareProposal() {
+       FB.ui({
+	 method: 'share_open_graph',
+	 action_type: 'share',
+	 object_type: 'eusay_app:proposal',
+	 action_properties: JSON.stringify({
+	   object:'{{ request.build_absolute_uri }}',
+	 })
+       }, function(response){});
+     }
+
+     function shareUpVote() {
+       FB.ui({
+	 method: 'share_open_graph',
+	 action_type: 'eusay_app:vote_for',
+	 object_type: 'eusay_app:proposal',
+	 action_properties: JSON.stringify({
+	   proposal:'{{ request.build_absolute_uri }}',
+	 })
+       }, function(response){});
+     }
+
+     function shareDownVote() {
+       FB.ui({
+	 method: 'share_open_graph',
+	 action_type: 'eusay_app:vote_against',
+	 object_type: 'eusay_app:proposal',
+	 action_properties: JSON.stringify({
+	   proposal:'{{ request.build_absolute_uri }}',
+	 })
+       }, function(response){});
+     }
+
      
     </script>
+
+    <script type="text/javascript">
+     window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
+    </script>
+
+
     {% block js %}
     {% endblock %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
