@@ -5,7 +5,7 @@ import appenlight_client.client as e_client
 
 ENVIRONMENT = "production"
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
