@@ -1,4 +1,4 @@
-"""Core utilities including slugify, swear check and testing utilities"""
+"""Core utilities including swear check and testing utilities"""
 
 import re
 import random
