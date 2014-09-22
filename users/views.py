@@ -179,7 +179,7 @@ def login(request):
     # If settings.ENVIRONMENT is "production", /login/ will automatically
     # use EASE to login (as long as it's configured to be CosignProtected
     # in Apache).
-    if request.user.username == "":  # Default username is blank
+    if request.user.username == request.user.sid:  # Default username is the sid
         return HttpResponseRedirect(reverse("setusername"))
     else:
         return HttpResponseRedirect(reverse("frontpage"))

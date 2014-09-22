@@ -5,7 +5,7 @@ import appenlight_client.client as e_client
 
 ENVIRONMENT = "production"
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
@@ -35,7 +35,7 @@ MIDDLEWARE_CLASSES = \
 MIDDLEWARE_CLASSES += ('django.contrib.auth.middleware.RemoteUserMiddleware',)
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.RemoteUserBackend',
+    'core.auth_backend.CustomUserModelBackend',
 )
 
 APPENLIGHT = e_client.get_config(
