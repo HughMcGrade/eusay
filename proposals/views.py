@@ -341,4 +341,7 @@ def update_proposal_status(request, proposal_id):
 
 def share(request, proposal_id):
     proposal = Proposal.objects.get(id=proposal_id)
-    return HttpResponse(render(request, "share.html", {"proposal": proposal}))
+    proposal_url = request.build_absolute_uri(proposal.get_absolute_url())
+    return HttpResponse(render(request, "share.html",
+                               {"proposal": proposal,
+                                "proposal_url": proposal_url}))

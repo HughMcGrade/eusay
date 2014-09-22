@@ -16,7 +16,7 @@ Share Your Proposal
      action_type: 'eusay_app:submit',
      object_type: 'eusay_app:proposal',
      action_properties: JSON.stringify({
-       proposal:'{{ request.build_absolute_uri }}{{ proposal.get_absolute_url }}',
+       proposal:'{{ proposal_url }}',
      })
    }, function(response){});
    changeGoToProposalButton();
@@ -54,7 +54,7 @@ Share Your Proposal
     <a class="twitter-share-button"
        href="https://twitter.com/share"
        data-text="I submitted a proposal on eusay!"
-       data-url="{{ request.build_absolute_uri }}"
+       data-url="{{ proposal_url }}"
        data-size="large"
        data-count="none"
        onclick="javascript: changeGoToProposalButton()">
