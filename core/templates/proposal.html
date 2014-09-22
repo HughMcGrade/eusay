@@ -177,7 +177,6 @@
    initForms();
    hideReplyForms();
    $("#proposal-action-menu").hide(0);
-   $.endlessPaginate();
  });
 
  function showReplyForm(id) {
@@ -373,14 +372,19 @@ window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.ge
 
   </div> <!-- /.col -->
 
-  {% if similar_proposals %}
-    <div class="col-xs-12 col-md-4" id="similar-proposals">
-      <h4 class="text-center">Similar proposals</h4>
-      <div class="endless_page_template">
-        {% include "proposal_similar.html" %}
-      </div>
-    </div>
-  {% endif %}
+  <div class="col-xs-12 col-md-4" id="similar-proposals">
+    {% if similar_proposals %}
+        <h4 class="text-center">Similar proposals</h4>
+        {% for proposal in similar_proposals %}
+          {% include "index_proposal.html" %}
+        {% endfor %}
+    {% else %}
+        <h4 class="text-center">New proposals</h4>
+        {% for proposal in new_proposals %}
+          {% include "index_proposal.html" %}
+        {% endfor %}
+    {% endif %}
+  </div>
 </div> <!-- /.row -->
 
 {% endblock %}

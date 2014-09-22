@@ -133,7 +133,10 @@ def proposal(request, proposal_id, slug=None):
     if request.user.is_authenticated() and not user_vote:
         user_vote = request.user.get_vote_on(proposal)
 
-    similar_proposals = to_queryset(SearchQuerySet().more_like_this(proposal))
+    similar_proposals = to_queryset(
+        SearchQuerySet().more_like_this(proposal))[:3]
+    new_proposals = Proposal.objects.get_visible_proposals()\
+                            .exclude(id=proposal_id).order_by("-createdAt")[:3]
 
     form = CommentForm()
     comments = proposal.get_visible_comments()
@@ -142,11 +145,8 @@ def proposal(request, proposal_id, slug=None):
                "comments": comments,
                "user_vote": user_vote,
                "hide": hide,
-               "similar_proposals": similar_proposals}
-
-    template = "proposal.html"
-    if request.is_ajax() and "page" in request.GET:
-        template = "proposal_similar.html"
+               "similar_proposals": similar_proposals,
+               "new_proposals": new_proposals}
 
     comment_votes = {}
     if request.user.is_authenticated():
@@ -160,7 +160,7 @@ def proposal(request, proposal_id, slug=None):
     context.update(comment_votes)
 
     response = render(request,
-                      template,
+                      "proposal.html",
                       context)
     for key in response_headers:
         response[key] = response_headers[key]

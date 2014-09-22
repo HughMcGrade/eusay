@@ -1,9 +1,0 @@
-{% load endless %}
-{% paginate 2 similar_proposals %}
-{% for proposal in similar_proposals %}
-  {% include "index_proposal.html" %}
-{% endfor %}
-{% get_pages %}
-<div id="proposal-similar-page-links">
-  {{ pages.previous }} {{ pages.next }}
-</div>
