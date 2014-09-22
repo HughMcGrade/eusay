@@ -8,15 +8,22 @@
 <div class="row">
     <div class="col-xs-12 col-sm-8 col-sm-offset-2">
         <h3>Notifications</h3>
-        <ul>
-            {% for key, count in unread %}
-                <b>{% include "notifications_entry.html" %}</b>
-            {% endfor %}
-        
-            {% for key, count in read %}
-                {% include "notifications_entry.html" %}
-            {% endfor %}
-        </ul>
+        {% if unread or read %}
+          <ul>
+              {% for key, count in unread %}
+                  <b>{% include "notifications_entry.html" %}</b>
+              {% endfor %}
+
+              {% for key, count in read %}
+                  {% include "notifications_entry.html" %}
+              {% endfor %}
+          </ul>
+        {% else %}
+          <p>
+            You have no notifications yet. Start using the site and you'll
+            probably get some soon!
+          </p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
