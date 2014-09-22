@@ -189,3 +189,8 @@ def contains_swear_words(text):
 def sqs_to_qs(sqs):
     for item in sqs:
         yield item.object
+
+
+def is_sid(value):
+    sid = re.compile("^s\d{7}$")
+    return sid.match(value)

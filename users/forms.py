@@ -3,7 +3,7 @@ from slugify import slugify
 from django import forms
 
 from users.models import User
-from core.utils import contains_swear_words
+from core.utils import contains_swear_words, is_sid
 
 
 def check_username(form):
@@ -29,6 +29,10 @@ def check_username(form):
     # don't allow swear words
     if contains_swear_words(cleaned_username):
         raise forms.ValidationError("Username cannot contain swear words.")
+
+    # don't allow SIDs as username
+    if is_sid(cleaned_username):
+        raise forms.ValidationError("Username cannot be a student ID.")
 
     return cleaned_username
 
@@ -69,8 +73,8 @@ class UsernameForm(forms.ModelForm):
 
         self.fields["username"] = forms.CharField(
             required=True,
-            widget=forms.TextInput(attrs={"placeholder": self.instance.sid,
-                                          "class": "form-control"}))
+            widget=forms.TextInput(attrs={"class": "form-control",
+                                          "placeholder": "Please enter a username."}))
 
     def clean_username(self):
         return check_username(self)

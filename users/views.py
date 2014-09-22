@@ -94,7 +94,8 @@ def profile(request, slug):
             else:
                 messages.add_message(request,
                                      messages.ERROR,
-                                     "That username is unavailable.")
+                                     "That username is unavailable or not "
+                                     "allowed.")
                 # error_msg = "That username is unavailable."
                 return render(request,
                               "own_profile.html",
@@ -200,8 +201,9 @@ def setusername(request):
         else:
             messages.add_message(request,
                                  messages.ERROR,
-                                 "That username is unavailable. "
-                                 "Please try another one.")
+                                 "That username is unavailable or not "
+                                 "allowed. Please try another one.")
             return HttpResponseRedirect(reverse("setusername"))
-    form = UsernameForm(instance=request.user)
+    form = UsernameForm(instance=request.user,
+                        initial={"username": ""})
     return render(request, "setusername.html", {"form": form})
