@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect,\
-    Http404
+    Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -58,9 +58,8 @@ def submit(request):
             proposal.save()
             form.save_m2m()  # save tags
             return HttpResponseRedirect(
-                reverse("proposal",
-                        kwargs={"proposal_id": proposal.id,
-                                "slug": proposal.slug}))  # Redirect after POST
+                reverse("share",
+                        kwargs={"proposal_id": proposal.id}))
         else:
             errors = form.errors
             return render(request, "submit.html", {"form": form,
@@ -338,3 +337,8 @@ def update_proposal_status(request, proposal_id):
         form = ProposalStatusForm(instance=proposal)
         return render(request, "update_proposal_status.html",
                       {"form": form, "proposal": proposal})
+
+
+def share(request, proposal_id):
+    proposal = Proposal.objects.get(id=proposal_id)
+    return HttpResponse(render(request, "share.html", {"proposal": proposal}))

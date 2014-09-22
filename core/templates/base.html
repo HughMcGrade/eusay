@@ -194,17 +194,6 @@
        return false;
      };
 
-     function shareSubmission() {
-       FB.ui({
-	 method: 'share_open_graph',
-	 action_type: 'eusay_app:submit',
-	 object_type: 'eusay_app:proposal',
-	 action_properties: JSON.stringify({
-	   proposal:'{{ request.build_absolute_uri }}',
-	 })
-       }, function(response){});
-     }
-
      function shareProposal() {
        FB.ui({
 	 method: 'share_open_graph',
@@ -294,7 +283,6 @@
             <h4 id="modal_title" class="modal-title">Modal title</h4>
 	  </div>
 	  <div id="modal_body" class="modal-body">
-            <p>One fine body&hellip;</p>
 	  </div>
 	</div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->

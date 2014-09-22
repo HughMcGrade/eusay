@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% load filters %}
+
+{% block title %}
+Share Your Proposal
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+ function shareSubmission() {
+   FB.ui({
+     method: 'share_open_graph',
+     action_type: 'eusay_app:submit',
+     object_type: 'eusay_app:proposal',
+     action_properties: JSON.stringify({
+       proposal:'{{ request.build_absolute_uri }}{{ proposal.get_absolute_url }}',
+     })
+   }, function(response){});
+   changeGoToProposalButton();
+ }
+
+ function changeGoToProposalButton() {
+   var button = $('#goto_proposal');
+   button.removeClass('btn-danger');
+   button.addClass('btn-success');
+   button.text('Go to proposal');
+ }
+
+ twttr.ready(function (twttr) {
+   twttr.events.bind('click', function(event) {
+     changeGoToProposalButton();
+   });
+ });
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+
+    <h1>Your proposal has been submitted!</h1>
+
+    Now, tell others about it by sharing on Facebook or Twitter!
+
+    <br />
+    <br />
+
+    <a class="twitter-share-button"
+       href="https://twitter.com/share"
+       data-text="I submitted a proposal on eusay!"
+       data-url="{{ request.build_absolute_uri }}"
+       data-size="large"
+       data-count="none"
+       onclick="javascript: changeGoToProposalButton()">
+       >
+      Tweet
+    </a>
+
+    <br />
+    <br />
+
+    <a href="#"
+       onclick="javascript: shareSubmission()"
+       class="btn btn-primary"
+       >
+      Share on Facebook
+    </a>
+
+    <br />
+    <br />
+
+    <a id="goto_proposal" class="btn btn-danger pull-right" href="{% url 'proposal' proposal.id %}">
+      No thanks!
+    </a>
+
+  </div>
+</div>
+
+{% endblock %}
