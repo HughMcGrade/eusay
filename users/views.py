@@ -3,7 +3,7 @@ from slugify import slugify
 
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.conf import settings
 
@@ -79,7 +79,10 @@ def get_users(request):
 
 
 def profile(request, slug):
-    user = User.objects.get(slug=slug)
+    try:
+        user = User.objects.get(slug=slug)
+    except:
+        raise Http404
     if request.user == user:
         # own profile
         if request.method == "POST":

@@ -1,5 +1,5 @@
-from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseForbidden, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect,\
+    Http404
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -73,7 +73,10 @@ def submit(request):
 
 
 def proposal(request, proposal_id, slug=None):
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
 
     response_headers = dict()
 
