@@ -423,6 +423,10 @@ hr.fancy-hr::after {
 }
 #editUserForm {
     display: none;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
 }
 #editUserText:hover {
     cursor: pointer;
