@@ -187,7 +187,7 @@ def add_tags():
             # 'School of Molecular, Genetic and Population Health Sciences'
             # 'School of Philosophy, Psychology and Language Sciences'
             'School of Physics and Astronomy',
-            'School of Social and Political Science'
+            'School of Social and Political Science',
             'Royal (Dick) School of Veterinary Studies']
     for tag in tags:
         try:
