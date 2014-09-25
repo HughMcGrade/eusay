@@ -170,6 +170,32 @@ def add_comments(amount):
     return True
 
 
+def add_tags():
+    from tags.models import Tag
+    from django.db.utils import IntegrityError
+    tags = ['School of Informatics', 'School of Biological Sciences',
+            'School of Biomedical Sciences', 'Business School',
+            'School of Chemistry', 'School of Clinical Sciences',
+            'School of Divinity', 'School of Economics',
+            'Edinburgh College of Art', 'The Moray House School of Education',
+            'School of Engineering', 'School of GeoSciences',
+            'School of Health in Social Science',
+            'School of History, Classics and Archaeology', 'School of Law',
+            'School of Literatures, Languages and Cultures',
+            'School of Mathematics',
+            # Below broken, see stackoverflow.com/questions/9036102/
+            # 'School of Molecular, Genetic and Population Health Sciences'
+            # 'School of Philosophy, Psychology and Language Sciences'
+            'School of Physics and Astronomy',
+            'School of Social and Political Science'
+            'Royal (Dick) School of Veterinary Studies']
+    for tag in tags:
+        try:
+            Tag.objects.create(name=tag)
+        except IntegrityError as error:
+            print(error)
+
+
 def to_queryset(searchqueryset):
     """
     This function converts a SearchQuerySet into a QuerySet.
@@ -192,5 +218,5 @@ def sqs_to_qs(sqs):
 
 
 def is_sid(value):
-    sid = re.compile("^s\d{7}$")
+    sid = re.compile(r"^s\d{7}$")
     return sid.match(value)
