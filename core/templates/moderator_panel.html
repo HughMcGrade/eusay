@@ -72,14 +72,14 @@
 	{{ r.reason }}
       </td>
       <td>
-	{{ r.reporter.name }}
+	{{ r.reporter.username }}
       </td>
       <td>
 	<form method="POST" class="action_form">
 	  {% csrf_token %}
 	  <input type="hidden" name="report" value="{{ r.id }}" />
-	  <input type="submit" class="btn btn-primary" name="action" value="Hide" />
-	  <input type="submit" class="btn btn-default" name="action" value="Ignore" />
+	  <input type="submit" class="btn btn-md btn-primary col-xs-9" name="action" value="Hide" />
+	  <input type="submit" class="btn btn-md btn-default col-xs-9" name="action" value="Ignore" />
 	</form>
       </td>
     </tr>
@@ -111,14 +111,14 @@ No open comment reports
 	{{ r.reason }}
       </td>
       <td>
-	{{ r.reporter.name }}
+	{{ r.reporter.username }}
       </td>
       <td>
 	<form method="POST" class="action_form">
 	  {% csrf_token %}
 	  <input type="hidden" name="report" value="{{ r.id }}" />
-	  <input type="submit" class="btn btn-primary" name="action" value="Hide" />
-	  <input type="submit" class="btn btn-default" name="action" value="Ignore" />
+	  <input type="submit" class="btn btn-md btn-primary col-xs-9" name="action" value="Hide" />
+	  <input type="submit" class="btn btn-md btn-default col-xs-9" name="action" value="Ignore" />
 	</form>
       </td>
     </tr>
