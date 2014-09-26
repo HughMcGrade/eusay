@@ -6,9 +6,11 @@ db.sqlite3
 .idea
 .settings
 /core/settings/whoosh_index/
+/core/whoosh_index/
 /core/test_index/
 /eusay/settings/whoosh_index/
 secrets.json
+/static/
 
 # -*- mode: gitignore; -*-
 *~

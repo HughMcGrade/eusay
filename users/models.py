@@ -82,7 +82,7 @@ class User(usermodels.AbstractUser):
                                  .filter(content_type=Proposal
                                          .get_content_type())\
                                  .filter(isVoteUp=True)
-        return [vote.content for vote in user_votes]
+        return [vote.content for vote in user_votes if vote.content]
 
     def get_proposals_voted_against(self):
         """
@@ -93,7 +93,7 @@ class User(usermodels.AbstractUser):
                                  .filter(content_type=Proposal
                                          .get_content_type())\
                                  .filter(isVoteUp=False)
-        return [vote.content for vote in user_votes]
+        return [vote.content for vote in user_votes if vote.content]
 
     def has_unread_notifications(self):
         return bool(Notification.objects.get_unread(self))

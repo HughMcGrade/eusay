@@ -1,5 +1,6 @@
 import random
 from slugify import slugify
+from datetime import datetime
 
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -159,8 +160,10 @@ def logout(request):
         if request.user.is_authenticated():
             response = django_logout(request,
                                      next_page=post_logout_url)
-            response.delete_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
-                                   domain="eusay.eusa.ed.ac.uk")
+            # Don't use delete_cookie() here, it doesn't work.
+            response.set_cookie('cosign-eucsCosign-eusay.eusa.ed.ac.uk',
+                                expires="Thu, 01 Jan 1970 00:00:00 GMT",
+                                path="/")
             return response
         else:
             messages.add_message(request,

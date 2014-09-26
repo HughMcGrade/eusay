@@ -1,0 +1,22 @@
+{% extends extend_template %}
+
+{% block title %}
+| Edit response
+{% endblock %}
+
+
+{%  block content %}
+<div class="row">
+  <h1 id="form_title">Edit response</h1>
+  <div id="form_body">
+    <form action="{% url 'edit_response' response.id %}" id="modal_form" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+	{{ form.text }}
+      </div>
+      <button id="form_submit_button" type="post" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

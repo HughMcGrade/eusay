@@ -93,6 +93,9 @@ urlpatterns = patterns('',
     url(r'^edit_response/(?P<response_id>\d+)',
         proposal_views.edit_response,
         name="edit_response"),
+    url(r'^share/(?P<proposal_id>\d+)',
+        proposal_views.share,
+        name="share"),
 
     # Other
     url(r'^about/', core_views.about, name="about"),

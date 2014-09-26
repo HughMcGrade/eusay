@@ -128,28 +128,33 @@
 	putNewMessagesFromResponse(response);
      }});
  };
- $(document).ready(function() {
-   initForms();
-   hideReplyForms();
-   $("#proposal-action-menu").hide(0);
- });
 
  function showReplyForm(id) {
    $("#comment-reply-form-box-" + id).slideToggle("fast", function() {
      $("#comment-reply-form-" + id +  "> textarea").focus()
    });
  };
+
  function viewHiddenProposal() {
    $("#view-hidden-proposal-button").slideUp(function() {
      $(".proposal-hidden").slideDown()
    });
  };
-function showProposalActionMenu() {
-  $("#proposal-action-menu").slideDown();
-};
-function hideProposalActionMenu() {
-  $("#proposal-action-menu").slideUp();
-}
+
+ function showProposalActionMenu() {
+   $("#proposal-action-menu").slideDown();
+ };
+
+ function hideProposalActionMenu() {
+   $("#proposal-action-menu").slideUp();
+ }
+
+ $(document).ready(function() {
+   initForms();
+   hideReplyForms();
+   $("#proposal-action-menu").hide(0);
+ });
+
 </script>
 
 {% endblock %}
@@ -215,13 +220,7 @@ function hideProposalActionMenu() {
         </div>
       </div>
       <div class="row proposal-text">
-	<a class="twitter-share-button"
-	   href="https://twitter.com/share"
-	   data-text="A proposal on eusay"
-	   data-url="{{ request.build_absolute_uri }}">
-	  Tweet
-	</a>
-        <div class="col-xs-10 col-xs-offset-1">
+	<div class="col-xs-10 col-xs-offset-1">
           {{ proposal.text | my_markdown }}
         </div>
       </div>
@@ -269,9 +268,27 @@ function hideProposalActionMenu() {
       {% endif %}
 
       <div class="row proposal-metainfo">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
           <span class="text-muted">{{ proposal.createdAt | date:"j M Y, f a" }}</span>
         </div>
+	<div class="col-xs-6" class="pull-right">
+	  <div class="col-xs-3 pull-right">
+	    <a class="twitter-share-button"
+	       href="https://twitter.com/share"
+	       data-text="A proposal on eusay"
+	       data-url="{{ request.build_absolute_uri }}">
+	      Tweet
+	    </a>
+	  </div>
+	  <div class="col-xs-5 pull-right">
+	    <a href="#"
+	       onclick="javascript: shareProposal()"
+	       class="btn btn-xs btn-primary"
+	       >
+	      Share on Facebook
+	    </a>
+	  </div>
+	</div>
       </div>
 
       <div class="row" id="proposal-action-menu">
@@ -298,6 +315,29 @@ function hideProposalActionMenu() {
         </div>
       </div>
     </div> <!-- /.proposal-page -->
+
+    <div id="share_vote_buttons" class="hidden col-xs-12">
+      <h3>Share your vote!</h3>
+      <hr />
+      <div class="col-xs-6">
+	<a class="twitter-share-button"
+	   href="https://twitter.com/share"
+	   data-text="A proposal on eusay"
+	   data-url="{{ request.build_absolute_uri }}">
+	  Tweet
+	</a>
+      </div>
+      <div class="col-xs-6">
+	<a href="#"
+	   onclick="javascript: shareProposal()"
+	   class="btn btn-md btn-primary"
+	   >
+	  Share on Facebook
+	</a>
+      </div>
+      <br />
+      <br />
+    </div>
 
     <div class="comments{% if hide %} proposal-hidden{% endif %}">
     {% include "proposal_comments.html" %}
