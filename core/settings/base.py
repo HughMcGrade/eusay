@@ -30,6 +30,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 MANDRILL_API_KEY = get_secret("MANDRILL_API_KEY")
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+SERVER_EMAIL = "eusay@btao.org"  # TODO: use @eusay.eusa.ed.ac.uk address
 
 AUTH_USER_MODEL = 'users.User'
 
