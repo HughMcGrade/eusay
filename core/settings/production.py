@@ -40,3 +40,5 @@ AUTHENTICATION_BACKENDS = (
 
 APPENLIGHT = e_client.get_config(
     {'appenlight.api_key':get_secret("APPENLIGHT_PRIVATE_KEY")})
+
+ADMINS = (("Hugh", "hugh_mcgrade@hotmail.co.uk"), ("Tao", "tao@btao.org"))
