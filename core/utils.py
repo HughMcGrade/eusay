@@ -2,6 +2,7 @@
 
 import re
 import random
+from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -220,3 +221,7 @@ def sqs_to_qs(sqs):
 def is_sid(value):
     sid = re.compile(r"^s\d{7}$")
     return sid.match(value)
+
+
+def remove_duplicates(seq):
+    return list(OrderedDict.fromkeys(seq))

@@ -33,4 +33,7 @@
 {% elif key.0 ==  "comment_vote_down" %}
     {{ count }} user{{ count|pluralize }} voted against your comment: "{{ key.1.text|smart_truncate }}"
 
+{% elif key.0 == "new_proposal" %}
+    New proposal in one of your followed tags: "{{ key.1.title }}"
+
 {% endif %}

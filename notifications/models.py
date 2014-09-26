@@ -16,7 +16,6 @@ class NotificationManager(models.Manager):
 
 class Notification(models.Model):
     NOTIFICATION_TYPES = (
-        ("proposal_submitted", ""),
         ("proposal_response", ""),
         ("proposal_comment", ""),
         ("proposal_amendment", ""),
@@ -27,7 +26,8 @@ class Notification(models.Model):
         ("proposal_vote_up", ""),
         ("proposal_vote_down", ""),
         ("comment_vote_up", ""),
-        ("comment_vote_down", "")
+        ("comment_vote_down", ""),
+        ("new_proposal", "")
     )
 
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL,

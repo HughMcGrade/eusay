@@ -9,6 +9,7 @@ from proposals.models import Proposal
 from comments.models import Comment
 from votes.models import Vote
 from notifications.models import Notification
+from tags.models import Tag
 
 
 class UserManager(usermodels.UserManager):
@@ -40,6 +41,7 @@ class User(usermodels.AbstractUser):
     title = models.CharField(max_length=100, blank=True)
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
+    follows_tags = models.ManyToManyField(Tag, related_name="followers")
     subscribed_to_notification_emails = models.BooleanField("subscribed to "
                                                             "notification "
                                                             "emails?",

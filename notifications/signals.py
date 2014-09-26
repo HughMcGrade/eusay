@@ -6,6 +6,22 @@ from comments.models import Comment
 from moderation.models import HideAction
 from votes.models import Vote
 from .models import Notification
+from core.utils import remove_duplicates
+
+
+@receiver(post_save, sender=Proposal)
+def notify_of_new_proposal(created, **kwargs):
+    proposal = kwargs.get("instance")
+    tags = proposal.tags.all()
+    recipients = []
+    if created:
+        for tag in tags:
+            recipients.extend([r for r in tag.followers.exclude(id=proposal.user.id)])
+        recipients = remove_duplicates(recipients)
+        for recipient in recipients:
+            Notification.objects.create(recipient=recipient,
+                                        type="new_proposal",
+                                        content=proposal)
 
 
 @receiver(post_save, sender=Response)

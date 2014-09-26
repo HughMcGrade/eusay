@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+| Tags
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-8{% if not user.is_authenticated %} col-xs-offset-2{% endif %}">
+    <h2>All tags</h2>
+    <hr />
+    <div class="proposal-tags">
+      {% for tag in tags %}
+        <a class="tag" href="{% url 'tag' tag.id tag.slug %}">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% if user.is_authenticated %}
+    <div class="col-xs-12 col-md-4">
+    <h2>Tags you follow</h2>
+    <hr />
+      {% if followed_tags %}
+        <ul id="followed-tags-list">
+        {% for tag in followed_tags %}
+          <li><a class="tag" href="{% url "tag" tag.id tag.slug %}">{{ tag.name }}</a></li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            You aren't following any tags.
+          </div>
+          <div class="panel-body">
+            Start following some to stay up to date with what's happening on eusay.
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

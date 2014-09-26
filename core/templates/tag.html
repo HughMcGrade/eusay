@@ -14,15 +14,26 @@
 
 {% block content %}
 
-{% if sort == "newest" %}
-<h2>New proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h2>
-<p>{{ tag.description }}</p>
-{% else %}
-<h2>Popular proposals tagged "{{ tag.name }}" <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h2>
-<p>{{ tag.description }}</p>
-{% endif %}
-<hr />
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Proposals tagged "{{ tag.name }}"</h2>
+    <a class="btn btn-primary btn-xs" href="{% url "follow_tag" tag.id %}" role="button">
+      {% if tag in user.follows_tags.all %}
+        <span class="glyphicon glyphicon-minus"></span> Unfollow tag
+      {% else %}
+        <span class="glyphicon glyphicon-plus"></span> Follow tag
+      {% endif %}
+    </a>
+    {% if sort == "newest" %}
+      <h3>Newest <a class="index-see-more-link" href="?sort=popular">See popular proposals</a></h3>
+      <p>{{ tag.description }}</p>
+      {% else %}
+      <h3>Popular <a class="index-see-more-link" href="?sort=newest">See new proposals</a></h3>
+      <p>{{ tag.description }}</p>
+      {% endif %}
+      <hr />
 
-
-{% include proposals_template %}
+      {% include proposals_template %}
+  </div>
+</div>
 {% endblock %}

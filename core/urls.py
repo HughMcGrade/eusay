@@ -44,6 +44,10 @@ urlpatterns = patterns('',
 
     # Tags
     url(r'^tag/(?P<tagId>\d+)/(?P<slug>[\w-]*)', tag_views.tag, name="tag"),
+    url(r'^tags/', tag_views.tags_list, name="tags_list"),
+    url(r'^follow_tag/(?P<tag_id>\d+)/',
+        tag_views.follow_tag,
+        name="follow_tag"),
 
     # Moderation
     url(r'^comment_hides', moderation_views.comment_hides,

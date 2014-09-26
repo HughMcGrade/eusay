@@ -2,7 +2,11 @@ from django.shortcuts import render
 from tags.models import Tag
 from proposals.models import Proposal
 
-from django.http.response import HttpResponsePermanentRedirect
+from django.http.response import HttpResponsePermanentRedirect,\
+    HttpResponseRedirect
+from django.contrib import messages
+from django.core.urlresolvers import reverse
+
 
 def tag(request, tagId, slug):
     tag = Tag.objects.get(id=tagId)
@@ -34,3 +38,26 @@ def tag(request, tagId, slug):
     if request.is_ajax():
         template = proposals_template
     return render(request, template, context)
+
+
+def tags_list(request):
+    tags = Tag.objects.all()
+    if request.user.is_authenticated():
+        followed_tags = request.user.follows_tags.all()
+    else:
+        followed_tags = []
+    return render(request, "tags.html", {"tags": tags,
+                                         "followed_tags": followed_tags})
+
+
+def follow_tag(request, tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    if request.user.is_authenticated():
+        if tag in request.user.follows_tags.all():
+            request.user.follows_tags.remove(tag)
+        else:
+            request.user.follows_tags.add(tag)
+    else:
+        messages.add_message(request, messages.ERROR, "You must be logged in "
+                                                      "to follow a tag.")
+    return HttpResponseRedirect(reverse("tag", args=[tag.id, tag.slug]))

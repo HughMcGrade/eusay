@@ -62,6 +62,9 @@ class Proposal(Content):
     def __unicode__(self):
         return self.title
 
+    def __str__(self):
+        return self.title
+
     def get_content_type():
         """
         Gets ContentType of Proposal model, caching result in ``_content_type``

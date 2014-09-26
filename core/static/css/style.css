@@ -298,7 +298,7 @@ body {
     top: 0;
     left: 0;
     z-index: 1;
-    background-image: url('static/img/blank.gif');
+    background-image: url('/static/img/blank.gif');
 }
 #proposal-action-menu-close {
     float: left;
@@ -447,6 +447,11 @@ hr.fancy-hr::after {
 .tag:hover {
     background-color: #b7ebb1;
     color: #606060;
+}
+#followed-tags-list {
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 0.9em;
 }
 #tag-list label {
     /* tags in submit page */

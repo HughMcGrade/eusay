@@ -307,6 +307,7 @@
 	    {% if user.is_authenticated and user.isModerator %}
 	    <li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
 	    {% endif %}
+      <li><a href="{% url "tags_list" %}">Browse tags</a></li>
 	  </ul>
 	  <form class="navbar-form navbar-right" role="search" action="/search" method="get">
             <div class="form-group">
