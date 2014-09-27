@@ -228,9 +228,9 @@
       <div class="row">
         <div class="col-xs-12">
            <div id="proposal_progress_bar" class="progress proposal-progress-bar">
-            <div class="progress-bar progress-bar-success proposal-progress-bar-up" data-toggle="tooltip" title="{{ proposal.upVotes }} vote{{ proposal.upVotes|pluralize }} in favor" style="width: {{ proposal.get_votes_up_percentage }}%">
+            <div class="progress-bar progress-bar-success proposal-progress-bar-up" style="width: {{ proposal.get_votes_up_percentage }}%">
             </div>
-            <div class="progress-bar progress-bar-danger proposal-progress-bar-down" data-toggle="tooltip" title="{{ proposal.downVotes }} vote{{ proposal.downVotes|pluralize }} against" style="width: {{ proposal.get_votes_down_percentage }}%">
+            <div class="progress-bar progress-bar-danger proposal-progress-bar-down" style="width: {{ proposal.get_votes_down_percentage }}%">
             </div>
           </div>
         </div>
