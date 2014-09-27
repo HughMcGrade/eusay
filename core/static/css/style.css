@@ -453,6 +453,14 @@ hr.fancy-hr::after {
     padding-left: 0;
     font-size: 0.9em;
 }
+#tag-page-title {
+    display: inline;
+}
+#tag-page-button {
+    position: relative;
+    top: -15px;
+    margin-top: 15px;
+}
 #tag-list label {
     /* tags in submit page */
     background-color: #7AA8D5;
