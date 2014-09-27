@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericRelation
 
 from core.models import Content
+from core.utils import replace_bad_words
 from votes.models import Vote
 
 
@@ -41,6 +42,7 @@ class Comment(Content):
 
     def save(self, *args, **kwargs):
         is_initial = not self.pk
+        self.text = replace_bad_words(self.text)
         super(Comment, self).save(*args, **kwargs)
         # when the comment is first created, add a vote by the commenter
         if is_initial:

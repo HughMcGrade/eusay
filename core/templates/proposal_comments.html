@@ -63,7 +63,7 @@
       </div>
 
 
-      {{ comment.text | replace_bad_words | my_markdown }}
+      {{ comment.text | my_markdown }}
 
       <div class="comment-meta">
         {{ comment.createdAt|timesince_human }}
@@ -123,7 +123,7 @@
     </form>
         </div>
 
-        {{ reply.text | replace_bad_words | my_markdown }}
+        {{ reply.text | my_markdown }}
 
         <div class="comment-meta">
           {{ reply.createdAt|timesince_human }}

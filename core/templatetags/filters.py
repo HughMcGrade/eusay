@@ -3,6 +3,7 @@ import re
 import markdown
 import bleach
 import datetime
+import random
 
 from django.template.loader import render_to_string
 from django.template.defaultfilters import stringfilter, pluralize
@@ -48,31 +49,6 @@ def comment_replies(comment):
 
     """
     return comment.get_replies(sort="chronological")
-
-
-@register.filter
-@stringfilter
-def replace_bad_words(value):
-    """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with
-    dashes
-
-    :type value: string
-    :returns: ``value`` without profanities
-    :rtype: string
-
-    """
-    # Replaces profanities in strings with safe words
-    # For instance, "shit" becomes "s--t"
-    words = re.sub(r"[^\w]", " ", value).split()
-    bad_words_seen = []
-    for word in words:
-        if word.lower() in settings.PROFANITIES_LIST:
-            bad_words_seen.append(word)
-    if bad_words_seen:
-        for word in bad_words_seen:
-            value = value.replace(word, "%s%s%s" %
-                                  (word[0], '-'*(len(word)-2), word[-1]))
-    return value
 
 
 @register.filter(is_safe=True)

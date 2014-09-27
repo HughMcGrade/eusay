@@ -219,6 +219,30 @@ def contains_swear_words(text):
     return bool(bad_words)
 
 
+def replace_bad_words(value):
+    """Replace words in ``value`` found in ``settings.PROFANITIES_LIST`` with
+    dashes
+
+    :type value: string
+    :returns: ``value`` without profanities
+    :rtype: string
+
+    """
+    # Replaces profanities in strings with %#!&!
+    replacement_symbols = "%&$?!"
+    words = re.sub(r"[^\w]", " ", value).split()
+    bad_words_seen = []
+    for word in words:
+        if word.lower() in settings.PROFANITIES_LIST:
+            bad_words_seen.append(word)
+    if bad_words_seen:
+        for word in bad_words_seen:
+            replacement = "".join([random.choice(replacement_symbols)
+                                   for i in range(len(word))])
+            value = value.replace(word, replacement)
+    return value
+
+
 def sqs_to_qs(sqs):
     for item in sqs:
         yield item.object
