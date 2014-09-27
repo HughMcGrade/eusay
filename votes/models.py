@@ -14,7 +14,7 @@ class VoteManager(models.Manager):
         return self.get_votes(content).filter(isVoteUp=is_up).count()
 
 class Vote(models.Model):
-    isVoteUp = models.BooleanField()
+    isVoteUp = models.BooleanField(default=False)
     createdAt = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="votes")
 
