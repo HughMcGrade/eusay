@@ -448,15 +448,16 @@ hr.fancy-hr::after {
 
 /* Tags */
 .tag {
-    background-color: #D5F7D0;
+    background-color: #c6e6f7;
     margin: 3px;
     padding: 1px 3px;
     color: #767676;
     display: inline-block;
 }
 .tag:hover {
-    background-color: #b7ebb1;
+    background-color: #b6d5e6;
     color: #606060;
+    text-decoration: none;
 }
 #followed-tags-list {
     list-style-type: none;
@@ -469,7 +470,7 @@ hr.fancy-hr::after {
 #tag-page-button {
     position: relative;
     top: -15px;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 #tag-list label {
     /* tags in submit page */
