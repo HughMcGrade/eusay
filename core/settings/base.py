@@ -42,7 +42,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.contrib.messages.context_processors.messages',
 )
 
-TEMPLATE_DIRS = os.path.join(BASE_DIR, "core/templates")
+TEMPLATE_DIRS = tuple(os.path.join(BASE_DIR, "core/templates"))
 
 ALLOWED_HOSTS = []
 
