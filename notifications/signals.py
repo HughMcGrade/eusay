@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 
@@ -12,15 +14,17 @@ from core.utils import remove_duplicates
 @receiver(m2m_changed, sender=Proposal.tags.through)
 def notify_of_new_proposal(**kwargs):
     proposal = kwargs.get("instance")
-    tags = proposal.tags.all()
-    recipients = []
-    for tag in tags:
-        recipients.extend([r for r in tag.followers.exclude(id=proposal.user.id)])
-    recipients = remove_duplicates(recipients)
-    for recipient in recipients:
-        Notification.objects.create(recipient=recipient,
-                                    type="new_proposal",
-                                    content=proposal)
+    if (datetime.datetime.now() - proposal.createdAt)\
+            < datetime.timedelta(minutes=1):
+        tags = proposal.tags.all()
+        recipients = []
+        for tag in tags:
+            recipients.extend([r for r in tag.followers.exclude(id=proposal.user.id)])
+        recipients = remove_duplicates(recipients)
+        for recipient in recipients:
+            Notification.objects.create(recipient=recipient,
+                                        type="new_proposal",
+                                        content=proposal)
 
 
 @receiver(post_save, sender=Response)
