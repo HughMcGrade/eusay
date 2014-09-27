@@ -281,6 +281,16 @@ body {
 	padding: 15px;
     margin-top: 40px;
 }
+#proposal-progress-bar-count {
+    width: 100%;
+    margin-bottom: 25px;
+}
+#proposal-progress-bar-count-for {
+    color: #6cad4d;
+}
+#proposal-progress-bar-count-against {
+    color: #ce4b48;
+}
 #proposal-action-menu-open {
     position: absolute;
     right: 10px;
@@ -452,6 +462,14 @@ hr.fancy-hr::after {
     list-style-type: none;
     padding-left: 0;
     font-size: 0.9em;
+}
+#tag-page-title {
+    display: inline;
+}
+#tag-page-button {
+    position: relative;
+    top: -15px;
+    margin-top: 15px;
 }
 #tag-list label {
     /* tags in submit page */

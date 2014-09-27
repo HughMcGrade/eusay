@@ -124,7 +124,8 @@ class ProposalStatusForm(forms.ModelForm):
                                    attrs={"class": "form-control"}))
     student_council = forms.ModelChoiceField(
         StudentCouncil.objects.filter(datetime__gt=datetime.now()),
-        widget=forms.Select(attrs={"class": "form-control"}))
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False)
 
     class Meta:
         model = Proposal
