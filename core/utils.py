@@ -113,6 +113,9 @@ def add_proposals(amount):
     get_title = lambda: random.choice(titles)
     get_body = lambda: random.choice(bodies)
 
+    from tags.models import Tag
+    get_tags = lambda: Tag.objects.all().order_by('?')[:3]
+
     # If no users exist, add one
     if get_user_model().objects.all().count() == 0:
         add_users(1)
@@ -121,9 +124,12 @@ def add_proposals(amount):
 
     for i in range(start_num, start_num + amount + 1):
         user = random.choice(get_user_model().objects.all())
-        Proposal.objects.create(title=get_title(),
+        proposal = Proposal.objects.create(title=get_title(),
                                 text=get_body(),
                                 user=user)
+        for tag in get_tags():
+            proposal.tags.add(tag)
+        proposal.save()
     return True
 
 
