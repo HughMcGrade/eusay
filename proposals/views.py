@@ -327,9 +327,12 @@ def update_proposal_status(request, proposal_id):
     proposal = Proposal.objects.get(id=proposal_id)
 
     if request.method == "POST":
+        print("form submitted.")
         form = ProposalStatusForm(request.POST, instance=proposal)
         if form.is_valid():
             form.save()
+        else:
+            messages.add_message(request, messages.ERROR, form.errors)
         return HttpResponseRedirect(reverse("proposal",
                                             kwargs={"proposal_id": proposal.id,
                                                     "slug": proposal.slug}))
