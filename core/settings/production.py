@@ -1,7 +1,5 @@
 from .base import *
 
-import appenlight_client.client as e_client
-
 
 ENVIRONMENT = "production"
 
@@ -25,20 +23,10 @@ DATABASES = {
     }
 }
 
-# Make AppEnlight be the first value in MIDDLEWARE_CLASSES
-MIDDLEWARE_CLASSES = \
-    ('appenlight_client.django_middleware.AppenlightMiddleware',) + \
-    MIDDLEWARE_CLASSES
-
-# But add RemoteUserMiddleware last, because it must come after
-# AuthenticationMiddleware
 MIDDLEWARE_CLASSES += ('django.contrib.auth.middleware.RemoteUserMiddleware',)
 
 AUTHENTICATION_BACKENDS = (
     'core.auth_backend.CustomUserModelBackend',
 )
-
-APPENLIGHT = e_client.get_config(
-    {'appenlight.api_key':get_secret("APPENLIGHT_PRIVATE_KEY")})
 
 ADMINS = (("Hugh", "hugh_mcgrade@hotmail.co.uk"), ("Tao", "tao@btao.org"))
