@@ -166,7 +166,7 @@ class Response(Content):
            self.user.userStatus == "Officeholder":
             super(Response, self).save(*args, **kwargs)
         else:
-            raise Exception("Only staff and officerholders"
+            raise Exception("Only staff and officerholders "
                             "can respond to proposals!")
 
     def __unicode__(self):
