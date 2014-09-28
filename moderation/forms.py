@@ -2,8 +2,9 @@ from django import forms
 
 from moderation.models import HideAction, Report
 
+from core.forms import SwearFilteredModelForm
 
-class HideActionForm(forms.ModelForm):
+class HideActionForm(SwearFilteredModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":
                                                           "form-control",
                                                           "rows": "3",
@@ -18,7 +19,7 @@ class HideActionForm(forms.ModelForm):
         fields = ['reason']
 
 
-class ReportForm(forms.ModelForm):
+class ReportForm(SwearFilteredModelForm):
     reason = forms.CharField(widget=forms.Textarea(attrs={"class":
                                                           "form-control",
                                                           "rows": "3",
