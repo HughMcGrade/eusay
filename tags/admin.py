@@ -3,7 +3,7 @@ from tags.models import Tag
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
+    list_display = ("name", "group", "description")
     prepopulated_fields = {'slug': ('name',), }
 
 admin.site.register(Tag, TagAdmin)

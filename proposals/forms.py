@@ -28,9 +28,17 @@ class ProposalForm(forms.ModelForm):
                                                         "onkeyup":
                                                         "countChars"
                                                         "(this, 6000)"}))
-    tags = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple(attrs={"id": "tag-list"}),
-        queryset=Tag.objects.all(),
+    school_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=1),
+        required=False)
+    liberation_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=2),
+        required=False)
+    other_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=3),
         required=False)
 
     def clean_title(self):
@@ -67,7 +75,7 @@ class ProposalForm(forms.ModelForm):
 
     class Meta:
         model = Proposal
-        fields = ['title', 'text', 'tags']
+        fields = ['title', 'text']
 
 
 class AmendmentForm(forms.Form):

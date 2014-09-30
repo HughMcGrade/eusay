@@ -368,10 +368,12 @@
           {% include "index_proposal.html" %}
         {% endfor %}
     {% else %}
-        <h4 class="text-center">New proposals</h4>
-        {% for proposal in new_proposals %}
-          {% include "index_proposal.html" %}
-        {% endfor %}
+      {% if new_proposals %}
+          <h4 class="text-center">New proposals</h4>
+          {% for proposal in new_proposals %}
+            {% include "index_proposal.html" %}
+          {% endfor %}
+        {% endif %}
     {% endif %}
   </div>
 </div> <!-- /.row -->

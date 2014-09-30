@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from haystack.query import SearchQuerySet
 
 from lxml.html.diff import htmldiff
+from itertools import chain
 
 from proposals.forms import ProposalForm, ResponseForm, AmendmentForm,\
     ProposalStatusForm
@@ -56,7 +57,10 @@ def submit(request):
             proposal = form.save(commit=False)
             proposal.user = request.user
             proposal.save()
-            form.save_m2m()  # save tags
+            tags = list(chain(form.cleaned_data.get("school_tags"),
+                              form.cleaned_data.get("liberation_tags"),
+                              form.cleaned_data.get("other_tags")))
+            proposal.tags.add(*tags)
             return HttpResponseRedirect(
                 reverse("share",
                         kwargs={"proposal_id": proposal.id}))

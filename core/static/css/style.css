@@ -450,13 +450,14 @@ hr.fancy-hr::after {
     background-color: #c6e6f7;
     margin: 3px;
     padding: 1px 3px;
-    color: #767676;
+    color: #525252;
+    border: 2px solid #A8C7D8;
     display: inline-block;
 }
 .tag:hover {
     background-color: #b6d5e6;
-    color: #606060;
     text-decoration: none;
+    color: #525252;
 }
 #followed-tags-list {
     list-style-type: none;
@@ -471,24 +472,34 @@ hr.fancy-hr::after {
     top: -15px;
     margin-top: 20px;
 }
-#tag-list label {
+
+.tag-list label {
     /* tags in submit page */
-    background-color: #7AA8D5;
+    background-color: #c6e6f7;
+    border: 2px solid #A8C7D8;
+    font-size: 0.9em;
     margin: 3px;
     padding: 1px 3px;
-    color: #ECECEC;
+    color: #525252;
     display: inline-block;
     font-weight: normal;
 }
-#tag-list label:hover {
-    background-color: #6A92BE;
-    color: #C5C5C5;
+.tag-list label:hover {
+    background-color: #b6d5e6;
 }
-#tag-list li {
+.tag-list li {
     /* make the tag list look less like a list */
     list-style: none;
     float: left;
 }
-#tag-list {
+.tag-list ul {
     padding-left: 0;
+}
+.tag-group {
+    margin-bottom: 1em;
+}
+
+/* Submission page */
+#proposal-submit-heading {
+    margin-bottom: 1em;
 }

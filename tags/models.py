@@ -5,9 +5,15 @@ from slugify import slugify
 
 
 class Tag(models.Model):
+    TAG_GROUPS = (
+        (1, "School"),
+        (2, "Liberation"),
+        (3, "Other")
+    )
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(default="slug", max_length=100)
+    slug = models.SlugField(blank=False, max_length=100)
+    group = models.IntegerField(choices=TAG_GROUPS, default=1)
     description = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
