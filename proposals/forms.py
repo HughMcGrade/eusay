@@ -2,11 +2,11 @@ from datetime import datetime
 
 from django import forms
 
-from proposals.models import Proposal, Response
 from core.utils import contains_swear_words
-from tags.models import Tag
+from proposals.models import Proposal, Response
 from student_councils.models import StudentCouncil
-
+from tags.models import Tag
+from core.forms import SwearFilteredModelForm
 
 class ProposalForm(forms.ModelForm):
     """
@@ -111,7 +111,7 @@ class AmendmentForm(forms.Form):
         self.initial['text'] = proposal_text
 
 
-class ResponseForm(forms.ModelForm):
+class ResponseForm(SwearFilteredModelForm):
     text = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control",
                "rows": "3",

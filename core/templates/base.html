@@ -163,7 +163,7 @@ UserVoice.push(['autoprompt', {}]);
 	 });
        });
 
-     }
+     };
 
 
 
@@ -192,7 +192,7 @@ UserVoice.push(['autoprompt', {}]);
 	   $('#changes').html(changes);
 	 }
        });
-     }
+     };
 
      function putNewMessagesFromResponse(response) {
        var html = $.parseHTML(response);
@@ -207,7 +207,7 @@ UserVoice.push(['autoprompt', {}]);
        else {
 	 return false;
        }
-     }
+     };
 
 
      // for displaying modal
@@ -247,7 +247,7 @@ UserVoice.push(['autoprompt', {}]);
 	   object:'{{ request.build_absolute_uri }}',
 	 })
        }, function(response){});
-     }
+     };
 
      function shareUpVote() {
        FB.ui({
@@ -258,7 +258,7 @@ UserVoice.push(['autoprompt', {}]);
 	   proposal:'{{ request.build_absolute_uri }}',
 	 })
        }, function(response){});
-     }
+     };
 
      function shareDownVote() {
        FB.ui({
@@ -269,8 +269,22 @@ UserVoice.push(['autoprompt', {}]);
 	   proposal:'{{ request.build_absolute_uri }}',
 	 })
        }, function(response){});
-     }
+     };
 
+     function popUp(button) {
+       var width  = 575,
+       height = 400,
+       left   = ($(window).width()  - width)  / 2,
+       top    = ($(window).height() - height) / 2,
+       url    = button.href + "?text=" + $(button).attr('data-text') + "&url=" + $(button).attr('data-url'),
+       opts   = 'status=1' +
+                ',width='  + width  +
+                ',height=' + height +
+                ',top='    + top    +
+                ',left='   + left;
+       window.open(url, 'twitter', opts);
+       return false;
+     };
      
     </script>
 

@@ -42,7 +42,6 @@ class Comment(Content):
 
     def save(self, *args, **kwargs):
         is_initial = not self.pk
-        self.text = replace_bad_words(self.text)
         super(Comment, self).save(*args, **kwargs)
         # when the comment is first created, add a vote by the commenter
         if is_initial:
