@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 
@@ -12,7 +12,10 @@ from users.views import request_login
 def edit_comment(request, comment_id):
     if not request.user.is_authenticated():
         return request_login(request)
-    comment = Comment.objects.get(id=comment_id)
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except:
+        raise Http404
     if not request.user == comment.user:
         messages.add_message(request,
                              messages.ERROR,
@@ -67,7 +70,10 @@ def edit_comment(request, comment_id):
 def delete_comment(request, comment_id):
     if not request.user.is_authenticated():
         return request_login(request)
-    comment = Comment.objects.get(id=comment_id)
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except:
+        raise Http404
     if comment.user != request.user:
         messages.add_message(request,
                              messages.ERROR,

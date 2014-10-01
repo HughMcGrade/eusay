@@ -3,13 +3,16 @@ from tags.models import Tag
 from proposals.models import Proposal
 
 from django.http.response import HttpResponsePermanentRedirect,\
-    HttpResponseRedirect
+    HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
 
 def tag(request, tagId, slug):
-    tag = Tag.objects.get(id=tagId)
+    try:
+        tag = Tag.objects.get(id=tagId)
+    except:
+        raise Http404
 
     # redirect requests with the wrong slug to the correct page
     if not slug == tag.slug:
@@ -51,7 +54,10 @@ def tags_list(request):
 
 
 def follow_tag(request, tag_id):
-    tag = Tag.objects.get(id=tag_id)
+    try:
+        tag = Tag.objects.get(id=tag_id)
+    except:
+        raise Http404
     if request.user.is_authenticated():
         if tag in request.user.follows_tags.all():
             request.user.follows_tags.remove(tag)

@@ -181,7 +181,10 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
         messages.add_message(request, messages.ERROR,
                              "Regular users cannot respond to proposals.")
         return HttpResponseRedirect(reverse('frontpage'))
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         if form.is_valid():
@@ -204,7 +207,10 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
 def edit_response(request, response_id):
     if not request.user.is_authenticated():
         return request_login(request)
-    response = Response.objects.get(id=response_id)
+    try:
+        response = Response.objects.get(id=response_id)
+    except:
+        raise Http404
     if not response.user == request.user:
         messages.add_message(request,
                              messages.ERROR,
@@ -241,7 +247,10 @@ def edit_response(request, response_id):
 def amend_proposal(request, proposal_id):
     if not request.user.is_authenticated():
         return request_login(request)
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
     if request.is_ajax():
         extend_template = "ajax_base.html"
     else:
@@ -293,7 +302,10 @@ def delete_proposal(request, proposal_id):
         extend_template = "ajax_base.html"
     else:
         extend_template = "base.html"
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
     if proposal.user != request.user:
         messages.add_message(request, messages.ERROR, ("You may only delete"
                                                        "your own proposals."
@@ -328,7 +340,10 @@ def update_proposal_status(request, proposal_id):
         messages.add_message(request, messages.ERROR, "You don't have "
                                                       "permission to do this.")
         return HttpResponseRedirect(reverse("frontpage"))
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
 
     if request.method == "POST":
         print("form submitted.")
@@ -347,7 +362,10 @@ def update_proposal_status(request, proposal_id):
 
 
 def share(request, proposal_id):
-    proposal = Proposal.objects.get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
     proposal_url = request.build_absolute_uri(proposal.get_absolute_url())
     return HttpResponse(render(request, "share.html",
                                {"proposal": proposal,

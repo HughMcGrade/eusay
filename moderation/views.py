@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseForbidden, HttpResponseNotFound
+    HttpResponseForbidden, HttpResponseNotFound, Http404
 from django.core.urlresolvers import reverse
 
 from users.views import request_login
@@ -20,7 +20,10 @@ def hide_comment(request, comment_id):
                              "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        comment = Comment.objects.get(id=comment_id)
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except:
+            raise Http404
         if request.method == "POST":
             form = HideActionForm(request.POST)
             if form.is_valid():
@@ -56,7 +59,10 @@ def hide_proposal(request, proposal_id):
                              "Only moderators may perform hide actions.")
         return HttpResponseRedirect(reverse('frontpage'))
     else:
-        proposal = Proposal.objects.get(id=proposal_id)
+        try:
+            proposal = Proposal.objects.get(id=proposal_id)
+        except:
+            raise Http404
         if request.method == "POST":
             form = HideActionForm(request.POST)
             if form.is_valid():
@@ -97,7 +103,10 @@ def proposal_hides(request):
 
 
 def report_comment(request, comment_id):
-    comment = Comment.objects.get(id=comment_id)
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except:
+        raise Http404
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -125,8 +134,10 @@ def report_comment(request, comment_id):
 
 
 def report_proposal(request, proposal_id):
-    proposal = Proposal.objects.all()\
-                               .get(id=proposal_id)
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
     if request.method == "POST":
         form = ReportForm(request.POST)
         if form.is_valid():
