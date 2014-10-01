@@ -6,16 +6,20 @@
 {% if not hide %}
     <div class="row" id="add_comment_row">
   <div class="col-xs-12 comment">
-    <form role="form" method="post" class="proposal-comment-form">
-      {% csrf_token %}
-      <div class="form-group">
-        <label>Add comment</label>
-        {% include "markdown_formatting_help.html" %}
-        {{ form.text }}
-        <div class="charNum">0/1000</div>
-      </div>
-      <button type="post" class="submit-comment-button btn btn-default">Submit</button>
-    </form>
+    {% if user.is_authenticated %}
+      <form role="form" method="post" class="proposal-comment-form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Add comment</label>
+          {% include "markdown_formatting_help.html" %}
+          {{ form.text }}
+          <div class="charNum">0/1000</div>
+        </div>
+        <button type="post" class="submit-comment-button btn btn-default">Submit</button>
+      </form>
+    {% else %}
+      Please <a href="{% url 'login' %}">log in</a> to comment.
+    {% endif %}
   </div>
 </div>
 {% endif %}
@@ -151,17 +155,21 @@
   {% if not hide %}
   <div class="row">
     <div class="col-xs-11 col-xs-offset-1 comment comment-reply-form" id="comment-reply-form-box-{{ comment.id }}">
-      <form role="form" method="post" class="proposal-comment-form">
-        <div class="form-group" id="comment-reply-form-{{ comment.id }}">
-          <label>Add comment</label>
-          {% include "markdown_formatting_help.html" %}
-          {{ form.text }}
-          <div class="charNum">0/1000</div>
-          {% csrf_token %}
-          <input type="hidden" name="reply_to" value="{{ comment.id }}" />
-        </div>
-        <button type="post" class="submit-comment-button btn btn-default">Submit</button>
-      </form>
+      {% if user.is_authenticated %}
+        <form role="form" method="post" class="proposal-comment-form">
+          <div class="form-group" id="comment-reply-form-{{ comment.id }}">
+            <label>Add comment</label>
+            {% include "markdown_formatting_help.html" %}
+            {{ form.text }}
+            <div class="charNum">0/1000</div>
+            {% csrf_token %}
+            <input type="hidden" name="reply_to" value="{{ comment.id }}" />
+          </div>
+          <button type="post" class="submit-comment-button btn btn-default">Submit</button>
+        </form>
+      {% else %}
+        Please <a href="{% url 'login' %}">log in</a> to reply.
+      {% endif %}
     </div>
   </div>
   {% endif %}
