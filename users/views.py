@@ -65,20 +65,6 @@ def generate_new_user(request):
                         "in a production environment!")
 
 
-def add_user(request):
-    user = generate_new_user(request)
-    return HttpResponse(user.username)
-
-
-# TODO: remove this, since it's for debugging
-def get_users(request):
-    users = User.objects.all()
-    s = "Current user is " + request.user.username + "<br />"
-    for user in users:
-        s = s + user.username + ", "
-    return HttpResponse(s)
-
-
 def profile(request, slug):
     try:
         user = User.objects.get(slug=slug)
@@ -119,26 +105,6 @@ def profile(request, slug):
         return render(request,
                       "no_profile.html",
                       {"profile": user})
-
-
-# Temporary for debugging
-# TODO: remove this when users + mods are implemented
-def make_mod(request):
-    if not request.user.is_authenticated():
-        return request_login(request)
-    request.user.isModerator = True
-    request.user.save()
-    messages.add_message(request, messages.INFO, "You are now a moderator")
-    return HttpResponseRedirect(reverse('frontpage'))
-
-
-def make_staff(request):
-    if not request.user.is_authenticated():
-        return request_login(request)
-    request.user.userStatus = "Staff"
-    request.user.save()
-    messages.add_message(request, messages.INFO, "You are now EUSA Staff")
-    return HttpResponseRedirect(reverse('frontpage'))
 
 
 def logout(request):

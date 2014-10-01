@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^welcome', user_views.setusername, name="setusername"),
 
     # Proposals
-    url(r'^$', proposal_views.index, name="frontpage"),  # Front page
+    url(r'^$', proposal_views.index, name="frontpage"),
     url(r'^submit/', proposal_views.submit, name="submit"),
     # There are two patterns for proposal pages so that if you don't enter
     # a slug in the URL, you still get to the proposal
@@ -59,17 +59,12 @@ urlpatterns = patterns('',
     url(r'^search/', search_views.search),
 
     # Action URLs
-    url(r'^add_user/', user_views.add_user),  # TODO: remove this, maybe?
-    url(r'^get_users/', user_views.get_users),   # TODO: remove this
     url(r'^report_comment/(?P<comment_id>\d+)',
         moderation_views.report_comment,
         name="report_comment"),
     url(r'^report_proposal/(?P<proposal_id>\d+)',
         moderation_views.report_proposal,
         name="report_proposal"),
-    url(r'^make_mod', user_views.make_mod),
-    url(r'^make_staff', user_views.make_staff),
-    # url(r'^get_messages/', _views.get_messages),
     url(r'^hide_comment/(?P<comment_id>\d+)',
         moderation_views.hide_comment,
         name="hide_comment"),
