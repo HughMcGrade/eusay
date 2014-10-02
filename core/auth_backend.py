@@ -9,10 +9,11 @@ class CustomUserModelBackend(RemoteUserBackend):
             return
         user = None
         sid = self.clean_username(remote_user)
+        email = sid + "@sms.ed.ac.uk"
 
         if self.create_unknown_user \
            and not User.objects.filter(sid=sid).exists():
-            user = User.objects.create(sid=sid, username=sid)
+            user = User.objects.create(sid=sid, username=sid, email=email)
             user = self.configure_user(user)
         else:
             try:
