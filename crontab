@@ -4,5 +4,9 @@
 # chmod -R 775 /home/admin/logs/
 # sudo su apache
 # crontab crontab
-*/15    *       *       *       *       /home/admin/.virtualenvs/eusay/bin/python /home/admin/public_html/eusay/manage.py update_ranks --settings=eusay.settings.production >> /home/admin/logs/cron/update$
+# structure: minute hour day-of-month month day-of-week command
+# day-of-week is 0-6 where 0 is sunday
+# intervals: */20 means every 20th (minute, day, whatever)
+*/15    *       *       *       *       /home/admin/.virtualenvs/eusay/bin/python /home/admin/public_html/eusay/manage.py update_ranks --settings=core.settings.production >> /home/admin/logs/cron/update_ranks_$(date +\%Y\%m\%d_\%H:\%M:\%S\%z).log
+0	2	*	*	*	/home/admin/.virtualenvs/eusay/bin/python /home/admin/public_html/eusay/manage.py send_notification_emails --settings=core.settings.production >> /home/admin/logs/cron/send_notification_emails_$(date +\%Y\%m\%d_\%H:\%M:\%S).log
 
