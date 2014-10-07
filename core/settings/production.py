@@ -6,7 +6,8 @@ ENVIRONMENT = "production"
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS += ["eusay.eusa.ed.ac.uk",
+ALLOWED_HOSTS += ["129.215.116.90",
+                  "eusay.eusa.ed.ac.uk",
                   ".eusay.eusa.ed.ac.uk"]  # Period matches any subdomains
 
 DATABASES = {
