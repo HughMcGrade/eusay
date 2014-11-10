@@ -133,22 +133,22 @@ class Proposal(Content):
         rank = 0
 
         # Take sum of weighted value for each comment
-        comments = Comment.objects.all().filter(proposal=self)
+        comments = Comment.objects.filter(proposal=self)
         for comment in comments:
-            rank += _weight_instance(
-                hour_age=_hours_since(comment.createdAt)) * 4
+            rank += self._weight_instance(
+                    hour_age=self._hours_since(comment.createdAt)) * 4
 
         votes = self.user.get_votes()
         # Vote.get_votes(self)
         for vote in votes:
-            hour_age = _hours_since(vote.createdAt)
+            hour_age = self._hours_since(vote.createdAt)
             if vote.isVoteUp:
-                rank += _weight_instance(hour_age) * 2
+                rank += self._weight_instance(hour_age) * 2
             else:
-                rank += _weight_instance(hour_age) * 1
+                rank += self._weight_instance(hour_age) * 1
 
         return rank * \
-            _proximity_coefficient() + \
+            self._proximity_coefficient() + \
             self.upVotes - \
             self.downVotes
 

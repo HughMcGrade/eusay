@@ -41,7 +41,8 @@ class User(usermodels.AbstractUser):
     title = models.CharField(max_length=100, blank=True)
     isModerator = models.BooleanField("moderator", default=False)
     hasProfile = models.BooleanField("public profile", default=False)
-    follows_tags = models.ManyToManyField(Tag, related_name="followers")
+    follows_tags = models.ManyToManyField(Tag, related_name="followers",
+                                          blank=True)
     subscribed_to_notification_emails = models.BooleanField("subscribed to "
                                                             "notification "
                                                             "emails?",
@@ -62,6 +63,9 @@ class User(usermodels.AbstractUser):
 
     def get_absolute_url(self):
         return reverse("user", kwargs={"slug": self.slug})
+
+    def get_votes(self):
+        return Vote.objects.filter(user=self)
 
     def get_vote_on(self, content):
         content_type = ContentType.objects.get_for_model(content)
