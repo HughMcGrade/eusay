@@ -323,7 +323,10 @@
             <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
             {% endif %}
             {% if proposal.user == user %}
-	            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
+              {% if proposal.is_new %}
+	              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a>
+              {% endif %}
+              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
             {% endif %}
           </div>
           {% endif %}

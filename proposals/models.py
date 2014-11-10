@@ -156,6 +156,13 @@ class Proposal(Content):
         return Comment.objects.get_visible_comments(
             proposal=self, reply_to=reply_to, sort=sort)
 
+    def is_new(self):
+        """
+        :return: True if the proposal is less than an hour old
+        """
+        timesince = datetime.datetime.now() - self.createdAt
+        return timesince < datetime.timedelta(hours=1)
+
 
 class Response(Content):
     text = models.TextField()

@@ -1,0 +1,61 @@
+{% extends extend_template %}
+
+{% block title %}
+| Edit proposal
+{% endblock %}
+
+{%  block content %}
+
+<script>
+ $(document).ready(function() {
+   // hide checkboxes
+   $('.tag-list input[type=checkbox]').hide();
+
+   // differentiate already checked checkboxes
+   $('.tag-list input').each(function() {
+     if (this.checked) {
+       $(this).parent().css({
+         "background-color": "#A8C7D8",
+         "border": "2px solid #c6e6f7"
+       });
+     }
+   });
+
+   // change tags' look when clicked
+   $('.tag-list input[type=checkbox]').change(function() {
+     if (this.checked) {
+       $(this).parent().css({
+         "background-color": "#A8C7D8",
+         "border": "2px solid #c6e6f7"
+       });
+     }
+     else {
+       $(this).parent().css({
+         "background-color": "#c6e6f7",
+         "border": "2px solid #A8C7D8"
+       });
+     }
+   });
+ });
+</script>
+
+
+<div class="row">
+  <h1 id="form_title">Edit proposal</h1>
+  <div id="form_body" class="col-xs-12 col-sm-8 col-sm-offset-2">
+    <form id="modal_form" method="post" action="{% url 'edit_proposal' proposal.id %}">
+      {%  csrf_token %}
+      <div class="form-group">
+        <label>Title</label>
+        {{ form.title }}
+        <label>Text</label>
+        {{ form.text }}
+        <div class="charNum">0/6000</div>
+      </div>
+      <button type="post" class="btn btn-success">Submit</button>
+      <a id="form_submit_button" class="btn btn-md btn-default" href="{% url 'proposal' proposal.id proposal.slug %}">Cancel</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

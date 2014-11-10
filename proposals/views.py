@@ -173,6 +173,58 @@ def proposal(request, proposal_id, slug=None):
 
     return response
 
+def edit_proposal(request, proposal_id):
+    try:
+        proposal = Proposal.objects.get(id=proposal_id)
+    except:
+        raise Http404
+    if not request.user.is_authenticated():
+        return request_login()
+    if request.user != proposal.user:
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You can't edit other people's proposals!")
+        return HttpResponseRedirect(reverse("frontpage"))
+    else:
+        if request.method == "POST":
+            if proposal.is_new():
+                form = ProposalForm(request.POST, instance=proposal)
+                if form.is_valid():
+                    form.save()
+                    messages.add_message(request, messages.SUCCESS,
+                                         "Proposal edited.")
+                    return HttpResponseRedirect(reverse("proposal", args=[
+                                                        str(proposal.id),
+                                                        proposal.slug]))
+                else:
+                    messages.add_message(request,
+                                         messages.ERROR,
+                                         "Invalid proposal.")
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     "You can only edit a proposal in the "
+                                     "first hour.")
+
+        form = ProposalForm(instance=proposal)
+        if proposal.is_new():
+            if request.is_ajax():
+                extend_template = "ajax_base.html"
+            else:
+                extend_template = "base.html"
+            return render(request, "edit_proposal_form.html",
+                          {"form": form,
+                           "proposal": proposal,
+                           "extend_template": extend_template})
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 "You can only edit a proposal in the "
+                                 "first hour.")
+            return HttpResponseRedirect(reverse("proposal", args=[
+                                                str(proposal.id),
+                                                proposal.slug]))
+
+
+
 def respond_to_proposal(request, proposal_id, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
