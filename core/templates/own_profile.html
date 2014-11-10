@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-{% if error_msg %}
-<div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ error_msg }}</div>
+{% if form.username.errors %}
+<div class="alert alert-danger" role="alert"><strong>Oops! </strong>{{ form.username.errors }}</div>
 {% endif %}
 <h2>{{ profile.username }} <small>{{ profile.sid }}</small></h2>
 <div class="row">

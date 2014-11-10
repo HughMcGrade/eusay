@@ -6,12 +6,19 @@
 
 {% block content %}
 
+{% if form.username.errors %}
+  <div class="alert alert-danger">
+  Error: {{ form.username.errors }}
+  </div>
+{% endif %}
+
 <div class="row">
   <div class="col-xs-12 col-md-8 col-md-offset-2">
     <h1 id="form_title">Welcome to eusay!</h1>
     <p>
       It looks like you haven't set a username yet. We recommend using your
-      real name. Note that you can't use your student ID as your username.
+      real name. Note that it can't contain spaces, and you can't use your
+      student ID as your username.
     </p>
 
   <form action="" method="post">

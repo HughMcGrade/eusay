@@ -82,11 +82,6 @@ def profile(request, slug):
                               kwargs={"slug": request.user.slug})
                 return HttpResponseRedirect(url)
             else:
-                messages.add_message(request,
-                                     messages.ERROR,
-                                     "That username is unavailable or not "
-                                     "allowed.")
-                # error_msg = "That username is unavailable."
                 return render(request,
                               "own_profile.html",
                               {"profile": user,
@@ -155,12 +150,14 @@ def login(request):
     if request.user.username == request.user.sid:  # Default username is the sid
         return HttpResponseRedirect(reverse("setusername"))
     else:
-        return HttpResponseRedirect(reverse("frontpage"))
+        return HttpResponseRedirect(reverse("frontpagerunser"))
 
 
 def setusername(request):
     #if request.user.username != "":
      #   return HttpResponseRedirect(reverse("frontpage"))
+    form = UsernameForm(instance=request.user,
+                        initial={"username": ""})
     if request.method == "POST":
         form = UsernameForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -170,12 +167,4 @@ def setusername(request):
                                  "You've set your username. "
                                  "Welcome to eusay!")
             return HttpResponseRedirect(reverse("frontpage"))
-        else:
-            messages.add_message(request,
-                                 messages.ERROR,
-                                 "That username is unavailable or not "
-                                 "allowed. Please try another one.")
-            return HttpResponseRedirect(reverse("setusername"))
-    form = UsernameForm(instance=request.user,
-                        initial={"username": ""})
     return render(request, "setusername.html", {"form": form})
