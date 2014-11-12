@@ -150,12 +150,14 @@ def login(request):
     if request.user.username == request.user.sid:  # Default username is the sid
         return HttpResponseRedirect(reverse("setusername"))
     else:
-        return HttpResponseRedirect(reverse("frontpagerunser"))
+        return HttpResponseRedirect(reverse("frontpage"))
 
 
 def setusername(request):
     #if request.user.username != "":
      #   return HttpResponseRedirect(reverse("frontpage"))
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse("frontpage"))
     form = UsernameForm(instance=request.user,
                         initial={"username": ""})
     if request.method == "POST":
