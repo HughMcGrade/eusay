@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
+from .forms import UserAdminForm
 
 class UserAdmin(admin.ModelAdmin):
-    readonly_fields = ("sid", )
+
+    form = UserAdminForm
+    
+    readonly_fields = ("sid", "password")
     list_display = ("sid", "username", "userStatus", "title")
     prepopulated_fields = {'slug': ('username',), }
 

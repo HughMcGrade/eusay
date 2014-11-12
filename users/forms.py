@@ -78,3 +78,10 @@ class UsernameForm(forms.ModelForm):
 
     def clean_username(self):
         return check_username(self)
+
+
+class UserAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        exclude = ["password"]
