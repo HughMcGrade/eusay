@@ -363,7 +363,8 @@ UserVoice.push(['autoprompt', {}]);
 	  <ul class="nav navbar-nav">
             <li><a href="{% url 'submit' %}">Submit</a></li>
 	    {% if user.is_authenticated and user.isModerator %}
-	    <li><a href="{% url 'moderator_panel' %}">Moderator Panel</a></li>
+	    {% load new_reports %}
+	    <li><a href="{% url 'moderator_panel' %}">Moderator Panel {% new_reports %}</a></li>
 	    {% endif %}
       <li><a href="{% url "tags_list" %}">Browse tags</a></li>
 	  </ul>
