@@ -27,7 +27,9 @@ class ProposalForm(forms.ModelForm):
                                                         "id": "text",
                                                         "onkeyup":
                                                         "countChars"
-                                                        "(this, 6000)"}))
+                                                        "(this, 6000)",
+                                                        "oninput":
+                                                        "this.editor.update()"}))
     school_tags = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(),
         queryset=Tag.objects.filter(group=1),

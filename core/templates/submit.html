@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block js %}
+<script src="{% static 'js/markdown.js' %}"></script>
 <script>
  $(document).ready(function() {
    // find similar proposals
@@ -101,7 +102,29 @@
 	{{ form.text }}
 	<div class="charNum">0/6000</div>
       </div>
+
+      <div class="col-xs-12">
+	<div style="padding: 10px 15px; background-color: #F6F6F6" class="default-alert">
+	  <strong>Preview</strong>
+	  <br /> <br />
+	  <div id="preview"></div>
+	</div>
+      </div>
+
+
     </div>
+
+    <script>
+     function Editor(input, preview) {
+       this.update = function () {
+         preview.innerHTML = markdown.toHTML(input.value);
+       };
+       input.editor = this;
+       this.update();
+     }
+     var $ = function (id) { return document.getElementById(id); };
+     new Editor($("text"), $("preview"));
+    </script>
 
     <div class="col-xs-12 col-md-4">
       <div class="alert alert-warning">
