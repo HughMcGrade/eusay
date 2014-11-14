@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 
 from core.tests import BaseTestCase
 
+from users.models import User
+from tags.models import Tag
 
 class ProfileTest(BaseTestCase):
 
@@ -75,3 +77,35 @@ class ProfileTest(BaseTestCase):
         previous_value = self.user.hasProfile
         self.user = get_user_model().objects.get(id=self.user.id)
         self.assertEqual(self.user.hasProfile, not previous_value)
+
+class WelcomeTest (BaseTestCase):
+
+    def test_welcome(self):
+        # Add tags
+        tag1 = Tag.objects.create(name="Group1", description="A tag", group=1)
+        tag2 = Tag.objects.create(name="Group2", description="Another tag", group=2)
+        tag3 = Tag.objects.create(name="Group3", description="Yet another tag", group=3)
+
+        # Login as user
+        self.assertTrue(self.client.login(username=self.user.username, password=""))
+
+        # Get prepare page
+        url = reverse("prepare_new_user")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("form", response.context)
+
+        # Submit prepare
+        new_username = 'Merkel54'
+        post = {'username': new_username,
+                'other_tags': str(tag3.id),
+                'liberation_tags': str(tag2.id),
+                'school_tags': [str(self.tag.id), str(tag1.id)]}
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 302)
+
+        # Test effect
+        user = User.objects.get(sid=self.user.sid)
+        self.assertEqual(user.username, new_username)
+        for tag in [self.tag, tag1, tag2, tag3]:
+            self.assertIn(Tag.objects.get(id=tag.id), user.follows_tags.all())

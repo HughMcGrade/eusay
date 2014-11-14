@@ -21,6 +21,9 @@ TEST_INDEX = {
 
 
 def add_objects(self):
+    """
+    Add test objects to test database.
+    """
     self.user = User.objects.create_user(sid="s1234567", userStatus="User",
                                          username="Urquell", hasProfile=True,
                                          password="")
@@ -34,7 +37,7 @@ def add_objects(self):
                                                  userStatus="Officeholder",
                                                  username="Nicola",
                                                  password="")
-    self.tag = Tag.objects.create(name="Fun", description="FUN FUN FUN")
+    self.tag = Tag.objects.create(name="Fun", description="FUN FUN FUN", group=1)
     self.proposal = Proposal.objects.create(title="Cascada and Venga"
                                             "Boys at Potterow all year.",
                                             text="EUSA shall book Cascada "
@@ -99,14 +102,17 @@ def add_objects(self):
                                                           "people may find "
                                                           "offensive.",
                                                      user=self.candidate)
-    self.proposal_report = Report.objects.create(content=self.reported_proposal,
-                                                 reason="Daft",
-                                                 reporter=self.user)
+    self.proposal_report = Report.objects.create(
+        content=self.reported_proposal,
+        reason="Daft",
+        reporter=self.user)
 
 
 @override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class BaseTestCase(TestCase):
-
+    """
+    Base class for all test cases setting up Haystack and adding objects.
+    """
     def setUp(self):
         add_objects(self)
         haystack.connections.reload('default')

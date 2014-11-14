@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', user_views.logout, name="logout"),
     url(r'^login/$', user_views.login, name="login"),
     url(r'^user/(?P<slug>[\w-]+)', user_views.profile, name="user"),
-    url(r'^welcome', user_views.setusername, name="setusername"),
+    url(r'^welcome/', user_views.prepare_new_user, name="prepare_new_user"),
 
     # Proposals
     url(r'^$', proposal_views.index, name="frontpage"),

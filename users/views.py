@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate as django_authenticate, \
 from django.contrib.auth.views import logout as django_logout
 
 from users.models import User
-from users.forms import UserForm, UsernameForm
+from users.forms import UserForm, NewUserForm
 
 RAND_NAMES = ['Tonja', 'Kaley', 'Bo', 'Tobias', 'Jacqui', 'Lorena', 'Isaac',
               'Adriene', 'Tuan', 'Shanon', 'Georgette', 'Chas', 'Yuonne',
@@ -148,25 +148,36 @@ def login(request):
     # use EASE to login (as long as it's configured to be CosignProtected
     # in Apache).
     if request.user.username == request.user.sid:  # Default username is the sid
-        return HttpResponseRedirect(reverse("setusername"))
+        return HttpResponseRedirect(reverse("prepare_new_user"))
     else:
         return HttpResponseRedirect(reverse("frontpage"))
 
 
-def setusername(request):
+def prepare_new_user(request):
     #if request.user.username != "":
      #   return HttpResponseRedirect(reverse("frontpage"))
     if not request.user.is_authenticated():
+        messages.add_message(request,
+                             messages.ERROR,
+                             "You must be logged in to set a username.")
         return HttpResponseRedirect(reverse("frontpage"))
-    form = UsernameForm(instance=request.user,
-                        initial={"username": ""})
+    form = NewUserForm(request.user)
     if request.method == "POST":
-        form = UsernameForm(request.POST, instance=request.user)
+        form = NewUserForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
+            user = request.user
+            user.follows_tags.add(*form.cleaned_data['school_tags'])
+            user.follows_tags.add(*form.cleaned_data['other_tags'])
+            user.follows_tags.add(*form.cleaned_data['liberation_tags'])
+            user.username = form.cleaned_data['username']
+            user.save()
             messages.add_message(request,
                                  messages.SUCCESS,
-                                 "You've set your username. "
                                  "Welcome to eusay!")
             return HttpResponseRedirect(reverse("frontpage"))
-    return render(request, "setusername.html", {"form": form})
+    return render(request, "prepare_new_user.html", {"form": form})
+
+def follow_tags_form(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse("frontpage"))
+    form = User

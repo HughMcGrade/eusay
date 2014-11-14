@@ -4,9 +4,9 @@ from django import forms
 
 from users.models import User
 from core.utils import contains_swear_words, is_sid
+from tags.models import Tag
 
-
-def check_username(form):
+def check_username(form, user):
     """
     This function takes a form as input, and raises an error if
     the username is blank, if the username slug already exists (and therefore
@@ -22,7 +22,7 @@ def check_username(form):
 
     # don't allow usernames where the slug already exists
     slug = slugify(cleaned_username, max_length=100)
-    if User.objects.exclude(sid=form.instance.sid).filter(slug=slug)\
+    if User.objects.exclude(sid=user.sid).filter(slug=slug)\
                                                   .exists():
         raise forms.ValidationError("User slug already exists.")
 
@@ -60,25 +60,34 @@ class UserForm(forms.ModelForm):
             forms.BooleanField(required=False)
 
     def clean_username(self):
-        return check_username(self)
+        return check_username(self, self.instance)
 
 
-class UsernameForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ["username", ]
+class NewUserForm(forms.Form):
 
-    def __init__(self, *args, **kwargs):
-        super(UsernameForm, self).__init__(*args, **kwargs)
-
-        self.fields["username"] = forms.CharField(
+    school_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=1),
+        required=False)
+    liberation_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=2),
+        required=False)
+    other_tags = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        queryset=Tag.objects.filter(group=3),
+        required=False)
+    username = forms.CharField(
             required=True,
             widget=forms.TextInput(attrs={"class": "form-control",
                                           "placeholder": "Please enter a username."}))
 
-    def clean_username(self):
-        return check_username(self)
+    def __init__(self, user, *args, **kwargs):
+        super(NewUserForm, self).__init__(*args, **kwargs)
+        self.user = user
 
+    def clean_username(self):
+        return check_username(self, self.user)
 
 class UserAdminForm(forms.ModelForm):
 

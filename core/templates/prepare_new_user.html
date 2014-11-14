@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+| Welcome!
+{% endblock %}
+
+{% block content %}
+
+{% if form.username.errors %}
+<div class="alert alert-danger">
+  Error: {{ form.username.errors }}
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <h1 id="form_title">Welcome to eusay!</h1>
+
+    <hr />
+
+    <h3>Username</h3>
+
+    <p>
+      It looks like you haven't set a username yet. We recommend using your
+      real name. Note that it can't contain spaces, and you can't use your
+      student ID as your username.
+    </p>
+    
+    <form action="" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+	{{ form.username }}
+      </div>
+
+      <hr />
+
+      <h3>Follow Tags</h3>
+
+      <p>
+	To make the most of eusay, we recommend following some tags so you are
+	notified of new proposals.
+      </p>
+
+
+      <div class="row">
+	<div class="col-xs-12 col-md-8 tag-group">
+	  <h4>General</h4>
+	  <div class="tag-list">
+            {{ form.other_tags }}
+	  </div>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-xs-12 col-md-8 tag-group">
+	  <h4>Liberation groups</h4>
+	  <div class="tag-list">
+            {{ form.liberation_tags }}
+	  </div>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-xs-12 col-md-8 tag-group">
+	  <h4>Schools</h4>
+	  <div class="tag-list">
+            {{ form.school_tags }}
+	  </div>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-xs-12">
+	  <button id="form_submit_button" type="post" class="btn btn-default">Submit</button>
+	</div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
