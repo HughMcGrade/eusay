@@ -7,6 +7,7 @@
     </div>
   {% endif %}
   <div class="index-proposal-top">
+    {% if proposal.responses.exists %}<span class="glyphicon glyphicon-star index-proposal-star"></span>{% endif %}
     <h4 class="index-proposal-title"><a class="pink"
                                         href="{% url 'proposal' proposal.id proposal.slug %}">
       {{ proposal.title }}

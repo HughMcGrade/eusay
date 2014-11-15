@@ -190,6 +190,9 @@
       <div class="row">
         <div class="col-xs-12">
           <h2 id="proposal-title" class="text-center">{{ proposal.title }}</h2>
+          {% if proposal.responses.exists %}
+            <p class="text-center"><span class="glyphicon glyphicon-star"></span> <a href="#proposal-response">EUSA has responded to this proposal.</a></p>
+          {% endif %}
           <p class="text-center">
             {% if proposal.get_status_display == "Open for discussion" %}
               <span data-toggle="tooltip" title="EUSA has not yet responded to this proposal."><span class="glyphicon glyphicon-play-circle"></span> {{ proposal.get_status_display }}</span>

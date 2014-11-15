@@ -171,6 +171,12 @@ body {
 .index-proposal-title {
     margin-bottom: 5px;
 }
+.index-proposal-star {
+    top: 2px;
+    right: 2px;
+    float: right;
+    color: #ed174e;
+}
 .index-proposal-title span {
     /* make whole div into a link */
     position: absolute;
