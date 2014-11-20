@@ -116,14 +116,14 @@
 
     <script>
      function Editor(input, preview) {
-       this.update = function () {
+       this.update = function() {
          preview.innerHTML = markdown.toHTML(input.value);
        };
        input.editor = this;
        this.update();
      }
-     var $ = function (id) { return document.getElementById(id); };
-     new Editor($("text"), $("preview"));
+     var e = function (id) { return document.getElementById(id); };
+     new Editor(e("text"), e("preview"));
     </script>
 
     <div class="col-xs-12 col-md-4">
