@@ -101,4 +101,5 @@ urlpatterns = patterns('',
 
     # Other
     url(r'^about/', core_views.about, name="about"),
+    url(r'^codeofconduct/', core_views.codeofconduct, name="codeofconduct"),
 )
