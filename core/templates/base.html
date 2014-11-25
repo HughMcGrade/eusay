@@ -56,6 +56,10 @@
 
      function initPage() {
        // init autocomplete search
+       jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+         var ul = this.menu.element;
+         ul.outerWidth(this.element.outerWidth());
+       };
        $("#search-field").autocomplete({
 	 source: function(request, response) {
 	   $.getJSON("{% url "api_v1:autocomplete" %}?term=" + request.term, function(data) {
