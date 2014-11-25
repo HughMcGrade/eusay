@@ -8,7 +8,7 @@ eusay is funded by the [Jisc Summer of Student Innovation](http://elevator.jisc.
 
 Requirements
 ------------
-eusay runs on Django 1.6 on Python 3. The database is PostgreSQL. See requirements.txt for package requirements.
+eusay runs on Django 1.7 on Python 3. The database is PostgreSQL. See requirements.txt for package requirements.
 
 Setup
 -----
@@ -18,10 +18,9 @@ The cron jobs in the crontab file updates proposal ranks every 15 minutes, and s
 
 To Do:
 ------
-* See [Trello](https://trello.com/b/yVdFBRrd/eusay)
+* See [Trello](https://trello.com/b/yVdFBRrd/eusay) and [GitHub issue tracker](https://github.com/HughMcGrade/eusay/issues)
 
 Known issues:
 -------------
 * See [issue tracker](https://github.com/HughMcGrade/eusay/issues) on GitHub
-* `python manage.py rebuild_index` requires the `--noinput` flag due to a bug in Whoosh, the search library.
 * `python manage.py rebuild_index` deletes the search index, which means that its permissions are lost. This means that the server cannot update the search index. Make sure to set permissions on `core/settings/whoosh_index` after running this command.
