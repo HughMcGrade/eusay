@@ -20,7 +20,6 @@ def search(request):
             # Convert to QuerySet and remove hidden proposals
             results_qs = Proposal.objects.filter(id__in=results)\
                 .filter(isHidden=False)
-            results_qs.filter(isHidden=False)
             context["query"] = query
             context["proposals"] = results_qs
 
