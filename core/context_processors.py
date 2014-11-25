@@ -5,4 +5,6 @@ def tracking_code(request):
     return {"PRIVATE_GOOGLE_ANALYTICS_KEY":
                 settings.PRIVATE_GOOGLE_ANALYTICS_KEY,
             "EUSA_GOOGLE_ANALYTICS_KEY":
-                settings.EUSA_GOOGLE_ANALYTICS_KEY}
+                settings.EUSA_GOOGLE_ANALYTICS_KEY,
+            "USERVOICE_ID":
+                settings.USERVOICE_ID}
