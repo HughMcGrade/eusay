@@ -41,7 +41,7 @@
           </span>
           <span class="pull-right">
               <span
-                  class="glyphicon glyphicon-bullhorn"></span> {{ proposal.comments.count }} comment{{ proposal.comments.count|pluralize }}
+                  class="glyphicon glyphicon-bullhorn"></span> {{ proposal.get_visible_comments | length }} comment{{ proposal.get_visible_comments | length | pluralize }}
           </span>
     </div>
   </div>
