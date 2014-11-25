@@ -22,3 +22,7 @@ DATABASES = {
         'timezone': 'Europe/London',
     }
 }
+
+# set these to the empty string in development so we don't track these sessions
+PRIVATE_GOOGLE_ANALYTICS_KEY = ""
+EUSA_GOOGLE_ANALYTICS_KEY = ""

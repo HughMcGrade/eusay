@@ -31,3 +31,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ADMINS = (("Hugh", "hugh_mcgrade@hotmail.co.uk"), ("Tao", "tao@btao.org"))
+
+PRIVATE_GOOGLE_ANALYTICS_KEY = "UA-55208952-1"
+EUSA_GOOGLE_ANALYTICS_KEY = "UA-18595941-1"
