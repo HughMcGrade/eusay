@@ -368,16 +368,21 @@ def delete_proposal(request, proposal_id):
         return HttpResponseRedirect(reverse('frontpage'))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
-            proposal.text = "This proposal has been deleted by its proposer."
-            proposal.title = "Deleted proposal"
-            proposal.user = get_user_model().objects.get_deleted_content_user()
-            proposal.tags.clear()
-            proposal.save()
-            messages.add_message(request, messages.INFO, "Proposal deleted")
-            return HttpResponseRedirect(reverse("proposal",
-                                                kwargs={"proposal_id":
-                                                        proposal.id, "slug":
-                                                        proposal.slug}))
+            if proposal.comments.count() > 0:
+                proposal.text = "This proposal has been deleted by its proposer."
+                proposal.title = "Deleted proposal"
+                proposal.user = get_user_model().objects.get_deleted_content_user()
+                proposal.tags.clear()
+                proposal.save()
+                messages.add_message(request, messages.INFO, "Proposal deleted")
+                return HttpResponseRedirect(reverse("proposal",
+                                                    kwargs={"proposal_id":
+                                                            proposal.id, "slug":
+                                                            proposal.slug}))
+            else:
+                proposal.delete()
+                messages.add_message(request, messages.INFO, "Proposal deleted")
+                return HttpResponseRedirect(reverse("frontpage"))
     else:
         return render(request, 'delete_proposal.html',
                       {'proposal': proposal,

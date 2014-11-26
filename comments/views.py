@@ -87,16 +87,21 @@ def delete_comment(request, comment_id):
                                             ]))
     if request.method == 'POST':
         if request.POST['action'] == 'delete':
-            comment.text = "This comment has been deleted by its creator."
-            comment.user = get_user_model().objects.get_deleted_content_user()
-            comment.save()
-            messages.add_message(request, messages.SUCCESS, "Comment deleted")
-            return HttpResponseRedirect(reverse("proposal",
-                                                kwargs={"proposal_id":
-                                                        comment.proposal.id,
-                                                        "slug":
-                                                        comment.proposal.slug})
-                                        + "#comment_" + str(comment.id))
+            if comment.get_replies().count() > 0:
+                comment.text = "This comment has been deleted by its creator."
+                comment.user = get_user_model().objects.get_deleted_content_user()
+                comment.save()
+                messages.add_message(request, messages.SUCCESS, "Comment deleted")
+                return HttpResponseRedirect(reverse("proposal",
+                                                    kwargs={"proposal_id":
+                                                            comment.proposal.id,
+                                                            "slug":
+                                                            comment.proposal.slug})
+                                            + "#comment_" + str(comment.id))
+            else:
+                comment.delete()
+                messages.add_message(request, messages.SUCCESS, "Comment deleted")
+                return HttpResponseRedirect(reverse("frontpage"))
     else:
         if request.is_ajax():
             extend_template = "ajax_base.html"
