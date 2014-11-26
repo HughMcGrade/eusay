@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models.signals import post_save, m2m_changed, pre_delete
+from django.db.models.signals import pre_save, post_save, m2m_changed, pre_delete
 from django.dispatch import receiver
 
 from proposals.models import Response, Proposal
@@ -122,7 +122,11 @@ def notify_of_vote(created, **kwargs):
                                     content=vote.content)
 
 @receiver(pre_delete, sender=Vote)
-def delete_notify_of_vote(**kwargs):
+def delete_notify_of_deleted_vote(**kwargs):
+    """
+    This signal deletes a notification when a vote is deleted.
+    """
+    print("pre_delete")
     vote = kwargs.get("instance")
     recipient = vote.content.user
     # Votes on proposals
@@ -139,7 +143,7 @@ def delete_notify_of_vote(**kwargs):
             type = "comment_vote_down"
     Notification.objects.filter(recipient=recipient,
                                 type=type,
-                                content=vote.content).delete()
+                                object_id=vote.content.id).delete()
 
 
 @receiver(post_save, sender=HideAction)
