@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import post_save, m2m_changed, pre_delete
 from django.dispatch import receiver
 
 from proposals.models import Response, Proposal
@@ -52,7 +52,7 @@ def notify_of_response(created, **kwargs):
 def notify_proposer_of_comment(created, **kwargs):
     comment = kwargs.get("instance")
     recipient = comment.proposal.user
-        # Don't send a notification if a user comments on their own proposal
+    # Don't send a notification if a user comments on their own proposal
     if created and comment.user != recipient:
         # Don't send this notification if someone replies to a proposer's own
         # comment on their own proposal, since they'll get a notification of a
@@ -120,6 +120,26 @@ def notify_of_vote(created, **kwargs):
         Notification.objects.create(recipient=recipient,
                                     type=type,
                                     content=vote.content)
+
+@receiver(pre_delete, sender=Vote)
+def delete_notify_of_vote(**kwargs):
+    vote = kwargs.get("instance")
+    recipient = vote.content.user
+    # Votes on proposals
+    if vote.content_type == Proposal.get_content_type():
+        if vote.isVoteUp:
+            type = "proposal_vote_up"
+        else:
+            type = "proposal_vote_down"
+    # Votes on comments
+    elif vote.content_type == Comment.get_content_type():
+        if vote.isVoteUp:
+            type = "comment_vote_up"
+        else:
+            type = "comment_vote_down"
+    Notification.objects.filter(recipient=recipient,
+                                type=type,
+                                content=vote.content).delete()
 
 
 @receiver(post_save, sender=HideAction)
