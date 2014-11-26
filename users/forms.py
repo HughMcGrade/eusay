@@ -42,7 +42,8 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ["username",
                   "hasProfile",
-                  "subscribed_to_notification_emails"]
+                  "subscribed_to_notification_emails",
+                  "email"]
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -52,6 +53,11 @@ class UserForm(forms.ModelForm):
                             widget=forms.TextInput(
                                 attrs={"placeholder": "New username",
                                        "class": "form-control"}))
+
+        self.fields["email"] = \
+            forms.CharField(required=False,
+                            widget=forms.TextInput(
+                                attrs={"class": "form-control"}))
 
         self.fields['hasProfile'] = \
             forms.BooleanField(required=False)
