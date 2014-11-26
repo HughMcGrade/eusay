@@ -63,7 +63,14 @@
  function initForms() {
    $('.proposal-comment-form').ajaxForm(
      { clearForm : true,
-      beforeSend: function() {
+       beforeSubmit: function(arr, form, options) {
+	 for (i = 0; i < arr.length; i++) {
+	   if (arr[i]['name'] == 'text' && arr[i]['value'] == '') {
+	     return false;
+	   }
+	 }
+       },
+       beforeSend: function() {
 	$('.submit-comment-button').attr('disabled', true);
 	$('.submit-comment-button').text('Submitting...');
       },

@@ -99,12 +99,15 @@ def autocomplete(request):
     (For autocomplete)
     """
     query = request.GET.get("term", "")
-    searchqueryset = SearchQuerySet().autocomplete(title_auto=query)
+    results = [r.pk for r in SearchQuerySet().autocomplete(title_auto=query)]
+    visible_results = Proposal.objects.filter(id__in=results)\
+                              .filter(isHidden=False)
     suggestions = []
-    for result in searchqueryset:
-        title = result.title
+    for proposal in visible_results:
+        title = proposal.title
         url = reverse("proposal",
-                      kwargs={"proposal_id": result.pk, "slug": result.slug})
+                      kwargs={"proposal_id": proposal.pk,
+                              "slug": proposal.slug})
         suggestions.append({"label": title, "link": url})
     data = json.dumps({
         "results": suggestions

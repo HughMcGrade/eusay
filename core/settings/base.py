@@ -40,6 +40,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+    'core.context_processors.tracking_code',
 )
 
 TEMPLATE_DIRS = tuple(os.path.join(BASE_DIR, "core/templates"))
