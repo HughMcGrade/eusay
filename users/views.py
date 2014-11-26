@@ -170,6 +170,7 @@ def prepare_new_user(request):
             user.follows_tags.add(*form.cleaned_data['other_tags'])
             user.follows_tags.add(*form.cleaned_data['liberation_tags'])
             user.username = form.cleaned_data['username']
+            user.email = form.cleaned_data['email']
             user.save()
             messages.add_message(request,
                                  messages.SUCCESS,

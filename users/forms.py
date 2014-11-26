@@ -81,10 +81,14 @@ class NewUserForm(forms.Form):
             required=True,
             widget=forms.TextInput(attrs={"class": "form-control",
                                           "placeholder": "Please enter a username."}))
+    email = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-control"}))
 
     def __init__(self, user, *args, **kwargs):
         super(NewUserForm, self).__init__(*args, **kwargs)
         self.user = user
+        self.fields['email'].initial = user.email
 
     def clean_username(self):
         return check_username(self, self.user)
