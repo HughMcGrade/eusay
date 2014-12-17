@@ -68,7 +68,6 @@
 {% for field,error in errors.items %}
 <div class="alert alert-danger"><b>Error in {{ field }} field:</b> {{ error.as_text }}</div>
 {% endfor %}
-  {{ errors }}
 {% endif %}
 
 <form method="post" action="">
