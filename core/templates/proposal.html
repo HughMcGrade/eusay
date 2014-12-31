@@ -316,6 +316,13 @@
 	</div>
       </div>
 
+      {% if user.can_write_response %}
+      <hr />
+      <div class="row text-center">
+	<a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response and update status</a>
+      </div>
+      {% endif %}
+
       <div class="row" id="proposal-action-menu">
         <div class="col-xs-12 btn-toolbar">
           <hr class="fancy-hr" />
@@ -328,10 +335,6 @@
             <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a>
             {% endif %}
             <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
-            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'update_proposal_status' proposal.id %}">Update proposal status</a>
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
-            {% endif %}
             {% if proposal.user == user %}
               {% if proposal.is_new %}
 	              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a>
@@ -343,29 +346,6 @@
         </div>
       </div>
     </div> <!-- /.proposal-page -->
-
-    <div id="share_vote_buttons" class="hidden col-xs-12">
-      <h3>Share your vote!</h3>
-      <hr />
-      <div class="col-xs-6">
-	<a class="twitter-share-button"
-	   href="https://twitter.com/share"
-	   data-text="A proposal on eusay"
-	   data-url="{{ request.build_absolute_uri }}">
-	  Tweet
-	</a>
-      </div>
-      <div class="col-xs-6">
-	<a href="#"
-	   onclick="javascript: shareProposal()"
-	   class="btn btn-md btn-primary"
-	   >
-	  Share on Facebook
-	</a>
-      </div>
-      <br />
-      <br />
-    </div>
 
     <div class="comments{% if hide %} proposal-hidden{% endif %}">
     {% include "proposal_comments.html" %}
