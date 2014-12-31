@@ -238,23 +238,27 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
     except:
         raise Http404
     if request.method == 'POST':
-        form = ResponseForm(request.POST)
-        if form.is_valid():
-            response = form.save(commit=False)
+        response_form = ResponseForm(request.POST)
+        status_form = ProposalStatusForm(request.POST, instance=proposal)
+        if response_form.is_valid() and status_form.is_valid():
+            response = response_form.save(commit=False)
             response.user = request.user
             response.proposal = proposal
             response.save()
-            return HttpResponseRedirect(reverse('proposal',
-                                                kwargs={"proposal_id":
-                                                        proposal.id, "slug":
-                                                proposal.slug}))
+            status_form.save()
         else:
             messages.add_message(request, messages.ERROR,
-                                 "Invalid response form")
-    form = ResponseForm()
+                                 response_form.errors + status_form.errors)
+        return HttpResponseRedirect(reverse('proposal',
+                                            kwargs={"proposal_id":
+                                                    proposal.id, "slug":
+                                                    proposal.slug}))
+    response_form = ResponseForm()
+    update_status_form = ProposalStatusForm()
     return render(request,
                   "respond_to_proposal_form.html",
-                  {"proposal": proposal, "form": form})
+                  {"proposal": proposal, "response_form": response_form,
+                   "update_status_form": update_status_form})
 
 def edit_response(request, response_id):
     if not request.user.is_authenticated():
@@ -387,36 +391,6 @@ def delete_proposal(request, proposal_id):
         return render(request, 'delete_proposal.html',
                       {'proposal': proposal,
                        "extend_template": extend_template})
-
-
-def update_proposal_status(request, proposal_id):
-    if not request.user.is_authenticated():
-        return request_login(request)
-    if not request.user.userStatus == "Staff"\
-       or request.user.userStatus == "Officeholder":
-        messages.add_message(request, messages.ERROR, "You don't have "
-                                                      "permission to do this.")
-        return HttpResponseRedirect(reverse("frontpage"))
-    try:
-        proposal = Proposal.objects.get(id=proposal_id)
-    except:
-        raise Http404
-
-    if request.method == "POST":
-        print("form submitted.")
-        form = ProposalStatusForm(request.POST, instance=proposal)
-        if form.is_valid():
-            form.save()
-        else:
-            messages.add_message(request, messages.ERROR, form.errors)
-        return HttpResponseRedirect(reverse("proposal",
-                                            kwargs={"proposal_id": proposal.id,
-                                                    "slug": proposal.slug}))
-    else:
-        form = ProposalStatusForm(instance=proposal)
-        return render(request, "update_proposal_status.html",
-                      {"form": form, "proposal": proposal})
-
 
 def share(request, proposal_id):
     try:
