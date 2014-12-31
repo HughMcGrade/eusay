@@ -247,8 +247,13 @@ def respond_to_proposal(request, proposal_id, *args, **kwargs):
             response.save()
             status_form.save()
         else:
-            messages.add_message(request, messages.ERROR,
-                                 response_form.errors + status_form.errors)
+            if response_form.errors:
+                messages.add_message(request, messages.ERROR,
+                                     response_form.errors)
+            if status_form.errors:
+                messages.add_message(request, messages.ERROR,
+                                     status_form.errors)
+
         return HttpResponseRedirect(reverse('proposal',
                                             kwargs={"proposal_id":
                                                     proposal.id, "slug":
