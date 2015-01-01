@@ -19,7 +19,8 @@ def notify_of_new_proposal(**kwargs):
         tags = proposal.tags.all()
         recipients = []
         for tag in tags:
-            recipients.extend([r for r in tag.followers.exclude(id=proposal.user.id)])
+            recipients.extend([r for r in tag.followers.exclude
+                               (id=proposal.user.id)])
         recipients = remove_duplicates(recipients)
         for recipient in recipients:
             Notification.objects.create(recipient=recipient,
@@ -98,6 +99,7 @@ def notify_commenter_of_reply_in_thread(created, **kwargs):
                                         type=type,
                                         content=content)
 
+
 @receiver(post_save, sender=Vote)
 def notify_of_vote(created, **kwargs):
     vote = kwargs.get("instance")
@@ -119,7 +121,9 @@ def notify_of_vote(created, **kwargs):
 
         Notification.objects.create(recipient=recipient,
                                     type=type,
-                                    content=vote.content)
+                                    content_type=vote.content_type,
+                                    object_id=vote.id)
+
 
 @receiver(pre_delete, sender=Vote)
 def delete_notify_of_vote(**kwargs):
@@ -139,7 +143,8 @@ def delete_notify_of_vote(**kwargs):
             type = "comment_vote_down"
     Notification.objects.filter(recipient=recipient,
                                 type=type,
-                                content=vote.content).delete()
+                                content_type=vote.content_type,
+                                object_id=vote.id).delete()
 
 
 @receiver(post_save, sender=HideAction)
@@ -156,3 +161,26 @@ def notify_submitter_if_content_hidden(created, **kwargs):
             Notification.objects.create(recipient=recipient,
                                         type=type,
                                         content=hide_action.content)
+
+
+@receiver(post_save, sender=Comment)
+def notify_voters_of_comment(created, **kwargs):
+    comment = kwargs.get("instance")
+    if created:
+        proposal = comment.proposal
+        for vote in Vote.objects.filter(content_type=Proposal
+                                        .get_content_type())\
+                                .filter(object_id=proposal.id):
+            Notification.objects.create(recipient=vote.user,
+                                        type="proposal_comment",
+                                        content=proposal)
+
+
+@receiver(post_save, sender=Comment)
+def notify_commenters_of_comment(created, **kwargs):
+    comment = kwargs.get("instance")
+    if created:
+        for comment in Comment.objects.filter(proposal=comment.proposal):
+            Notification.objects.create(recipient=comment.user,
+                                        type="proposal_comment",
+                                        content=comment.proposal)
