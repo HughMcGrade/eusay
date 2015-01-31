@@ -15,7 +15,7 @@
      $.getJSON("/api/v1/search?format=json&q=" + query, function(data) {
        var output = "<ul>";
        for (var i in data.results) {
-         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].upVotes + " votes in favor</li>";
        }
        output += "</ul>";
        if (data.count == 0) {
