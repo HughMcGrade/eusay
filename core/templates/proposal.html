@@ -284,6 +284,13 @@
         </div>
       </form>
 
+      {% if user.can_write_response %}
+      <hr class="fancy-hr" />
+      <div class="row text-center">
+	    <a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write a EUSA response</a>
+      </div>
+      {% endif %}
+
       {% if proposal.tags.all %}
       <div class="row proposal-tags">
         <div class="col-xs-12">
@@ -315,13 +322,6 @@
 	</div>
 	</div>
       </div>
-
-      {% if user.can_write_response %}
-      <hr />
-      <div class="row text-center">
-	<a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response and update status</a>
-      </div>
-      {% endif %}
 
       <div class="row" id="proposal-action-menu">
         <div class="col-xs-12 btn-toolbar">

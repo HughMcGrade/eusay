@@ -279,7 +279,15 @@
        window.open(url, 'twitter', opts);
        return false;
      };
-     
+    function validateResponseForm() {
+        var x = document.forms["responseForm"]["text"].value;
+        if (x == null || x == "") {
+            alert("Please write a response!");
+            return false;
+        } else {
+          return true;
+        }
+    };
     </script>
 
     <script type="text/javascript">
