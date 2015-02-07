@@ -279,7 +279,23 @@
        window.open(url, 'twitter', opts);
        return false;
      };
-     
+    function validateResponseForm() {
+        var x = document.forms["responseForm"]["text"].value;
+        if (x == null || x == "") {
+            alert("Please write a response!");
+            return false;
+        } else {
+          return true;
+        }
+    };
+
+    // this function re-initialises tooltips and the formatting info about
+    // markdown
+    function initialiseTooltipsAndFormattingHelp() {
+      $('*[data-toggle="tooltip"]').tooltip();
+      $(".submit-formatting-help").hide(0);
+      return true;
+    };
     </script>
 
     <script type="text/javascript">
