@@ -22,16 +22,16 @@
     <li>Your <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">proposal, "{{ key.1.title }}",</a> was hidden by a moderator</li>
 
 {% elif key.0 ==  "proposal_vote_up" %}
-    <li>{{ count }} user{{ count|pluralize }} voted for <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title}}</a></li>
+    <li>{{ count }} user{{ count|pluralize }} voted for <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.content.id key.1.content.slug %}">{{ key.1.content.title}}</a></li>
 
 {% elif key.0 ==  "proposal_vote_down" %}
-    <li>{{ count }} user{{ count|pluralize }} voted against <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}">{{ key.1.title }}</a></li>
+    <li>{{ count }} user{{ count|pluralize }} voted against <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.content.id key.1.content.slug %}">{{ key.1.content.title }}</a></li>
 
 {% elif key.0 ==  "comment_vote_up" %}
-    <li>{{ count }} user{{ count|pluralize }} voted for your <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}#comment_{{ key.1.id }}">comment:</a> "{{ key.1.text|smart_truncate }}"</li>
+    <li>{{ count }} user{{ count|pluralize }} voted for your <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.content.proposal.id key.1.content.proposal.slug %}#comment_{{ key.1.content.id }}">comment:</a> "{{ key.1.content.text|smart_truncate }}"</li>
 
 {% elif key.0 ==  "comment_vote_down" %}
-    <li>{{ count }} user{{ count|pluralize }} voted against your <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.proposal.id key.1.proposal.slug %}#comment_{{ key.1.id }}">comment:</a> "{{ key.1.text|smart_truncate }}"</li>
+    <li>{{ count }} user{{ count|pluralize }} voted against your <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.content.proposal.id key.1.content.proposal.slug %}#comment_{{ key.1.content.id }}">comment:</a> "{{ key.1.content.text|smart_truncate }}"</li>
 
 {% elif key.0 == "new_proposal" %}
     <li>New proposal in one of your followed tags: <a href="https://eusay.eusa.ed.ac.uk{% url 'proposal' key.1.id key.1.slug %}"> "{{ key.1.title }}"</a></li>
