@@ -40,3 +40,9 @@ class Vote(models.Model):
                                                                   False) - 1
         self.content.save()
         super(Vote, self).delete(*args, **kwargs)
+
+    def get_content_type():
+        if not hasattr(Vote, '_content_type'):
+            Vote._content_type = ContentType.objects.get(
+                app_label="votes", model="vote")
+        return Vote._content_type
