@@ -224,7 +224,7 @@ $(function () {
         <div class="col-xs-12">
           <h2 id="proposal-title" class="text-center">{{ proposal.title }}</h2>
           {% if proposal.responses.exists %}
-            <p class="text-center"><span class="glyphicon glyphicon-star"></span> <a href="#proposal-response">EUSA has responded to this proposal.</a></p>
+            <p class="text-center"><span class="glyphicon glyphicon-star"></span> <a href="#proposal-response">There is a response to this proposal.</a></p>
           {% endif %}
           <p class="text-center">
             {% if proposal.get_status_display == "Open for discussion" %}
@@ -283,7 +283,7 @@ $(function () {
               <div class="well" id="proposal-response">
                 <h4 class="text-center">
                   <span class="glyphicon glyphicon-star comment-user-status"></span>
-                  {{ response.user.username }} ({{ response.user.get_userStatus_display }}) responded to this proposal:
+                  {{ response.user.username }} ({{ response.user.get_userStatus_display }}) wrote a response:
                 </h4>
                 <p>{{ response.text }}</p>
                 <span class="text-muted">{{ response.createdAt | date:"j M Y, f a" }}</span>
@@ -310,10 +310,10 @@ $(function () {
         </div>
       </form>
 
-      {% if user.can_write_response %}
+      {% if can_write_response %}
       <hr class="fancy-hr" />
       <div class="row text-center">
-	    <a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write a EUSA response</a>
+	    <a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
       </div>
       {% endif %}
 
