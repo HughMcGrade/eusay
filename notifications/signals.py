@@ -102,6 +102,43 @@ def notify_commenter_of_reply_in_thread(created, **kwargs):
                                         content=content)
 
 
+@receiver(post_save, sender=Comment)
+def notify_voters_of_comment(created, **kwargs):
+    comment = kwargs.get("instance")
+    if created:
+        proposal = comment.proposal
+        # Do not notify proposers or commenters notified elsewhere
+        notified = [c.user for c in Comment.objects.filter(proposal=proposal)]
+        notified.append(proposal.user)
+        for vote in Vote.objects.filter(content_type=Proposal
+                                        .get_content_type())\
+                                .filter(object_id=proposal.id):
+            if not vote.user in notified:
+                Notification.objects.create(recipient=vote.user,
+                                            type="proposal_comment",
+                                            content=proposal)
+
+
+@receiver(post_save, sender=Comment)
+def notify_commenters_of_comment(created, **kwargs):
+    comment = kwargs.get("instance")
+    if created:
+        for comment in Comment.objects.filter(proposal=comment.proposal).\
+                exclude(user=comment.user):
+            # Do not notify proposer
+            if comment.user != comment.proposal.user:
+                Notification.objects.create(recipient=comment.user,
+                                            type="proposal_comment",
+                                            content=comment.proposal)
+
+
+@receiver(pre_delete, sender=Comment)
+def delete_notify_of_comment(**kwargs):
+    comment = kwargs.get("instance")
+    Notification.objects.filter(content_type=comment.content_type,
+                                object_id=comment.id).delete()
+
+
 @receiver(post_save, sender=Vote)
 def notify_of_vote(created, **kwargs):
     vote = kwargs.get("instance")
@@ -129,6 +166,9 @@ def notify_of_vote(created, **kwargs):
 
 @receiver(pre_delete, sender=Vote)
 def delete_notify_of_vote(**kwargs):
+    # TODO: are all these conditions necessary? would it not be enough to just
+    # delete any notifications where object_id=vote.id and
+    # content_type=vote.content_type?
     vote = kwargs.get("instance")
     recipient = vote.content.user
     # Votes on proposals
@@ -163,32 +203,3 @@ def notify_submitter_if_content_hidden(created, **kwargs):
             Notification.objects.create(recipient=recipient,
                                         type=type,
                                         content=hide_action.content)
-
-
-@receiver(post_save, sender=Comment)
-def notify_voters_of_comment(created, **kwargs):
-    comment = kwargs.get("instance")
-    if created:
-        proposal = comment.proposal
-        # Do not notify proposers or commenters notifed elsewhere
-        notified = [c.user for c in Comment.objects.filter(proposal=proposal)]
-        notified.append(proposal.user)
-        for vote in Vote.objects.filter(content_type=Proposal
-                                        .get_content_type())\
-                                .filter(object_id=proposal.id):
-            if not vote.user in notified:
-                Notification.objects.create(recipient=vote.user,
-                                            type="proposal_comment",
-                                            content=proposal)
-
-
-@receiver(post_save, sender=Comment)
-def notify_commenters_of_comment(created, **kwargs):
-    comment = kwargs.get("instance")
-    if created:
-        for comment in Comment.objects.filter(proposal=comment.proposal):
-            # Do not notify proposer
-            if comment.user != comment.proposal.user:
-                Notification.objects.create(recipient=comment.user,
-                                            type="proposal_comment",
-                                            content=comment.proposal)
