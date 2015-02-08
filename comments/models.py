@@ -12,9 +12,10 @@ from votes.models import Vote
 class CommentManager(models.Manager):
 
     def get_visible_comments(self, proposal, reply_to=None, sort="popularity"):
-        comments = self.filter(proposal=proposal).filter(replyTo=reply_to)\
-                                                 .filter(isHidden=False)\
+        comments = self.filter(proposal=proposal).filter(isHidden=False)\
                                                  .select_related('user')
+        if reply_to is not None:
+            comments.filter(replyTo=reply_to)
         if sort == "popularity":
             return sorted(comments, key=lambda c: c.get_score(), reverse=True)
         elif sort == "newest":
