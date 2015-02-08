@@ -170,10 +170,11 @@ class Response(Content):
 
     def save(self, *args, **kwargs):
         if self.user.userStatus == "Staff" or \
-           self.user.userStatus == "Officeholder":
+           self.user.userStatus == "Officeholder" or \
+           self.user == self.proposal.user:
             super(Response, self).save(*args, **kwargs)
         else:
-            raise Exception("Only staff and officerholders "
+            raise Exception("Only staff, officeholders or the proposer "
                             "can respond to proposals!")
 
     def __unicode__(self):

@@ -146,13 +146,21 @@ def proposal(request, proposal_id, slug=None):
 
     form = CommentForm()
     comments = proposal.get_visible_comments()
+
+    can_write_response = False
+    if request.user.userStatus == "Staff" or \
+       request.user.userStatus == "Officeholder" or \
+       request.user == proposal.user:
+        can_write_response = True
+
     context = {"form": form,
                "proposal": proposal,
                "comments": comments,
                "user_vote": user_vote,
                "hide": hide,
                "similar_proposals": similar_proposals,
-               "new_proposals": new_proposals}
+               "new_proposals": new_proposals,
+               "can_write_response": can_write_response}
 
     comment_votes = {}
     if request.user.is_authenticated():
@@ -228,15 +236,19 @@ def edit_proposal(request, proposal_id):
 def respond_to_proposal(request, proposal_id, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
-    if request.user.userStatus != "Staff"\
-       and request.user.userStatus != "Officeholder":
-        messages.add_message(request, messages.ERROR,
-                             "Regular users cannot respond to proposals.")
-        return HttpResponseRedirect(reverse('frontpage'))
     try:
         proposal = Proposal.objects.get(id=proposal_id)
     except:
         raise Http404
+
+    if request.user.userStatus != "Staff"\
+       and request.user.userStatus != "Officeholder"\
+       and request.user != proposal.user:
+        messages.add_message(request, messages.ERROR,
+                             "You cannot write a response to this proposal.")
+        return HttpResponseRedirect(reverse('frontpage'))
+
+
     if request.method == 'POST':
         response_form = ResponseForm(request.POST)
         status_form = ProposalStatusForm(request.POST, instance=proposal)
