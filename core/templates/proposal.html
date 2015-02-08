@@ -149,18 +149,25 @@
    });
  };
 
- function showProposalActionMenu() {
-   $("#proposal-action-menu").slideDown();
- };
-
- function hideProposalActionMenu() {
-   $("#proposal-action-menu").slideUp();
- }
+$(function () {
+  $('.click-nav > ul').toggleClass('no-js js');
+  $('.click-nav .js ul').hide();
+  $('.click-nav .js').click(function(e) {
+    $('.click-nav .js ul').slideToggle(200);
+    $('.clicker').toggleClass('active');
+    e.stopPropagation();
+  });
+  $(document).click(function() {
+    if ($('.click-nav .js ul').is(':visible')) {
+      $('.click-nav .js ul', this).slideUp();
+      $('.clicker').removeClass('active');
+    }
+  });
+});
 
  $(document).ready(function() {
    initForms();
    hideReplyForms();
-   $("#proposal-action-menu").hide(0);
  });
 
 </script>
@@ -191,9 +198,27 @@
   <div class="col-xs-12 col-md-8">
     <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
 
-    <div id="proposal-action-menu-open">
-      <a href="#proposal-action-menu" onclick="showProposalActionMenu()"><span class="glyphicon glyphicon-chevron-down"></span></a>
-    </div>
+    <div class="click-nav">
+      <ul class="no-js">
+        <li>
+          <a href="#" class="clicker"><span class="glyphicon glyphicon-chevron-down"></span></a>
+          <ul>
+            {% if user.isModerator and not hide %}
+            <li><a onclick="javascript:return displayModal('{% url 'hide_proposal' proposal.id %}', null, false);" href="{% url 'hide_proposal' proposal.id %}">Hide</a></li>
+            {% else %}
+            <li><a onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a></li>
+            {% endif %}
+            <li><a onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a></li>
+            {% if proposal.user == user %}
+              {% if proposal.is_new %}
+	              <li><a onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a></li>
+              {% endif %}
+              <li><a onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a></li>
+            {% endif %}
+          </ul>
+        </li>
+      </ul>
+    </div> <!-- /.click-nav -->
 
       <div class="row">
         <div class="col-xs-12">
@@ -322,29 +347,6 @@
 	    </a>
 	</div>
 	</div>
-      </div>
-
-      <div class="row" id="proposal-action-menu">
-        <div class="col-xs-12 btn-toolbar">
-          <hr class="fancy-hr" />
-          <span id="proposal-action-menu-close" class="glyphicon glyphicon-remove" onclick="hideProposalActionMenu()"></span>
-          {% if not hide %}
-          <div class="btn-group">
-            {% if user.isModerator and not hide %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'hide_proposal' proposal.id %}', null, false);" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
-            {% else %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a>
-            {% endif %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
-            {% if proposal.user == user %}
-              {% if proposal.is_new %}
-	              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a>
-              {% endif %}
-              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
-            {% endif %}
-          </div>
-          {% endif %}
-        </div>
       </div>
     </div> <!-- /.proposal-page -->
 
