@@ -118,10 +118,11 @@ class HideTest(BaseTestCase):
 class ReportTest(BaseTestCase):
 
     def testReportComment(self):
-        # View form anonymously
+        # Try to view form anonymously
+        # (but get redirected because not authenticated)
         url = reverse('report_comment', args=[self.comment.id])
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         # Report anonymously
         post = {'reason': 'Unacceptable'}
@@ -151,10 +152,11 @@ class ReportTest(BaseTestCase):
             object_id=self.comment.id))
 
     def testReportProposal(self):
-        # View form anonymously
+        # Try tiew form anonymously
+        # (but get redirected because not authenticated)
         url = reverse('report_proposal', args=[self.proposal.id])
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         # Report anonymously
         post = {'reason': 'Unacceptable'}
