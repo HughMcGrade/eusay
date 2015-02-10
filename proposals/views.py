@@ -148,10 +148,11 @@ def proposal(request, proposal_id, slug=None):
     comments = proposal.get_visible_comments()
 
     can_write_response = False
-    if request.user.userStatus == "Staff" or \
-       request.user.userStatus == "Officeholder" or \
-       request.user == proposal.user:
-        can_write_response = True
+    if request.user.is_authenticated():
+        if request.user.userStatus == "Staff" or \
+           request.user.userStatus == "Officeholder" or \
+           request.user == proposal.user:
+            can_write_response = True
 
     context = {"form": form,
                "proposal": proposal,
