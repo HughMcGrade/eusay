@@ -116,5 +116,8 @@ class User(usermodels.AbstractUser):
     def has_unread_notifications(self):
         return bool(Notification.objects.get_unread(self))
 
+    def can_write_response(self):
+        return self.userStatus == "Staff" or self.userStatus == "Officeholder"
+
     def __unicode__(self):
         return self.username + " (" + self.sid + ")"

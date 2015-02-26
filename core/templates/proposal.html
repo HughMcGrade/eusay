@@ -134,6 +134,7 @@
 	initForms();
 	putNewMessagesFromResponse(response);
      }});
+  initialiseTooltipsAndFormattingHelp();
  };
 
  function showReplyForm(id) {
@@ -148,18 +149,25 @@
    });
  };
 
- function showProposalActionMenu() {
-   $("#proposal-action-menu").slideDown();
- };
-
- function hideProposalActionMenu() {
-   $("#proposal-action-menu").slideUp();
- }
+$(function () {
+  $('.click-nav > ul').toggleClass('no-js js');
+  $('.click-nav .js ul').hide();
+  $('.click-nav .js').click(function(e) {
+    $('.click-nav .js ul').slideToggle(200);
+    $('.clicker').toggleClass('active');
+    e.stopPropagation();
+  });
+  $(document).click(function() {
+    if ($('.click-nav .js ul').is(':visible')) {
+      $('.click-nav .js ul', this).slideUp();
+      $('.clicker').removeClass('active');
+    }
+  });
+});
 
  $(document).ready(function() {
    initForms();
    hideReplyForms();
-   $("#proposal-action-menu").hide(0);
  });
 
 </script>
@@ -190,15 +198,33 @@
   <div class="col-xs-12 col-md-8">
     <div class="proposal-page page-shadow{% if hide %} proposal-hidden{% endif %}">
 
-    <div id="proposal-action-menu-open">
-      <a href="#proposal-action-menu" onclick="showProposalActionMenu()"><span class="glyphicon glyphicon-chevron-down"></span></a>
-    </div>
+    <div class="click-nav">
+      <ul class="no-js">
+        <li>
+          <a href="#" class="clicker"><span class="glyphicon glyphicon-chevron-down"></span></a>
+          <ul>
+            {% if user.isModerator and not hide %}
+            <li><a onclick="javascript:return displayModal('{% url 'hide_proposal' proposal.id %}', null, false);" href="{% url 'hide_proposal' proposal.id %}">Hide</a></li>
+            {% else %}
+            <li><a onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a></li>
+            {% endif %}
+            <li><a onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a></li>
+            {% if proposal.user == user %}
+              {% if proposal.is_new %}
+	              <li><a onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a></li>
+              {% endif %}
+              <li><a onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a></li>
+            {% endif %}
+          </ul>
+        </li>
+      </ul>
+    </div> <!-- /.click-nav -->
 
       <div class="row">
         <div class="col-xs-12">
           <h2 id="proposal-title" class="text-center">{{ proposal.title }}</h2>
           {% if proposal.responses.exists %}
-            <p class="text-center"><span class="glyphicon glyphicon-star"></span> <a href="#proposal-response">EUSA has responded to this proposal.</a></p>
+            <p class="text-center"><span class="glyphicon glyphicon-star"></span> <a href="#proposal-response">There is a response to this proposal.</a></p>
           {% endif %}
           <p class="text-center">
             {% if proposal.get_status_display == "Open for discussion" %}
@@ -257,7 +283,7 @@
               <div class="well" id="proposal-response">
                 <h4 class="text-center">
                   <span class="glyphicon glyphicon-star comment-user-status"></span>
-                  {{ response.user.username }} ({{ response.user.get_userStatus_display }}) responded to this proposal:
+                  {{ response.user.username }} ({{ response.user.get_userStatus_display }}) wrote a response:
                 </h4>
                 <p>{{ response.text }}</p>
                 <span class="text-muted">{{ response.createdAt | date:"j M Y, f a" }}</span>
@@ -283,6 +309,13 @@
           </div>
         </div>
       </form>
+
+      {% if can_write_response %}
+      <hr class="fancy-hr" />
+      <div class="row text-center">
+	    <a class="btn btn-lg btn-primary" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
+      </div>
+      {% endif %}
 
       {% if proposal.tags.all %}
       <div class="row proposal-tags">
@@ -315,57 +348,7 @@
 	</div>
 	</div>
       </div>
-
-      <div class="row" id="proposal-action-menu">
-        <div class="col-xs-12 btn-toolbar">
-          <hr class="fancy-hr" />
-          <span id="proposal-action-menu-close" class="glyphicon glyphicon-remove" onclick="hideProposalActionMenu()"></span>
-          {% if not hide %}
-          <div class="btn-group">
-            {% if user.isModerator and not hide %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'hide_proposal' proposal.id %}', null, false);" href="{% url 'hide_proposal' proposal.id %}">Hide</a>
-            {% else %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'report_proposal' proposal.id %}');" href="{% url 'report_proposal' proposal.id %}">Report</a>
-            {% endif %}
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'amend_proposal' proposal.id %}', prepareAmendForm, false);" href="{% url 'amend_proposal' proposal.id %}">Propose Amendment</a>
-            {% if user.userStatus == "Staff" or user.userStatus == "Officeholder" %}
-            <a type="button" class="btn btn-default btn-xs" href="{% url 'update_proposal_status' proposal.id %}">Update proposal status</a>
-            <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'respond' proposal.id proposal.slug %}', null, false);" href="{% url 'respond' proposal.id proposal.slug %}">Write official response</a>
-            {% endif %}
-            {% if proposal.user == user %}
-              {% if proposal.is_new %}
-	              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'edit_proposal' proposal.id %}', null, false);" href="{% url 'edit_proposal' proposal.id %}">Edit</a>
-              {% endif %}
-              <a type="button" class="btn btn-default btn-xs" onclick="javascript:return displayModal('{% url 'delete_proposal' proposal.id %}', null, false);" href="{% url 'delete_proposal' proposal.id %}">Delete</a>
-            {% endif %}
-          </div>
-          {% endif %}
-        </div>
-      </div>
     </div> <!-- /.proposal-page -->
-
-    <div id="share_vote_buttons" class="hidden col-xs-12">
-      <h3>Share your vote!</h3>
-      <hr />
-      <div class="col-xs-6">
-	<a class="twitter-share-button"
-	   href="https://twitter.com/share"
-	   data-text="A proposal on eusay"
-	   data-url="{{ request.build_absolute_uri }}">
-	  Tweet
-	</a>
-      </div>
-      <div class="col-xs-6">
-	<a href="#"
-	   onclick="javascript: shareProposal()"
-	   class="btn btn-md btn-primary"
-	   >
-	  Share on Facebook
-	</a>
-      </div>
-      <br />
-      <br />
-    </div>
 
     <div class="comments{% if hide %} proposal-hidden{% endif %}">
     {% include "proposal_comments.html" %}

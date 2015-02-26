@@ -159,8 +159,8 @@ class ResponseForm(SwearFilteredModelForm):
     text = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control",
                "rows": "3",
-               "placeholder": "Enter your official response to "
-                              "this proposal here."}))
+               "placeholder": "What does EUSA think of the proposal? What "
+                              "will they do about it, or what has been done so far?"}))
 
     class Meta:
         model = Response

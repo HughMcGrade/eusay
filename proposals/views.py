@@ -146,13 +146,22 @@ def proposal(request, proposal_id, slug=None):
 
     form = CommentForm()
     comments = proposal.get_visible_comments()
+
+    can_write_response = False
+    if request.user.is_authenticated():
+        if request.user.userStatus == "Staff" or \
+           request.user.userStatus == "Officeholder" or \
+           request.user == proposal.user:
+            can_write_response = True
+
     context = {"form": form,
                "proposal": proposal,
                "comments": comments,
                "user_vote": user_vote,
                "hide": hide,
                "similar_proposals": similar_proposals,
-               "new_proposals": new_proposals}
+               "new_proposals": new_proposals,
+               "can_write_response": can_write_response}
 
     comment_votes = {}
     if request.user.is_authenticated():
@@ -228,33 +237,46 @@ def edit_proposal(request, proposal_id):
 def respond_to_proposal(request, proposal_id, *args, **kwargs):
     if not request.user.is_authenticated():
         return request_login(request)
-    if request.user.userStatus != "Staff"\
-       and request.user.userStatus != "Officeholder":
-        messages.add_message(request, messages.ERROR,
-                             "Regular users cannot respond to proposals.")
-        return HttpResponseRedirect(reverse('frontpage'))
     try:
         proposal = Proposal.objects.get(id=proposal_id)
     except:
         raise Http404
+
+    if request.user.userStatus != "Staff"\
+       and request.user.userStatus != "Officeholder"\
+       and request.user != proposal.user:
+        messages.add_message(request, messages.ERROR,
+                             "You cannot write a response to this proposal.")
+        return HttpResponseRedirect(reverse('frontpage'))
+
+
     if request.method == 'POST':
-        form = ResponseForm(request.POST)
-        if form.is_valid():
-            response = form.save(commit=False)
+        response_form = ResponseForm(request.POST)
+        status_form = ProposalStatusForm(request.POST, instance=proposal)
+        if response_form.is_valid() and status_form.is_valid():
+            response = response_form.save(commit=False)
             response.user = request.user
             response.proposal = proposal
             response.save()
-            return HttpResponseRedirect(reverse('proposal',
-                                                kwargs={"proposal_id":
-                                                        proposal.id, "slug":
-                                                proposal.slug}))
+            status_form.save()
         else:
-            messages.add_message(request, messages.ERROR,
-                                 "Invalid response form")
-    form = ResponseForm()
+            if response_form.errors:
+                messages.add_message(request, messages.ERROR,
+                                     response_form.errors)
+            if status_form.errors:
+                messages.add_message(request, messages.ERROR,
+                                     status_form.errors)
+
+        return HttpResponseRedirect(reverse('proposal',
+                                            kwargs={"proposal_id":
+                                                    proposal.id, "slug":
+                                                    proposal.slug}))
+    response_form = ResponseForm()
+    update_status_form = ProposalStatusForm()
     return render(request,
                   "respond_to_proposal_form.html",
-                  {"proposal": proposal, "form": form})
+                  {"proposal": proposal, "response_form": response_form,
+                   "update_status_form": update_status_form})
 
 def edit_response(request, response_id):
     if not request.user.is_authenticated():
@@ -387,36 +409,6 @@ def delete_proposal(request, proposal_id):
         return render(request, 'delete_proposal.html',
                       {'proposal': proposal,
                        "extend_template": extend_template})
-
-
-def update_proposal_status(request, proposal_id):
-    if not request.user.is_authenticated():
-        return request_login(request)
-    if not request.user.userStatus == "Staff"\
-       or request.user.userStatus == "Officeholder":
-        messages.add_message(request, messages.ERROR, "You don't have "
-                                                      "permission to do this.")
-        return HttpResponseRedirect(reverse("frontpage"))
-    try:
-        proposal = Proposal.objects.get(id=proposal_id)
-    except:
-        raise Http404
-
-    if request.method == "POST":
-        print("form submitted.")
-        form = ProposalStatusForm(request.POST, instance=proposal)
-        if form.is_valid():
-            form.save()
-        else:
-            messages.add_message(request, messages.ERROR, form.errors)
-        return HttpResponseRedirect(reverse("proposal",
-                                            kwargs={"proposal_id": proposal.id,
-                                                    "slug": proposal.slug}))
-    else:
-        form = ProposalStatusForm(instance=proposal)
-        return render(request, "update_proposal_status.html",
-                      {"form": form, "proposal": proposal})
-
 
 def share(request, proposal_id):
     try:

@@ -5,6 +5,7 @@ db.sqlite3
 .DS_Store
 .idea
 .settings
+.coverage
 /core/settings/whoosh_index/
 /core/whoosh_index/
 /core/test_index/

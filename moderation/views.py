@@ -103,25 +103,39 @@ def proposal_hides(request):
 
 
 def report_comment(request, comment_id):
+    if not request.user.is_authenticated():
+        return request_login(request)
     try:
         comment = Comment.objects.get(id=comment_id)
+        proposal = comment.proposal
     except:
         raise Http404
     if request.method == "POST":
         form = ReportForm(request.POST)
-        if form.is_valid():
-            report = form.save(commit=False)
-            if request.user.is_authenticated():
-                report.reporter = request.user
-            report.content = comment
-            report.save()
-            messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted "
-                                  "to the moderators."))
-            return HttpResponseRedirect(reverse('frontpage'))
+        if request.user.is_authenticated():
+            if form.is_valid():
+                report = form.save(commit=False)
+                report.content = comment
+                report.save()
+                messages.add_message(request, messages.INFO,
+                                     ("Your report has been submitted "
+                                      "to the moderators."))
+                return HttpResponseRedirect(reverse('proposal', args=[
+                                                    str(proposal.id),
+                                                    proposal.slug]))
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     "Invalid report form.")
+                return HttpResponseRedirect(reverse('proposal', args=[
+                                                    str(proposal.id),
+                                                    proposal.slug]))
         else:
             messages.add_message(request, messages.ERROR,
-                                 "Invalid report comment form")
+                                 "Please log in to report content.")
+            return HttpResponseRedirect(reverse('proposal', args=[
+                                                str(proposal.id),
+                                                proposal.slug]))
+
     else:
         if request.is_ajax():
             extend_template = "ajax_base.html"
@@ -134,25 +148,39 @@ def report_comment(request, comment_id):
 
 
 def report_proposal(request, proposal_id):
+    if not request.user.is_authenticated():
+        return request_login(request)
     try:
         proposal = Proposal.objects.get(id=proposal_id)
     except:
         raise Http404
     if request.method == "POST":
         form = ReportForm(request.POST)
-        if form.is_valid():
-            report = form.save(commit=False)
-            if request.user.is_authenticated():
-                report.reporter = request.user
-            report.content = proposal
-            report.save()
-            messages.add_message(request, messages.INFO,
-                                 ("Your report has been submitted to "
-                                  "the moderators."))
-            return HttpResponseRedirect(reverse('frontpage'))
+        if request.user.is_authenticated():
+            if form.is_valid():
+                report = form.save(commit=False)
+                if request.user.is_authenticated():
+                    report.reporter = request.user
+                report.content = proposal
+                report.save()
+                messages.add_message(request, messages.INFO,
+                                     ("Your report has been submitted to "
+                                      "the moderators."))
+                return HttpResponseRedirect(reverse('proposal', args=[
+                                            str(proposal.id),
+                                            proposal.slug]))
+            else:
+                messages.add_message(request, messages.ERROR,
+                                     "Invalid report form.")
+                return HttpResponseRedirect(reverse('proposal', args=[
+                                            str(proposal.id),
+                                            proposal.slug]))
         else:
             messages.add_message(request, messages.ERROR,
-                                 "Invalid report proposal form")
+                                 "Please log in to report content.")
+            return HttpResponseRedirect(reverse('proposal', args=[
+                                                str(proposal.id),
+                                                proposal.slug]))
     else:
         if request.is_ajax():
             extend_template = "ajax_base.html"
