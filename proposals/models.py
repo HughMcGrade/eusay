@@ -147,10 +147,7 @@ class Proposal(Content):
             else:
                 rank += Proposal._weight_instance(hour_age) * 1
 
-        return rank * \
-            Proposal._proximity_coefficient() + \
-            self.upVotes - \
-            self.downVotes
+        return rank * Proposal._proximity_coefficient()
 
     def get_visible_comments(self, reply_to=None, sort="popularity"):
         return Comment.objects.get_visible_comments(
