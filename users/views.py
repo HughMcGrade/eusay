@@ -82,6 +82,8 @@ def profile(request, slug):
                               kwargs={"slug": request.user.slug})
                 return HttpResponseRedirect(url)
             else:
+                for field, error in form.errors.items():
+                    messages.add_message(request, messages.ERROR, error)
                 return render(request,
                               "own_profile.html",
                               {"profile": user,

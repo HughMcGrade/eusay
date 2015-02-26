@@ -1,4 +1,5 @@
 from slugify import slugify
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth import models as usermodels
@@ -43,10 +44,21 @@ class User(usermodels.AbstractUser):
     hasProfile = models.BooleanField("public profile", default=False)
     follows_tags = models.ManyToManyField(Tag, related_name="followers",
                                           blank=True)
-    subscribed_to_notification_emails = models.BooleanField("subscribed to "
-                                                            "notification "
-                                                            "emails?",
-                                                            default=True)
+
+    """
+    Days between email notifications. 0 means no email notifications.
+    """
+    email_notification_frequency = models.IntegerField("days between email"
+                                                       " notifications",
+                                                       choices=[
+                                                           (3, "Every 3 days"),
+                                                           (7, "Weekly"),
+                                                           (0, "Never")
+                                                       ],
+                                                       default=3)
+    last_notification_email = models.DateField("last notification email"
+                                               "date",
+                                               default=datetime.now)
 
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()
