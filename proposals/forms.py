@@ -43,6 +43,48 @@ class ProposalForm(forms.ModelForm):
         queryset=Tag.objects.filter(group=3),
         required=False)
 
+    def clean_school_tags(self):
+        """
+        Get the cleaned school tags if there are no more than
+        4 of them
+
+        :returns:   Cleaned school tags of length < 4
+        :raises:   :mod:`django.forms.ValidationError`
+        """
+        cleaned_school_tags = self.cleaned_data["school_tags"]
+        if len(cleaned_school_tags) > 4:
+            raise forms.ValidationError("Please add no more than "
+                                        "four school tags")
+        return cleaned_school_tags
+
+    def clean_liberation_tags(self):
+        """
+        Get the cleaned liberation tags if there are no more than
+        4 of them
+
+        :returns:   Cleaned liberation tags of length < 4
+        :raises:   :mod:`django.forms.ValidationError`
+        """
+        cleaned_liberation_tags = self.cleaned_data["liberation_tags"]
+        if len(cleaned_liberation_tags) > 4:
+            raise forms.ValidationError("Please add no more than "
+                                        "four liberation group tags")
+        return cleaned_liberation_tags
+
+    def clean_other_tags(self):
+        """
+        Get the cleaned general tags if there are no more than
+        4 of them
+
+        :returns:   Cleaned general tags of length < 4
+        :raises:   :mod:`django.forms.ValidationError`
+        """
+        cleaned_other_tags = self.cleaned_data["other_tags"]
+        if len(cleaned_other_tags) > 4:
+            raise forms.ValidationError("Please include no more than "
+                                        "four general tags")
+        return cleaned_other_tags
+
     def clean_title(self):
         """
         Get the cleaned proposal title if it contains no swear words,
@@ -117,8 +159,8 @@ class ResponseForm(SwearFilteredModelForm):
     text = forms.CharField(widget=forms.Textarea(
         attrs={"class": "form-control",
                "rows": "3",
-               "placeholder": "Enter your official response to "
-                              "this proposal here."}))
+               "placeholder": "What does EUSA think of the proposal? What "
+                              "will they do about it, or what has been done so far?"}))
 
     class Meta:
         model = Response

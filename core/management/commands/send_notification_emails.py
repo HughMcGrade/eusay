@@ -10,6 +10,16 @@ from users.models import User
 from notifications.models import Notification
 
 
+def is_notification_email_due(user):
+    """
+    Calculates whether or not a notification email is due for user
+    This is only for users with email_notification_frequency > 0,
+    otherwise no emails should be sent.
+    """
+    days_since_last = user.last_notification_email - datetime.now()
+    return days_since_last > timedelta(days=user.email_notification_frequency)
+
+
 class Command(BaseCommand):
     help = "Sends out an email to all users who have unread notifications."
 
@@ -22,7 +32,8 @@ class Command(BaseCommand):
                                                 .filter(has_been_emailed=False)
             if notifications.exists() \
                     and user.email != "" \
-                    and user.subscribed_to_notification_emails:
+                    and user.email_notification_frequency != 0 \
+                    and is_notification_email_due(user):
                 notifications_dict = Counter([(n.type, n.content)
                                               for n in notifications])
                 count = notifications.count()
@@ -49,6 +60,9 @@ class Command(BaseCommand):
                 emails.append(msg)
 
                 notifications_to_be_emailed.extend(list(notifications))
+
+                user.last_notification_email = datetime.now()
+                user.save()
 
         connection = get_connection()
         connection.send_messages(emails)

@@ -148,11 +148,13 @@ class ResponseTest(BaseTestCase):
         self.assertEqual(response.status_code, 302)
 
         # Respond as regular user
-        post = {'text': 'My response'}
+        post = {'text': 'My response', 'status': Proposal.PROPOSAL_STATUS_CHOICES[1][0]}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.assertRaises(Response.DoesNotExist, Response.objects.get,
                           proposal=self.proposal.id)
+        proposal = Proposal.objects.get(id=self.proposal.id)
+        self.assertEqual(proposal.status, self.proposal.status)
 
         # Log in as officeholder
         self.assertTrue(self.client.login(username=self.officeholder.username,
@@ -162,12 +164,14 @@ class ResponseTest(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        # Respond as officeholder
-        post = {'text': 'My response'}
+        # Respond and update status as officeholder
+        post = {'text': 'My response', 'status': Proposal.PROPOSAL_STATUS_CHOICES[1][0]}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         proposal_response = Response.objects.get(proposal=self.proposal.id)
         self.assertTrue(Response.objects.get(proposal=self.proposal.id))
+        self.proposal = Proposal.objects.get(id=self.proposal.id)
+        self.assertEqual(self.proposal.status, Proposal.PROPOSAL_STATUS_CHOICES[1][0])
 
         # View new response
         url = reverse('proposal', kwargs={"proposal_id": self.proposal.id,
