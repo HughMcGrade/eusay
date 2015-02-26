@@ -51,9 +51,9 @@ class User(usermodels.AbstractUser):
     email_notification_frequency = models.IntegerField("days between email"
                                                        " notifications",
                                                        choices=[
-                                                           ("Every 3 days", 3),
-                                                           ("Weekly", 7),
-                                                           ("Never", 0)
+                                                           (3, "Every 3 days"),
+                                                           (7, "Weekly"),
+                                                           (0, "Never")
                                                        ],
                                                        default=3)
     last_notification_email = models.DateField("last notification email"
