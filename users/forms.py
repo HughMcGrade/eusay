@@ -63,11 +63,11 @@ class UserForm(forms.ModelForm):
             forms.BooleanField(required=False)
 
         self.fields['email_notification_frequency'] = \
-            forms.ChoiceField(required=False, choices=[
+            forms.ChoiceField(required=False, choices=(
                 (3, "Every 3 days"),
                 (7, "Weekly"),
                 (0, "Never"),
-            ])
+            ))
 
     def clean_username(self):
         return check_username(self, self.instance)
