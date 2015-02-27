@@ -56,7 +56,6 @@
     <th>Comment</th>
     <th>Proposal</th>
     <th>Reason</th>
-    <th>Reporter</th>
     <th>Action</th>
   </thead>
   <tbody>
@@ -70,9 +69,6 @@
       </td>
       <td>
 	{{ r.reason }}
-      </td>
-      <td>
-	{{ r.reporter.username }}
       </td>
       <td>
 	<form method="POST" class="action_form">
@@ -98,7 +94,6 @@ No open comment reports
   <thead>
     <th>Proposal</th>
     <th>Reason</th>
-    <th>Reporter</th>
     <th>Action</th>
   </thead>
   <tbody>
@@ -109,9 +104,6 @@ No open comment reports
       </td>
       <td>
 	{{ r.reason }}
-      </td>
-      <td>
-	{{ r.reporter.username }}
       </td>
       <td>
 	<form method="POST" class="action_form">

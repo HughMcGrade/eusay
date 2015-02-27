@@ -9,19 +9,42 @@
 <div class="row">
   <div class="col-xs-2"></div>
   <div class="col-xs-8">
-    <h1 id="form_title">Respond to "{{ proposal.title }}"</h1>
+    <h1 id="form_title">Respond to "{{ proposal.title }}" and update status</h1>
     <hr />
     <div id="form_body">
-      <form action="{% url 'respond' proposal.id proposal.slug %}" id="modal_form" method="post">
-	{% csrf_token %}
-	<div class="form-group">
-	  {{ form.text }}
-	</div>
-	<button id="form_submit_button" type="post" class="btn btn-default">Submit</button>
+      <form name="responseForm" action="{% url 'respond' proposal.id proposal.slug %}" id="modal_form" method="post" onsubmit="return validateResponseForm();">
+        {% csrf_token %}
+        <label for="id_response_text">Response Text</label>
+        <div class="form-group">
+          {{ response_form.text }}
+        </div>
+        <hr />
+        <div class="form-group">
+          <div class="alert alert-danger">When you respond to a proposal, please also update its status.</div>
+          <a class="pull-right" data-toggle="collapse" data-target="#statusDescriptions">What status should I choose?</a>
+          <div class="form-group" id="proposal-status-form">
+            <label for="id_status">New proposal status</label><br />
+            {{ update_status_form.status }}
+          </div>
+          <div class="collapse" id="statusDescriptions">
+            <div class="well">
+              <b>Open for discussion</b>: The default status. EUSA has not taken up this proposal yet.<br />
+              <b>Work in progress</b>: EUSA is currently acting on this proposal.<br />
+              <b>Going to Student Council</b>: The proposal will be taken up at a future student council. If this is
+              the case, please specify a date!<br />
+              <b>Resolved</b>: The proposal has been resolved.
+            </div>
+          </div>
+          <div class="form-group" id="proposal-student-council-form">
+            <label for="id_student_council">If status is "Going to Student Council", choose a date</label><br />
+            {{ update_status_form.student_council }}
+          </div>
+        </div>
+        <button id="form_submit_button" type="post" class="btn btn-primary">Submit</button>
       </form>
     </div>
   </div>
-  <div class="col-xs-2"></div>
+<div class="col-xs-2"></div>
 </div>
 
 {% endblock %}

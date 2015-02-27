@@ -4,7 +4,7 @@
 <hr />
 
 {% if not hide %}
-    <div class="row" id="add_comment_row">
+<div class="row" id="add_comment_row">
   <div class="col-xs-12 comment">
     {% if user.is_authenticated %}
       <form role="form" method="post" class="proposal-comment-form">
@@ -13,7 +13,7 @@
           <label>Add comment</label>
           {% include "markdown_formatting_help.html" %}
           {{ form.text }}
-          <div class="charNum">0/1000</div>
+          <div class="charNum">0/6000</div>
         </div>
         <button type="post" class="submit-comment-button btn btn-default">Submit</button>
       </form>

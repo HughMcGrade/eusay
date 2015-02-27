@@ -92,8 +92,7 @@ def add_objects(self):
                                                         "space",
                                                    user=self.candidate)
     self.comment_report = Report.objects.create(content=self.reported_comment,
-                                                reason="Offensive",
-                                                reporter=self.user)
+                                                reason="Offensive")
     self.reported_proposal = Proposal.objects.create(title="Do things some "
                                                      "may find offensive",
                                                      text="I think EUSA "
@@ -104,8 +103,7 @@ def add_objects(self):
                                                      user=self.candidate)
     self.proposal_report = Report.objects.create(
         content=self.reported_proposal,
-        reason="Daft",
-        reporter=self.user)
+        reason="Daft")
 
 
 @override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)

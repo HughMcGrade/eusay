@@ -15,7 +15,7 @@
      $.getJSON("/api/v1/search?format=json&q=" + query, function(data) {
        var output = "<ul>";
        for (var i in data.results) {
-         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].votesUp + " votes in favor</li>";
+         output += "<li><a href='/proposal/" + data.results[i].id + "' class='alert-link'>" +  data.results[i].title + "</a> " + data.results[i].upVotes + " votes in favor</li>";
        }
        output += "</ul>";
        if (data.count == 0) {
@@ -68,7 +68,6 @@
 {% for field,error in errors.items %}
 <div class="alert alert-danger"><b>Error in {{ field }} field:</b> {{ error.as_text }}</div>
 {% endfor %}
-  {{ errors }}
 {% endif %}
 
 <form method="post" action="">
@@ -125,6 +124,7 @@
     </div>
   </div>
   <h3>Tags</h3>
+  <p>You may add up to four tags in each category.</p>
   <div class="row">
     <div class="col-xs-12 col-md-8 tag-group">
       <h4>General</h4>

@@ -37,7 +37,10 @@ class ProfileTest(BaseTestCase):
         self.client.login(username=self.eusa_staff.username, password="")
 
         # Change other user's username
-        post = {'username': 'Brendan', 'hasProfile': self.user.hasProfile}
+        post = {'username': 'Brendan',
+                'hasProfile': self.user.hasProfile,
+                'email_notification_frequency':
+                    self.user.email_notification_frequency}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 200)
         previous_name = self.user.username
@@ -48,7 +51,10 @@ class ProfileTest(BaseTestCase):
         self.client.login(username=self.user.username, password="")
 
         # Change own username
-        post = {'username': 'Brendan', 'hasProfile': self.user.hasProfile}
+        post = {'username': 'Brendan',
+                'hasProfile': self.user.hasProfile,
+                'email_notification_frequency':
+                    self.user.email_notification_frequency}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         self.user = get_user_model().objects.get(id=self.user.id)
@@ -62,7 +68,9 @@ class ProfileTest(BaseTestCase):
 
         # Change other user's hasProfile value
         post = {'username': self.user.username,
-                'hasProfile': not self.user.hasProfile}
+                'hasProfile': not self.user.hasProfile,
+                'email_notification_frequency':
+                    self.user.email_notification_frequency}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
         self.user = get_user_model().objects.get(id=self.user.id)
@@ -72,7 +80,10 @@ class ProfileTest(BaseTestCase):
         self.client.login(username=self.user.username, password="")
 
         # Change own hasProfile value
-        post = {'username': 'Brendan', 'hasProfile': not self.user.hasProfile}
+        post = {'username': 'Brendan',
+                'hasProfile': not self.user.hasProfile,
+                'email_notification_frequency':
+                    self.user.email_notification_frequency}
         response = self.client.post(url, post)
         previous_value = self.user.hasProfile
         self.user = get_user_model().objects.get(id=self.user.id)

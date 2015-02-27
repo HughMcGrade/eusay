@@ -42,7 +42,8 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ["username",
                   "hasProfile",
-                  "subscribed_to_notification_emails"]
+                  "email_notification_frequency",
+                  "email"]
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -53,11 +54,20 @@ class UserForm(forms.ModelForm):
                                 attrs={"placeholder": "New username",
                                        "class": "form-control"}))
 
+        self.fields["email"] = \
+            forms.CharField(required=False,
+                            widget=forms.TextInput(
+                                attrs={"class": "form-control"}))
+
         self.fields['hasProfile'] = \
             forms.BooleanField(required=False)
 
-        self.fields['subscribed_to_notification_emails'] = \
-            forms.BooleanField(required=False)
+        self.fields['email_notification_frequency'] = \
+            forms.ChoiceField(required=False, choices=(
+                (3, "Every 3 days"),
+                (7, "Weekly"),
+                (0, "Never"),
+            ))
 
     def clean_username(self):
         return check_username(self, self.instance)
@@ -81,10 +91,14 @@ class NewUserForm(forms.Form):
             required=True,
             widget=forms.TextInput(attrs={"class": "form-control",
                                           "placeholder": "Please enter a username."}))
+    email = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-control"}))
 
     def __init__(self, user, *args, **kwargs):
         super(NewUserForm, self).__init__(*args, **kwargs)
         self.user = user
+        self.fields['email'].initial = user.email
 
     def clean_username(self):
         return check_username(self, self.user)

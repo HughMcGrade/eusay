@@ -30,7 +30,7 @@ class HideAction(models.Model):
 
 class Report(models.Model):
     id = models.AutoField(primary_key=True)
-    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    # reporter = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=2000)
 
